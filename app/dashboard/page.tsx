@@ -205,30 +205,36 @@ export default function DashboardPage() {
         <div className="flex flex-col gap-4 lg:col-span-3">
           <h3 className="text-sm font-bold text-foreground">Quick Actions</h3>
 
-          <ActionCard
-            icon={<CloudLightning className="h-5 w-5 text-white" />}
-            iconBg="bg-blue-600"
-            title="Start Extraction"
-            desc="Import list or scrape URL to find prospects."
-            action=">"
-            active
-          />
+          <Link href="/dashboard/extraction" className="contents">
+            <ActionCard
+              icon={<CloudLightning className="h-5 w-5 text-white" />}
+              iconBg="bg-blue-600"
+              title="Start Extraction"
+              desc="Import list or scrape URL to find prospects."
+              action=">"
+              active
+            />
+          </Link>
 
-          <ActionCard
-            icon={<CheckCircle2 className="h-5 w-5 text-emerald-500" />}
-            iconBg="bg-emerald-500/10"
-            title="View Scored Leads"
-            desc={`Review ${stats?.qualified_leads || 0} high-intent leads pending.`}
-            action=">"
-          />
+          <Link href="/dashboard/scoring" className="contents">
+            <ActionCard
+              icon={<CheckCircle2 className="h-5 w-5 text-emerald-500" />}
+              iconBg="bg-emerald-500/10"
+              title="View Scored Leads"
+              desc={`Review ${stats?.qualified_leads || 0} high-intent leads pending.`}
+              action=">"
+            />
+          </Link>
 
-          <ActionCard
-            icon={<Rocket className="h-5 w-5 text-purple-500" />}
-            iconBg="bg-purple-500/10"
-            title="Launch Campaign"
-            desc="Select template and target audience."
-            action=">"
-          />
+          <Link href="/dashboard/campaigns/create?template=invitation" className="contents">
+            <ActionCard
+              icon={<Rocket className="h-5 w-5 text-purple-500" />}
+              iconBg="bg-purple-500/10"
+              title="Launch Campaign"
+              desc="Select template and target audience."
+              action=">"
+            />
+          </Link>
         </div>
 
         {/* Lead Quality Distribution (Center Col) */}

@@ -60,6 +60,18 @@ export default function LinkedInMessaging({
 
                 if (!res.error) {
                     toast.success(`Message queued for extension! Check your Chrome extension.`);
+
+                    // NOTIFY EXTENSION TO START SENDING IMMEDIATELY
+                    if (typeof window !== 'undefined') {
+                        window.postMessage({
+                            type: 'LEAD_GENIUS_START_SINGLE',
+                            payload: {
+                                leadId: leadId,
+                                linkedinUrl: linkedinUrl
+                            }
+                        }, '*');
+                    }
+
                     setMessage("");
                     onMessageSent?.();
                     onClose?.();

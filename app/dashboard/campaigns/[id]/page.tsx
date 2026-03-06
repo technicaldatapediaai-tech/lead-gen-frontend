@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/dialog";
 import LinkedInStatusBadge from "@/components/linkedin/LinkedInStatusBadge";
 import BatchLinkedInMessaging from "@/components/linkedin/BatchLinkedInMessaging";
+import BatchEmailMessaging from "@/components/email/BatchEmailMessaging";
 
 interface Campaign {
     id: string;
@@ -81,8 +82,9 @@ export default function CampaignDetailsPage() {
     // Multi-select state
     const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
 
-    // Batch LinkedIn Dialog State
+    // Batch Dialog State
     const [showBatchLinkedIn, setShowBatchLinkedIn] = useState(false);
+    const [showBatchEmail, setShowBatchEmail] = useState(false);
 
     // Pagination & Filter (Simple for now)
     const [page, setPage] = useState(1);
@@ -201,33 +203,49 @@ export default function CampaignDetailsPage() {
                 </div>
 
                 {/* Stats Row */}
-                <div className="grid grid-cols-4 gap-4 mt-6">
-                    <StatBox label="Total Leads" value={campaign.leads_count} icon={<Users className="h-4 w-4" />} />
-                    <StatBox label="Contacted" value={campaign.contacted_count} icon={<Mail className="h-4 w-4" />} />
-                    <StatBox label="Replied" value={campaign.replied_count} icon={<MessageSquare className="h-4 w-4" />} />
-                    <StatBox label="Reply Rate" value={`${campaign.contacted_count ? ((campaign.replied_count / campaign.contacted_count) * 100).toFixed(1) : 0}%`} icon={<CheckCircle2 className="h-4 w-4" />} />
+                <div className="flex items-center justify-between mt-6">
+                    <div className="grid grid-cols-4 gap-4 flex-1 mr-8">
+                        <StatBox label="Total Leads" value={campaign.leads_count} icon={<Users className="h-4 w-4" />} />
+                        <StatBox label="Contacted" value={campaign.contacted_count} icon={<Mail className="h-4 w-4" />} />
+                        <StatBox label="Replied" value={campaign.replied_count} icon={<MessageSquare className="h-4 w-4" />} />
+                        <StatBox label="Reply Rate" value={`${campaign.contacted_count ? ((campaign.replied_count / campaign.contacted_count) * 100).toFixed(1) : 0}%`} icon={<CheckCircle2 className="h-4 w-4" />} />
+                    </div>
+                    <div className="flex gap-3">
+                        <Button
+                            onClick={() => setShowBatchLinkedIn(true)}
+                            className="h-12 px-6 bg-[#0077b5] hover:bg-[#006396] text-white font-bold gap-2 rounded-xl shadow-lg shadow-blue-500/20"
+                        >
+                            <Linkedin className="h-5 w-5" />
+                            Run LinkedIn Automation
+                        </Button>
+                        <Button
+                            onClick={() => setShowBatchEmail(true)}
+                            className="h-12 px-6 bg-emerald-500 hover:bg-emerald-600 text-white font-bold gap-2 rounded-xl shadow-lg shadow-emerald-500/20"
+                        >
+                            <Mail className="h-5 w-5" />
+                            Run Email Automation
+                        </Button>
+                    </div>
                 </div>
             </div>
 
             {/* Content Body */}
             <div className="flex-1 overflow-hidden p-8 flex flex-col gap-6">
 
-                {/* Configuration (Collapsible or Card) */}
-                {campaign.settings && (
-                    <div className="rounded-xl border border-border bg-card p-6">
-                        <h3 className="font-semibold mb-4 text-sm uppercase tracking-wider text-muted-foreground">Configuration</h3>
-                        <div className="grid grid-cols-2 gap-y-2 gap-x-8 text-sm">
-                            {Object.entries(campaign.settings).map(([key, val]) => (
-                                <div key={key} className="flex justify-between border-b border-border/50 py-2 last:border-0">
-                                    <span className="text-muted-foreground capitalize">{key.replace(/_/g, ' ')}</span>
-                                    <span className="font-mono text-foreground truncate max-w-[300px]" title={String(val)}>
-                                        {typeof val === 'object' ? JSON.stringify(val) : String(val)}
-                                    </span>
-                                </div>
-                            ))}
+                {/* Simplified Configuration */}
+                <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                            <MessageSquare className="h-4 w-4" /> Outreach Message
+                        </h3>
+                        <div className="text-[10px] font-bold bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded uppercase tracking-widest">
+                            {campaign.settings?.template || 'Custom'}
                         </div>
                     </div>
-                )}
+                    <div className="rounded-lg bg-muted/30 p-4 font-medium text-sm text-foreground leading-relaxed italic border border-border/50">
+                        "{campaign.settings?.message || 'No message configured'}"
+                    </div>
+                </div>
 
                 {/* Leads Table Section */}
                 <div className="flex-1 flex flex-col rounded-xl border border-border bg-card overflow-hidden shadow-sm relative">
@@ -247,6 +265,13 @@ export default function CampaignDetailsPage() {
                                     onClick={() => setShowBatchLinkedIn(true)}
                                 >
                                     <Linkedin className="h-3.5 w-3.5" /> LinkedIn Outreach
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    className="h-8 gap-2 bg-emerald-500 hover:bg-emerald-600 text-white border-none"
+                                    onClick={() => setShowBatchEmail(true)}
+                                >
+                                    <Mail className="h-3.5 w-3.5" /> Email Outreach
                                 </Button>
                                 <Button size="sm" variant="outline" className="h-8 gap-2 bg-background/50 border-primary/20 hover:bg-primary/5" onClick={() => handleBulkAction('export')}>
                                     <Download className="h-3.5 w-3.5" /> Export
@@ -287,7 +312,7 @@ export default function CampaignDetailsPage() {
                                         />
                                     </th>
                                     <th className="px-6 py-3">Lead Name</th>
-                                    <th className="px-6 py-3">Company</th>
+                                    <th className="px-6 py-3">Company & Email</th>
                                     <th className="px-6 py-3">Score</th>
                                     <th className="px-6 py-3">Status</th>
                                     <th className="px-6 py-3 text-right">Actions</th>
@@ -316,11 +341,12 @@ export default function CampaignDetailsPage() {
                                                 />
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div className="font-medium text-foreground">{lead.name}</div>
-                                                <div className="text-xs text-muted-foreground">{lead.title}</div>
+                                                <div className="font-medium text-foreground">{lead.name || "Unknown"}</div>
+                                                <div className="text-xs text-muted-foreground">{lead.title || "No Title"}</div>
                                             </td>
-                                            <td className="px-6 py-4 text-muted-foreground">
-                                                {lead.company || '-'}
+                                            <td className="px-6 py-4">
+                                                <div className="text-foreground">{lead.company || '-'}</div>
+                                                <div className="text-xs text-muted-foreground">{lead.email || 'No Email'}</div>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className={`font-bold ${lead.score >= 80 ? 'text-emerald-500' :
@@ -345,6 +371,7 @@ export default function CampaignDetailsPage() {
                                                             target="_blank"
                                                             rel="noopener noreferrer"
                                                             className="p-1.5 text-blue-500 hover:bg-blue-50 rounded transition"
+                                                            onClick={(e) => e.stopPropagation()}
                                                         >
                                                             <Briefcase className="h-4 w-4" />
                                                         </a>
@@ -369,12 +396,25 @@ export default function CampaignDetailsPage() {
             <Dialog open={showBatchLinkedIn} onOpenChange={setShowBatchLinkedIn}>
                 <DialogContent className="sm:max-w-2xl p-0 overflow-hidden h-[80vh] flex flex-col">
                     <BatchLinkedInMessaging
-                        leads={selectedLeadsObjects}
+                        leads={selectedLeads.length > 0 ? selectedLeadsObjects : leads}
                         onCancel={() => setShowBatchLinkedIn(false)}
                         onComplete={(results) => {
                             setShowBatchLinkedIn(false);
                             // Deselect leads processed successfully? or keep valid selection?
                             // For now, keep selection so user can see what they selected
+                        }}
+                    />
+                </DialogContent>
+            </Dialog>
+
+            {/* Batch Email Modal */}
+            <Dialog open={showBatchEmail} onOpenChange={setShowBatchEmail}>
+                <DialogContent className="sm:max-w-2xl p-0 overflow-hidden h-[80vh] flex flex-col">
+                    <BatchEmailMessaging
+                        leads={selectedLeads.length > 0 ? selectedLeadsObjects : leads}
+                        onCancel={() => setShowBatchEmail(false)}
+                        onComplete={(results) => {
+                            setShowBatchEmail(false);
                         }}
                     />
                 </DialogContent>

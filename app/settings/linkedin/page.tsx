@@ -1,10 +1,11 @@
 "use client";
 
-import { Bell, ChevronDown, Linkedin, Lock, X, Loader2 } from "lucide-react";
+import { Linkedin, Lock, X, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
+import Header from "@/components/Header";
 
 interface LinkedInCredential {
     id: string;
@@ -30,6 +31,15 @@ export default function LinkedInSettingsPage() {
     const [isConnecting, setIsConnecting] = useState(false);
     const [isDisconnecting, setIsDisconnecting] = useState(false);
 
+    // Credentials Modal State
+    const [showCredentialModal, setShowCredentialModal] = useState(false);
+    const [credentialModalType, setCredentialModalType] = useState<"personal" | "organization">("personal");
+    const [linkedinEmail, setLinkedinEmail] = useState("");
+    const [linkedinPassword, setLinkedinPassword] = useState("");
+    const [linkedinName, setLinkedinName] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [isSavingCredentials, setIsSavingCredentials] = useState(false);
+
     useEffect(() => {
         fetchLinkedInStatus();
     }, []);
@@ -54,7 +64,6 @@ export default function LinkedInSettingsPage() {
         try {
             const res = await api.get<{ auth_url: string }>(`/api/linkedin/auth/url?credential_type=${credentialType}`);
             if (res.data?.auth_url) {
-                // Open OAuth URL in new window
                 window.location.href = res.data.auth_url;
             } else {
                 toast.error("Failed to initiate LinkedIn connection");
@@ -64,6 +73,39 @@ export default function LinkedInSettingsPage() {
             toast.error(error?.message || "Failed to connect LinkedIn");
         } finally {
             setIsConnecting(false);
+        }
+    };
+
+    const handleConnectWithCredentials = async () => {
+        if (!linkedinEmail.trim() || !linkedinPassword.trim()) {
+            toast.error("Please enter your LinkedIn email and password");
+            return;
+        }
+
+        setIsSavingCredentials(true);
+        try {
+            const res = await api.post("/api/linkedin/connect-credentials", {
+                linkedin_email: linkedinEmail.trim(),
+                linkedin_password: linkedinPassword.trim(),
+                profile_name: linkedinName.trim() || undefined,
+                credential_type: credentialModalType,
+            });
+
+            if (!res.error) {
+                toast.success(`${credentialModalType === "personal" ? "Personal" : "Organization"} LinkedIn connected successfully!`);
+                setShowCredentialModal(false);
+                setLinkedinEmail("");
+                setLinkedinPassword("");
+                setLinkedinName("");
+                await fetchLinkedInStatus();
+            } else {
+                toast.error(res.error?.detail || "Failed to connect");
+            }
+        } catch (error: any) {
+            console.error("Error connecting with credentials:", error);
+            toast.error("Failed to connect LinkedIn");
+        } finally {
+            setIsSavingCredentials(false);
         }
     };
 
@@ -104,39 +146,22 @@ export default function LinkedInSettingsPage() {
         }
     };
 
+    const openCredentialModal = (type: "personal" | "organization") => {
+        setCredentialModalType(type);
+        setLinkedinEmail("");
+        setLinkedinPassword("");
+        setLinkedinName("");
+        setShowPassword(false);
+        setShowCredentialModal(true);
+    };
+
     const personalCredential = status?.credentials.find(c => c.type === "personal");
     const orgCredential = status?.credentials.find(c => c.type === "organization");
 
     return (
         <div className="flex h-full flex-col bg-background text-foreground transition-colors duration-300">
             {/* Top Header */}
-            <header className="flex h-16 items-center justify-between border-b border-border bg-card px-8 transition-colors duration-300">
-                <div className="flex gap-4">
-                    {/* Placeholder for left side actions */}
-                </div>
-
-                <div className="flex items-center gap-6">
-                    <button className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 transition-colors">
-                        Start a campaign
-                    </button>
-
-                    <div className="flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1.5">
-                        <span className="text-amber-600 dark:text-amber-400 text-sm font-medium">500 credits</span>
-                    </div>
-
-                    <button className="text-muted-foreground hover:text-foreground transition-colors">
-                        <Bell size={20} />
-                    </button>
-
-                    <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
-                        <div className="h-8 w-8 rounded-full bg-gradient-to-br from-pink-500 to-rose-400 ring-2 ring-background">
-                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" alt="Avatar" className="h-full w-full rounded-full" />
-                        </div>
-                        <span className="text-sm font-semibold text-foreground">{user?.full_name || user?.email}</span>
-                        <ChevronDown size={14} className="text-muted-foreground" />
-                    </div>
-                </div>
-            </header>
+            <Header />
 
             {/* Scrollable Content */}
             <div className="flex-1 overflow-y-auto bg-background px-8 py-8 transition-colors duration-300">
@@ -207,21 +232,32 @@ export default function LinkedInSettingsPage() {
                                     )}
                                 </div>
                             ) : (
-                                <div className="flex items-center justify-between rounded-xl border border-border bg-background p-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="h-10 w-10 rounded-full bg-muted grid place-items-center">
-                                            <Linkedin size={20} />
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between rounded-xl border border-border bg-background p-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-10 w-10 rounded-full bg-muted grid place-items-center">
+                                                <Linkedin size={20} />
+                                            </div>
+                                            <span className="font-semibold text-muted-foreground">Not Connected</span>
                                         </div>
-                                        <span className="font-semibold text-muted-foreground">Not Connected</span>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={() => handleConnect("personal")}
+                                                disabled={isConnecting}
+                                                className="flex items-center gap-2 rounded-lg bg-[#0077b5] px-4 py-2 text-xs font-bold text-white hover:bg-[#006396] transition-colors disabled:opacity-50"
+                                            >
+                                                {isConnecting && <Loader2 className="h-3 w-3 animate-spin" />}
+                                                Connect via OAuth
+                                            </button>
+                                            <button
+                                                onClick={() => openCredentialModal("personal")}
+                                                className="flex items-center gap-2 rounded-lg border border-[#0077b5] bg-transparent px-4 py-2 text-xs font-bold text-[#0077b5] hover:bg-[#0077b5]/10 transition-colors"
+                                            >
+                                                <Linkedin size={14} />
+                                                Connect with Credentials
+                                            </button>
+                                        </div>
                                     </div>
-                                    <button
-                                        onClick={() => handleConnect("personal")}
-                                        disabled={isConnecting}
-                                        className="flex items-center gap-2 rounded-lg bg-[#0077b5] px-4 py-2 text-xs font-bold text-white hover:bg-[#006396] transition-colors disabled:opacity-50"
-                                    >
-                                        {isConnecting && <Loader2 className="h-3 w-3 animate-spin" />}
-                                        Connect Personal LinkedIn
-                                    </button>
                                 </div>
                             )}
                         </div>
@@ -288,24 +324,35 @@ export default function LinkedInSettingsPage() {
                                     )}
                                 </div>
                             ) : (
-                                <div className="flex items-center justify-between rounded-xl border border-border bg-background p-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="h-10 w-10 rounded-full bg-muted grid place-items-center">
-                                            <Linkedin size={20} />
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between rounded-xl border border-border bg-background p-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-10 w-10 rounded-full bg-muted grid place-items-center">
+                                                <Linkedin size={20} />
+                                            </div>
+                                            <div>
+                                                <div className="font-semibold text-muted-foreground">Not Connected</div>
+                                                <div className="text-xs text-muted-foreground">Requires admin role</div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <div className="font-semibold text-muted-foreground">Not Connected</div>
-                                            <div className="text-xs text-muted-foreground">Requires admin role</div>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={() => handleConnect("organization")}
+                                                disabled={isConnecting}
+                                                className="flex items-center gap-2 rounded-lg bg-[#0077b5] px-4 py-2 text-xs font-bold text-white hover:bg-[#006396] transition-colors disabled:opacity-50"
+                                            >
+                                                {isConnecting && <Loader2 className="h-3 w-3 animate-spin" />}
+                                                Connect via OAuth
+                                            </button>
+                                            <button
+                                                onClick={() => openCredentialModal("organization")}
+                                                className="flex items-center gap-2 rounded-lg border border-[#0077b5] bg-transparent px-4 py-2 text-xs font-bold text-[#0077b5] hover:bg-[#0077b5]/10 transition-colors"
+                                            >
+                                                <Linkedin size={14} />
+                                                Connect with Credentials
+                                            </button>
                                         </div>
                                     </div>
-                                    <button
-                                        onClick={() => handleConnect("organization")}
-                                        disabled={isConnecting}
-                                        className="flex items-center gap-2 rounded-lg bg-[#0077b5] px-4 py-2 text-xs font-bold text-white hover:bg-[#006396] transition-colors disabled:opacity-50"
-                                    >
-                                        {isConnecting && <Loader2 className="h-3 w-3 animate-spin" />}
-                                        Connect Organization LinkedIn
-                                    </button>
                                 </div>
                             )}
                         </div>
@@ -326,7 +373,7 @@ export default function LinkedInSettingsPage() {
 
                             <div className="space-y-4 text-sm text-muted-foreground">
                                 <p>
-                                    Lead Genius connects to your LinkedIn account via OAuth or Chrome extension. Once connected, it allows the tool to
+                                    Lead Genius connects to your LinkedIn account via <strong className="text-foreground">OAuth</strong> or your <strong className="text-foreground">LinkedIn credentials</strong>. Once connected, it allows the tool to
                                     <strong className="text-foreground"> send messages</strong> on your behalf.
                                 </p>
                                 <p>
@@ -341,6 +388,101 @@ export default function LinkedInSettingsPage() {
                     </>
                 )}
             </div>
+
+            {/* LinkedIn Sign In Modal */}
+            {showCredentialModal && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+                    onClick={(e) => { if (e.target === e.currentTarget) setShowCredentialModal(false); }}
+                >
+                    <div className="w-full max-w-[400px] rounded-2xl bg-white dark:bg-card border border-border shadow-2xl mx-4 overflow-hidden">
+                        {/* Top section with logo */}
+                        <div className="px-8 pt-8 pb-4 flex flex-col items-center">
+                            <Linkedin size={34} className="text-[#0077b5]" fill="#0077b5" />
+                            <h2 className="mt-3 text-xl font-semibold text-gray-800 dark:text-foreground">
+                                Sign in to LinkedIn
+                            </h2>
+                            <p className="mt-1 text-xs text-gray-500 dark:text-muted-foreground">
+                                Connect your {credentialModalType} account to Lead Genius
+                            </p>
+                        </div>
+
+                        {/* Divider */}
+                        <div className="px-8 flex items-center gap-4 my-2">
+                            <div className="flex-1 h-px bg-border" />
+                            <span className="text-xs text-gray-400 dark:text-muted-foreground">or</span>
+                            <div className="flex-1 h-px bg-border" />
+                        </div>
+
+                        {/* Form */}
+                        <div className="px-8 pb-8 pt-4">
+                            <div className="space-y-4">
+                                {/* Email / Phone field */}
+                                <div className="relative">
+                                    <input
+                                        type="email"
+                                        id="linkedin-email"
+                                        value={linkedinEmail}
+                                        onChange={(e) => setLinkedinEmail(e.target.value)}
+                                        placeholder=" "
+                                        className="peer w-full rounded-md border border-gray-300 dark:border-input bg-transparent px-3 pt-5 pb-2 text-sm text-gray-800 dark:text-foreground outline-none focus:border-[#0077b5] focus:ring-1 focus:ring-[#0077b5] transition-all"
+                                        autoComplete="off"
+                                    />
+                                    <label
+                                        htmlFor="linkedin-email"
+                                        className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-500 dark:text-muted-foreground transition-all pointer-events-none peer-focus:top-3 peer-focus:text-xs peer-focus:text-[#0077b5] peer-[:not(:placeholder-shown)]:top-3 peer-[:not(:placeholder-shown)]:text-xs"
+                                    >
+                                        Email or phone
+                                    </label>
+                                </div>
+
+                                {/* Password field */}
+                                <div className="relative">
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        id="linkedin-password"
+                                        value={linkedinPassword}
+                                        onChange={(e) => setLinkedinPassword(e.target.value)}
+                                        placeholder=" "
+                                        className="peer w-full rounded-md border border-gray-300 dark:border-input bg-transparent px-3 pt-5 pb-2 pr-16 text-sm text-gray-800 dark:text-foreground outline-none focus:border-[#0077b5] focus:ring-1 focus:ring-[#0077b5] transition-all"
+                                        autoComplete="off"
+                                    />
+                                    <label
+                                        htmlFor="linkedin-password"
+                                        className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-500 dark:text-muted-foreground transition-all pointer-events-none peer-focus:top-3 peer-focus:text-xs peer-focus:text-[#0077b5] peer-[:not(:placeholder-shown)]:top-3 peer-[:not(:placeholder-shown)]:text-xs"
+                                    >
+                                        Password
+                                    </label>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-[#0077b5] hover:text-[#006396] transition-colors"
+                                    >
+                                        {showPassword ? "Hide" : "Show"}
+                                    </button>
+                                </div>
+
+                                {/* Forgot password */}
+                                <div>
+                                    <a href="https://www.linkedin.com/uas/request-password-reset" target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-[#0077b5] hover:underline hover:text-[#006396]">
+                                        Forgot password?
+                                    </a>
+                                </div>
+
+                                {/* Sign in button */}
+                                <button
+                                    onClick={handleConnectWithCredentials}
+                                    disabled={isSavingCredentials || !linkedinEmail.trim() || !linkedinPassword.trim()}
+                                    className="w-full rounded-full bg-[#0077b5] py-3 text-base font-semibold text-white hover:bg-[#006396] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                >
+                                    {isSavingCredentials && <Loader2 className="h-4 w-4 animate-spin" />}
+                                    {isSavingCredentials ? "Signing in..." : "Sign in"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

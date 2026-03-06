@@ -24,6 +24,21 @@ function getAccessToken(): string | null {
 }
 
 /**
+ * Variable to prevent multiple simultaneous refresh calls
+ */
+let isRefreshing = false;
+let refreshSubscribers: ((token: string) => void)[] = [];
+
+function onTokenRefreshed(token: string) {
+    refreshSubscribers.map((cb) => cb(token));
+    refreshSubscribers = [];
+}
+
+function addRefreshSubscriber(cb: (token: string) => void) {
+    refreshSubscribers.push(cb);
+}
+
+/**
  * Make an authenticated API request
  */
 export async function apiRequest<T>(
@@ -46,6 +61,61 @@ export async function apiRequest<T>(
             ...options,
             headers,
         });
+
+        // If unauthorized, try to refresh token
+        if (response.status === 401 && !endpoint.includes('/auth/refresh') && !endpoint.includes('/auth/login')) {
+            const refreshToken = localStorage.getItem('refresh_token');
+
+            if (!refreshToken) {
+                // No refresh token, redirect to login
+                if (typeof window !== 'undefined') {
+                    localStorage.clear();
+                    window.location.href = '/auth/login';
+                }
+                return { error: { detail: 'Session expired', status: 401 } };
+            }
+
+            if (!isRefreshing) {
+                isRefreshing = true;
+
+                try {
+                    const refreshRes = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ refresh_token: refreshToken }),
+                    });
+
+                    if (refreshRes.ok) {
+                        const data = await refreshRes.json();
+                        // Import setTokens or use it directly
+                        localStorage.setItem('access_token', data.access_token);
+                        localStorage.setItem('token_expires_at', String(Date.now() + data.expires_in * 1000));
+
+                        isRefreshing = false;
+                        onTokenRefreshed(data.access_token);
+                    } else {
+                        // Refresh failed
+                        isRefreshing = false;
+                        if (typeof window !== 'undefined') {
+                            localStorage.clear();
+                            window.location.href = '/auth/login';
+                        }
+                        return { error: { detail: 'Session expired', status: 401 } };
+                    }
+                } catch (e) {
+                    isRefreshing = false;
+                    return { error: { detail: 'Network error during refresh', status: 0 } };
+                }
+            }
+
+            // Wait for refresh to complete and retry
+            return new Promise((resolve) => {
+                addRefreshSubscriber((newToken) => {
+                    const retryHeaders = { ...headers, 'Authorization': `Bearer ${newToken}` };
+                    resolve(apiRequest<T>(endpoint, { ...options, headers: retryHeaders }));
+                });
+            });
+        }
 
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({ detail: 'Request failed' }));

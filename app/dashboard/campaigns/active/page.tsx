@@ -23,10 +23,13 @@ export default function CampaignsPage() {
             {/* Header */}
             <header className="flex items-center justify-between px-8 py-8 transition-colors">
                 <h1 className="text-2xl font-bold text-foreground">My campaigns</h1>
-                <button className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_20px_rgba(37,99,255,0.3)] hover:bg-blue-500 transition">
+                <Link
+                    href="/dashboard/campaigns/templates"
+                    className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_20px_rgba(37,99,255,0.3)] hover:bg-blue-500 transition"
+                >
                     Start a campaign
                     <Plus className="h-4 w-4" />
-                </button>
+                </Link>
             </header>
 
             {/* Controls Bar */}

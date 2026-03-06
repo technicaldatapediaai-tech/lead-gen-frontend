@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
+import Header from "@/components/Header";
 
 interface WorkingDays {
     MONDAY: boolean;
@@ -97,32 +98,8 @@ export default function AccountActivityPage() {
 
     return (
         <div className="flex h-full flex-col bg-background text-foreground transition-colors duration-300">
-            {/* Top Header (Consistent with other pages) */}
-            <header className="flex h-16 items-center justify-between border-b border-border bg-card px-8 transition-colors duration-300">
-                <div className="flex gap-4"></div>
-
-                <div className="flex items-center gap-6">
-                    <button className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 transition-colors">
-                        Start a campaign
-                    </button>
-
-                    <div className="flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1.5">
-                        <span className="text-amber-600 dark:text-amber-400 text-sm font-medium">500 credits</span>
-                    </div>
-
-                    <button className="text-muted-foreground hover:text-foreground transition-colors">
-                        <Bell size={20} />
-                    </button>
-
-                    <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
-                        <div className="h-8 w-8 rounded-full bg-gradient-to-br from-pink-500 to-rose-400 ring-2 ring-background">
-                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" alt="Avatar" className="h-full w-full rounded-full" />
-                        </div>
-                        <span className="text-sm font-semibold text-foreground">{user?.full_name || user?.email}</span>
-                        <ChevronDown size={14} className="text-muted-foreground" />
-                    </div>
-                </div>
-            </header>
+            {/* Top Header */}
+            <Header />
 
             {/* Scrollable Content */}
             <div className="flex-1 overflow-y-auto bg-background px-8 py-8 transition-colors duration-300">

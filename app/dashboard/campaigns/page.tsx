@@ -142,13 +142,13 @@ export default function CampaignsPage() {
                         Manage and optimize your multi-channel outreach strategies across LinkedIn, Email, and AI Calls.
                     </p>
                 </div>
-                <button
-                    onClick={handleCreateCampaign}
+                <Link
+                    href="/dashboard/campaigns/templates"
                     className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-[0_4px_20px_rgba(37,99,255,0.3)] hover:bg-blue-500"
                 >
                     <PlusIcon />
                     Create New Campaign
-                </button>
+                </Link>
             </header>
 
             {/* Main Content */}
@@ -168,7 +168,7 @@ export default function CampaignsPage() {
                     </Link>
                     <StatCard
                         label="Total Leads Contacted"
-                        value={isLoading ? "..." : stats?.totalContacted.toLocaleString() || "0"}
+                        value={isLoading ? "..." : stats?.totalContacted?.toLocaleString() || "0"}
                         trend="From all campaigns"
                         trendUp={true}
                         icon={<UsersIcon />}
@@ -208,26 +208,30 @@ export default function CampaignsPage() {
                                 iconBg="bg-blue-500"
                             />
                         </Link>
-                        <ChannelCard
-                            title="Email Outreach"
-                            desc="Cold email sequences with A/B testing, personalization, and deliverability warm-up."
-                            activeCount={isLoading ? "..." : String(stats?.channels?.find(c => c.name === 'email')?.contacted || 0)}
-                            icon={<MailIcon />}
-                            gradient="from-emerald-600/20 to-teal-500/5"
-                            borderColor="border-emerald-500/20"
-                            iconBg="bg-emerald-500"
-                        />
-                        <ChannelCard
-                            title="AI Call Agent"
-                            desc="Deploy conversational AI agents to qualify leads over the phone instantly."
-                            activeCount={isLoading ? "..." : String(stats?.channels?.find(c => c.name === 'ai_call')?.contacted || 0)}
-                            icon={<PhoneIcon />}
-                            badge="NEW"
-                            gradient="from-indigo-600/20 to-purple-500/5"
-                            borderColor="border-indigo-500/20"
-                            iconBg="bg-white text-black"
-                            isAi={true}
-                        />
+                        <Link href="/dashboard/campaigns/templates/email" className="contents">
+                            <ChannelCard
+                                title="Email Outreach"
+                                desc="Cold email sequences with A/B testing, personalization, and deliverability warm-up."
+                                activeCount={isLoading ? "..." : String(stats?.channels?.find(c => c.name === 'email')?.contacted || 0)}
+                                icon={<MailIcon />}
+                                gradient="from-emerald-600/20 to-teal-500/5"
+                                borderColor="border-emerald-500/20"
+                                iconBg="bg-emerald-500"
+                            />
+                        </Link>
+                        <Link href="/dashboard/campaigns" className="contents" onClick={() => toast.info("AI Call Agent features are coming soon!")}>
+                            <ChannelCard
+                                title="AI Call Agent"
+                                desc="Deploy conversational AI agents to qualify leads over the phone instantly."
+                                activeCount={isLoading ? "..." : String(stats?.channels?.find(c => c.name === 'ai_call')?.contacted || 0)}
+                                icon={<PhoneIcon />}
+                                badge="NEW"
+                                gradient="from-indigo-600/20 to-purple-500/5"
+                                borderColor="border-indigo-500/20"
+                                iconBg="bg-white text-black"
+                                isAi={true}
+                            />
+                        </Link>
                     </div>
                 </div>
 

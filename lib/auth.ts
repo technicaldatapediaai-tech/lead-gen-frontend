@@ -13,6 +13,8 @@ export interface User {
     id: string;
     email: string;
     full_name?: string;
+    avatar_url?: string;
+    credits?: number;
     is_active: boolean;
     is_verified: boolean;
     current_org_id?: string;

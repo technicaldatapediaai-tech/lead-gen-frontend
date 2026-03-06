@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Search, ChevronRight, LayoutTemplate, MessageSquare, UserPlus, Mail, Eye, Link as LinkIcon, Download } from "lucide-react";
 import Link from "next/link";
 
 export default function CampaignTemplatesPage() {
+    const templatesRef = useRef<HTMLDivElement>(null);
     return (
         <div className="flex h-full overflow-hidden bg-background text-muted-foreground transition-colors duration-300">
             {/* Sidebar Filters */}
@@ -37,6 +38,9 @@ export default function CampaignTemplatesPage() {
                         <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">Channel</h3>
                         <div className="flex flex-wrap gap-2">
                             <FilterChip label="LinkedIn" active />
+                            <Link href="/dashboard/campaigns/templates/email">
+                                <FilterChip label="Email" />
+                            </Link>
                         </div>
                     </div>
 
@@ -84,7 +88,7 @@ export default function CampaignTemplatesPage() {
                             <p className="mb-4 text-blue-100/90 text-sm">
                                 Answer a few questions, and we'll suggest campaign templates tailored to your needs!
                             </p>
-                            <button className="rounded-lg bg-white px-4 py-2 text-xs font-bold text-blue-600 shadow-md transition hover:bg-blue-50">
+                            <button onClick={() => templatesRef.current?.scrollIntoView({ behavior: 'smooth' })} className="rounded-lg bg-white px-4 py-2 text-xs font-bold text-blue-600 shadow-md transition hover:bg-blue-50">
                                 Get started!
                             </button>
                         </div>
@@ -96,8 +100,8 @@ export default function CampaignTemplatesPage() {
                     </div>
 
                     {/* Templates Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <Link href="/campaigns/create?template=invitation" className="contents">
+                    <div ref={templatesRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <Link href="/dashboard/campaigns/create?template=invitation" className="contents">
                             <TemplateCard
                                 platform="LinkedIn"
                                 title="Invitation"
@@ -111,50 +115,56 @@ export default function CampaignTemplatesPage() {
                         </Link>
 
                         {/* Template 2: Invitation + 2 Messages */}
-                        <TemplateCard
-                            platform="LinkedIn"
-                            title="Invitation + 2 Messages"
-                            usageCount="338.1K"
-                            gradient="from-blue-600/20 to-blue-900/40"
-                            active
-                        >
-                            <div className="flex items-center justify-center h-24 gap-2">
-                                <StepIcon icon={<LinkIcon className="h-4 w-4" />} label="Invitation" color="bg-blue-500" />
-                                <div className="h-0.5 w-6 bg-blue-500/30" />
-                                <div className="relative">
-                                    <StepIcon icon={<MessageSquare className="h-4 w-4" />} label="Message" color="bg-blue-500" />
-                                    <span className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-pink-500 text-[9px] font-bold flex items-center justify-center text-white ring-2 ring-background">x2</span>
+                        <Link href="/dashboard/campaigns/create?template=invitation_followup" className="contents">
+                            <TemplateCard
+                                platform="LinkedIn"
+                                title="Invitation + 2 Messages"
+                                usageCount="338.1K"
+                                gradient="from-blue-600/20 to-blue-900/40"
+                                active
+                            >
+                                <div className="flex items-center justify-center h-24 gap-2">
+                                    <StepIcon icon={<LinkIcon className="h-4 w-4" />} label="Invitation" color="bg-blue-500" />
+                                    <div className="h-0.5 w-6 bg-blue-500/30" />
+                                    <div className="relative">
+                                        <StepIcon icon={<MessageSquare className="h-4 w-4" />} label="Message" color="bg-blue-500" />
+                                        <span className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-pink-500 text-[9px] font-bold flex items-center justify-center text-white ring-2 ring-background">x2</span>
+                                    </div>
                                 </div>
-                            </div>
-                        </TemplateCard>
+                            </TemplateCard>
+                        </Link>
 
 
 
                         {/* Template 4: Message */}
-                        <TemplateCard
-                            platform="LinkedIn"
-                            title="Message"
-                            usageCount="152.4K"
-                            gradient="from-slate-800 to-slate-900"
-                        >
-                            <div className="flex items-center justify-center h-24 gap-4">
-                                <StepIcon icon={<MessageSquare className="h-4 w-4" />} label="Message" color="bg-blue-500" />
-                            </div>
-                        </TemplateCard>
+                        <Link href="/dashboard/campaigns/create?template=message" className="contents">
+                            <TemplateCard
+                                platform="LinkedIn"
+                                title="Message"
+                                usageCount="152.4K"
+                                gradient="from-slate-800 to-slate-900"
+                            >
+                                <div className="flex items-center justify-center h-24 gap-4">
+                                    <StepIcon icon={<MessageSquare className="h-4 w-4" />} label="Message" color="bg-blue-500" />
+                                </div>
+                            </TemplateCard>
+                        </Link>
 
                         {/* Template 5: Invitation + Message */}
-                        <TemplateCard
-                            platform="LinkedIn"
-                            title="Invitation + Message"
-                            usageCount="189.2K"
-                            gradient="from-blue-600/10 to-indigo-900/20"
-                        >
-                            <div className="flex items-center justify-center h-24 gap-2">
-                                <StepIcon icon={<LinkIcon className="h-4 w-4" />} label="Invitation" color="bg-blue-500" />
-                                <div className="h-0.5 w-6 bg-muted-foreground/30" />
-                                <StepIcon icon={<MessageSquare className="h-4 w-4" />} label="Message" color="bg-blue-500" />
-                            </div>
-                        </TemplateCard>
+                        <Link href="/dashboard/campaigns/create?template=invitation_message" className="contents">
+                            <TemplateCard
+                                platform="LinkedIn"
+                                title="Invitation + Message"
+                                usageCount="189.2K"
+                                gradient="from-blue-600/10 to-indigo-900/20"
+                            >
+                                <div className="flex items-center justify-center h-24 gap-2">
+                                    <StepIcon icon={<LinkIcon className="h-4 w-4" />} label="Invitation" color="bg-blue-500" />
+                                    <div className="h-0.5 w-6 bg-muted-foreground/30" />
+                                    <StepIcon icon={<MessageSquare className="h-4 w-4" />} label="Message" color="bg-blue-500" />
+                                </div>
+                            </TemplateCard>
+                        </Link>
 
                         {/* Template 6: Visit */}
                         <TemplateCard

@@ -7,6 +7,8 @@ import { Loader2, Plus, Search, Filter, Bell, Briefcase, Mail, Phone, MoreHorizo
 import { toast } from "sonner";
 import LinkedInMessaging from "@/components/linkedin/LinkedInMessaging";
 import BatchLinkedInMessaging from "@/components/linkedin/BatchLinkedInMessaging";
+import EmailMessaging from "@/components/email/EmailMessaging";
+import BatchEmailMessaging from "@/components/email/BatchEmailMessaging";
 import LinkedInStatusBadge from "@/components/linkedin/LinkedInStatusBadge";
 import {
     Dialog,
@@ -99,6 +101,11 @@ export default function CRMPage() {
     const [batchLinkedInModalOpen, setBatchLinkedInModalOpen] = useState(false);
     const [selectedLeadsForBatch, setSelectedLeadsForBatch] = useState<Set<string>>(new Set());
 
+    // Email Messaging State
+    const [emailModalOpen, setEmailModalOpen] = useState(false);
+    const [emailModalLead, setEmailModalLead] = useState<Lead | null>(null);
+    const [batchEmailModalOpen, setBatchEmailModalOpen] = useState(false);
+
     // Helper: Select/Deselect lead for batch
     const toggleLeadSelection = (leadId: string) => {
         setSelectedLeadsForBatch(prev => {
@@ -131,6 +138,27 @@ export default function CRMPage() {
         }
 
         setBatchLinkedInModalOpen(true);
+    };
+
+    const openEmailModal = (lead: Lead) => {
+        if (!lead.email) {
+            toast.error("This lead doesn't have an email address");
+            return;
+        }
+        setEmailModalLead(lead);
+        setEmailModalOpen(true);
+    };
+
+    const openBatchEmailModal = () => {
+        const selectedLeadObjects = leads.filter(l => selectedLeadsForBatch.has(l.id));
+        const leadsWithEmail = selectedLeadObjects.filter(l => l.email);
+
+        if (leadsWithEmail.length === 0) {
+            toast.error("Selected leads don't have email addresses");
+            return;
+        }
+
+        setBatchEmailModalOpen(true);
     };
 
     const fetchLeads = useCallback(async () => {
@@ -339,14 +367,24 @@ export default function CRMPage() {
 
                     {/* Batch LinkedIn Message Button */}
                     {selectedLeadsForBatch.size > 0 && (
-                        <Button
-                            onClick={openBatchLinkedInModal}
-                            variant="outline"
-                            className="flex items-center gap-2 border-[#0077b5] text-[#0077b5] hover:bg-[#0077b5] hover:text-white"
-                        >
-                            <Linkedin className="h-4 w-4" />
-                            LinkedIn Message ({selectedLeadsForBatch.size})
-                        </Button>
+                        <div className="flex gap-2">
+                            <Button
+                                onClick={openBatchLinkedInModal}
+                                variant="outline"
+                                className="flex items-center gap-2 border-[#0077b5] text-[#0077b5] hover:bg-[#0077b5] hover:text-white"
+                            >
+                                <Linkedin className="h-4 w-4" />
+                                LinkedIn ({selectedLeadsForBatch.size})
+                            </Button>
+                            <Button
+                                onClick={openBatchEmailModal}
+                                variant="outline"
+                                className="flex items-center gap-2 border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-white"
+                            >
+                                <Mail className="h-4 w-4" />
+                                Email ({selectedLeadsForBatch.size})
+                            </Button>
+                        </div>
                     )}
 
                     {/* Export Button */}
@@ -520,11 +558,11 @@ export default function CRMPage() {
 
                             {/* Table Header */}
                             <div className="grid grid-cols-12 gap-2 border-b border-border bg-muted/30 px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                                <div className="col-span-4">Lead Name</div>
-                                <div className="col-span-3">Company</div>
+                                <div className="col-span-3">Lead Name</div>
+                                <div className="col-span-3">Company & Email</div>
                                 <div className="col-span-1">Score</div>
                                 <div className="col-span-2">Status</div>
-                                <div className="col-span-2 text-right">Added</div>
+                                <div className="col-span-3 text-right">Added</div>
                             </div>
 
                             {/* Table Rows (Scrollable) */}
@@ -575,9 +613,9 @@ export default function CRMPage() {
                                         </div>
 
                                         <div className={`mx-auto mb-3 flex h-20 w-20 items-center justify-center rounded-full text-2xl font-bold text-white shadow-lg ${selectedLead.score >= 80 ? 'bg-blue-600 shadow-blue-500/20' : 'bg-slate-600'}`}>
-                                            {selectedLead.name.substring(0, 2).toUpperCase()}
+                                            {(selectedLead.name || 'UQ').substring(0, 2).toUpperCase()}
                                         </div>
-                                        <h2 className="text-xl font-bold text-foreground">{selectedLead.name}</h2>
+                                        <h2 className="text-xl font-bold text-foreground">{selectedLead.name || 'Unknown User'}</h2>
                                         <div className="text-sm text-muted-foreground mt-1">
                                             {selectedLead.title}
                                             {selectedLead.company && <span className="block font-medium text-blue-500">{selectedLead.company}</span>}
@@ -586,9 +624,13 @@ export default function CRMPage() {
                                         {/* Action Buttons */}
                                         <div className="mt-6 flex justify-center gap-3">
                                             {selectedLead.email && (
-                                                <a href={`mailto:${selectedLead.email}`} className="p-2 rounded bg-muted hover:bg-accent text-foreground transition" title="Email">
+                                                <button
+                                                    onClick={() => openEmailModal(selectedLead)}
+                                                    className="p-2 rounded bg-blue-600/10 hover:bg-blue-600/20 text-blue-600 transition"
+                                                    title="Email Outreach"
+                                                >
                                                     <Mail className="h-4 w-4" />
-                                                </a>
+                                                </button>
                                             )}
                                             {selectedLead.phone && (
                                                 <a href={`tel:${selectedLead.phone}`} className="p-2 rounded bg-muted hover:bg-accent text-foreground transition" title="Call">
@@ -720,7 +762,7 @@ export default function CRMPage() {
                     {linkedInModalLead && (
                         <LinkedInMessaging
                             leadId={linkedInModalLead.id}
-                            leadName={linkedInModalLead.name}
+                            leadName={linkedInModalLead.name || "Unknown"}
                             linkedinUrl={linkedInModalLead.linkedin_url!}
                             onMessageSent={() => {
                                 fetchLeads();
@@ -744,6 +786,41 @@ export default function CRMPage() {
                         }}
                         onCancel={() => {
                             setBatchLinkedInModalOpen(false);
+                        }}
+                    />
+                </DialogContent>
+            </Dialog>
+
+            {/* Email Outreach Modal */}
+            <Dialog open={emailModalOpen} onOpenChange={setEmailModalOpen}>
+                <DialogContent className="max-w-2xl p-0">
+                    {emailModalLead && (
+                        <EmailMessaging
+                            leadId={emailModalLead.id}
+                            leadName={emailModalLead.name || "Unknown"}
+                            leadEmail={emailModalLead.email!}
+                            onMessageSent={() => {
+                                fetchLeads();
+                                setEmailModalOpen(false);
+                            }}
+                            onClose={() => setEmailModalOpen(false)}
+                        />
+                    )}
+                </DialogContent>
+            </Dialog>
+
+            {/* Batch Email Messaging Modal */}
+            <Dialog open={batchEmailModalOpen} onOpenChange={setBatchEmailModalOpen}>
+                <DialogContent className="max-w-4xl p-0 max-h-[90vh]">
+                    <BatchEmailMessaging
+                        leads={leads.filter(l => selectedLeadsForBatch.has(l.id))}
+                        onComplete={(results) => {
+                            setBatchEmailModalOpen(false);
+                            setSelectedLeadsForBatch(new Set());
+                            fetchLeads();
+                        }}
+                        onCancel={() => {
+                            setBatchEmailModalOpen(false);
                         }}
                     />
                 </DialogContent>
@@ -794,10 +871,10 @@ function LeadRow({ lead, selected, onClick }: { lead: Lead, selected: boolean, o
             <div className="col-span-4 flex items-center gap-3">
                 <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${lead.score >= 80 ? 'bg-blue-600' : 'bg-slate-500'
                     }`}>
-                    {lead.name.substring(0, 2).toUpperCase()}
+                    {(lead.name || "U").substring(0, 2).toUpperCase()}
                 </div>
                 <div className="min-w-0 overflow-hidden">
-                    <div className="text-sm font-semibold text-foreground truncate">{lead.name}</div>
+                    <div className="text-sm font-semibold text-foreground truncate">{lead.name || "Unknown"}</div>
                     <div className="text-xs text-muted-foreground truncate">{lead.title || "No Title"}</div>
                 </div>
             </div>
