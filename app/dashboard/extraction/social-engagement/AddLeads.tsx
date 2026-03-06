@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     Search,
     Compass,
@@ -14,10 +14,22 @@ import {
     Info,
     Clock,
     Check,
-    Loader2
+    Loader2,
+    Building2,
+    ChevronDown
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
+import { setTokens } from "@/lib/auth";
+
+interface OrgItem {
+    id: string;
+    name: string;
+    domain?: string;
+    industry?: string;
+    role: string;
+    is_active: boolean;
+}
 
 export default function AddLeads({ onClose, onSuccess }: { onClose: () => void; onSuccess?: () => void }) {
     const [step, setStep] = useState(1);
@@ -39,12 +51,73 @@ export default function AddLeads({ onClose, onSuccess }: { onClose: () => void; 
     const [isPolling, setIsPolling] = useState(false);
     const [pollingStatus, setPollingStatus] = useState("Initializing...");
 
+    // Organization State
+    const [organizations, setOrganizations] = useState<OrgItem[]>([]);
+    const [selectedOrgId, setSelectedOrgId] = useState<string | null>(null);
+    const [orgsLoading, setOrgsLoading] = useState(true);
+    const [orgDropdownOpen, setOrgDropdownOpen] = useState(false);
+
+    // Fetch organizations on mount and auto-select
+    useEffect(() => {
+        async function fetchOrgs() {
+            setOrgsLoading(true);
+            const { data, error } = await api.get<{
+                organizations: OrgItem[];
+                current_org_id: string | null;
+            }>("/api/organizations");
+
+            if (!error && data) {
+                const activeOrgs = (data.organizations || []).filter(o => o.is_active);
+                setOrganizations(activeOrgs);
+
+                // Priority: localStorage saved org > current_org_id from backend > first org
+                const savedOrgId = localStorage.getItem("leadgenius_selected_org_id");
+                const validSavedOrg = savedOrgId && activeOrgs.some(o => o.id === savedOrgId);
+
+                if (validSavedOrg) {
+                    setSelectedOrgId(savedOrgId);
+                } else if (data.current_org_id && activeOrgs.some(o => o.id === data.current_org_id)) {
+                    setSelectedOrgId(data.current_org_id);
+                    localStorage.setItem("leadgenius_selected_org_id", data.current_org_id);
+                } else if (activeOrgs.length > 0) {
+                    setSelectedOrgId(activeOrgs[0].id);
+                    localStorage.setItem("leadgenius_selected_org_id", activeOrgs[0].id);
+                }
+            }
+            setOrgsLoading(false);
+        }
+        fetchOrgs();
+    }, []);
+
     const handleNext = async () => {
         if (step < 3) {
             setStep(step + 1);
         } else {
+            // Validate organization is selected
+            if (!selectedOrgId) {
+                toast.error("Please select an organization before creating a campaign.");
+                setStep(1);
+                return;
+            }
+
             // Submit to backend
             try {
+                // Switch to selected org first (ensures backend has correct context)
+                const switchRes = await api.post<{
+                    access_token?: string;
+                    token_type?: string;
+                }>(`/api/organizations/switch/${selectedOrgId}`);
+
+                if (switchRes.data?.access_token) {
+                    // Save the new token with the org context
+                    setTokens({
+                        access_token: switchRes.data.access_token,
+                        refresh_token: localStorage.getItem("refresh_token") || "",
+                        token_type: switchRes.data.token_type || "bearer",
+                        expires_in: 3600,
+                    });
+                }
+
                 // Open new tab for LinkedIn Post Search only if NOT using Cloud Extraction
                 if (selected === "linkedin-post" && url && !useCloudScraper) {
                     window.open(url, "_blank");
@@ -198,10 +271,100 @@ export default function AddLeads({ onClose, onSuccess }: { onClose: () => void; 
                                 type="text"
                                 value={listName}
                                 onChange={(e) => setListName(e.target.value)}
-                                className="mb-8 h-12 w-full rounded-xl border border-input bg-background/50 px-4 text-sm text-foreground focus:border-blue-500 focus:outline-none transition-colors"
+                                className="mb-6 h-12 w-full rounded-xl border border-input bg-background/50 px-4 text-sm text-foreground focus:border-blue-500 focus:outline-none transition-colors"
                                 placeholder="e.g. Q1 Marketing Outreach"
                                 autoFocus
                             />
+
+                            {/* Organization Selector */}
+                            <div className="mb-8">
+                                <div className="mb-2 flex items-center gap-2">
+                                    <Building2 size={14} className="text-blue-500" />
+                                    <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Organization</span>
+                                    {selectedOrgId && (
+                                        <span className="ml-auto flex items-center gap-1 text-[10px] text-emerald-500 font-medium">
+                                            <Check size={10} /> Auto-selected
+                                        </span>
+                                    )}
+                                </div>
+
+                                {orgsLoading ? (
+                                    <div className="flex items-center gap-2 h-12 px-4 rounded-xl border border-input bg-background/50">
+                                        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                                        <span className="text-sm text-muted-foreground">Loading organizations...</span>
+                                    </div>
+                                ) : organizations.length === 0 ? (
+                                    <div className="flex items-center gap-2 h-12 px-4 rounded-xl border border-amber-500/30 bg-amber-500/5">
+                                        <Info size={14} className="text-amber-500" />
+                                        <span className="text-sm text-amber-500">No organizations found. Please create one first.</span>
+                                    </div>
+                                ) : organizations.length === 1 ? (
+                                    // Single org - show as locked/auto-selected
+                                    <div className="flex items-center gap-3 h-12 px-4 rounded-xl border border-blue-500/30 bg-blue-500/5">
+                                        <div className="grid h-8 w-8 place-items-center rounded-lg bg-blue-600/15 text-blue-500">
+                                            <Building2 size={16} />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="text-sm font-semibold text-foreground truncate">{organizations[0].name}</div>
+                                            {organizations[0].industry && (
+                                                <div className="text-[10px] text-muted-foreground truncate">{organizations[0].industry}</div>
+                                            )}
+                                        </div>
+                                        <Check size={16} className="text-blue-500" />
+                                    </div>
+                                ) : (
+                                    // Multiple orgs - show dropdown
+                                    <div className="relative">
+                                        <button
+                                            type="button"
+                                            onClick={() => setOrgDropdownOpen(!orgDropdownOpen)}
+                                            className="flex items-center gap-3 h-12 w-full px-4 rounded-xl border border-input bg-background/50 hover:border-blue-500/50 transition-colors text-left"
+                                        >
+                                            <div className="grid h-8 w-8 place-items-center rounded-lg bg-blue-600/15 text-blue-500 shrink-0">
+                                                <Building2 size={16} />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="text-sm font-semibold text-foreground truncate">
+                                                    {organizations.find(o => o.id === selectedOrgId)?.name || "Select organization"}
+                                                </div>
+                                            </div>
+                                            <ChevronDown size={16} className={`text-muted-foreground transition-transform ${orgDropdownOpen ? "rotate-180" : ""}`} />
+                                        </button>
+
+                                        {orgDropdownOpen && (
+                                            <div className="absolute z-30 mt-1 w-full rounded-xl border border-border bg-card shadow-xl overflow-hidden">
+                                                {organizations.map((org) => (
+                                                    <button
+                                                        key={org.id}
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setSelectedOrgId(org.id);
+                                                            localStorage.setItem("leadgenius_selected_org_id", org.id);
+                                                            setOrgDropdownOpen(false);
+                                                        }}
+                                                        className={`flex items-center gap-3 w-full px-4 py-3 text-left transition-colors hover:bg-accent ${selectedOrgId === org.id ? "bg-blue-500/5" : ""
+                                                            }`}
+                                                    >
+                                                        <div className={`grid h-8 w-8 place-items-center rounded-lg shrink-0 ${selectedOrgId === org.id ? "bg-blue-600/15 text-blue-500" : "bg-secondary text-muted-foreground"
+                                                            }`}>
+                                                            <Building2 size={16} />
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="text-sm font-semibold text-foreground truncate">{org.name}</div>
+                                                            <div className="text-[10px] text-muted-foreground truncate">
+                                                                {org.role} {org.industry ? `• ${org.industry}` : ""}
+                                                            </div>
+                                                        </div>
+                                                        {selectedOrgId === org.id && (
+                                                            <Check size={16} className="text-blue-500 shrink-0" />
+                                                        )}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
 
                             <h2 className="mb-6 text-2xl font-semibold text-foreground">
                                 How would you like to add leads?
@@ -447,13 +610,13 @@ export default function AddLeads({ onClose, onSuccess }: { onClose: () => void; 
                         )}
                         <button
                             onClick={handleNext}
-                            disabled={isLoading || (step === 1 && !listName.trim())}
+                            disabled={isLoading || (step === 1 && (!listName.trim() || !selectedOrgId))}
                             className={`rounded-xl px-8 py-3 text-sm font-semibold text-white shadow-lg transition flex items-center gap-2
                                 ${step === 3
-                                    ? "bg-[#6366F1] shadow-[#6366F1]/25 hover:bg-[#6366F1]/90" // Indigo/Purple for final step
+                                    ? "bg-[#6366F1] shadow-[#6366F1]/25 hover:bg-[#6366F1]/90"
                                     : "bg-blue-600 shadow-blue-500/25 hover:bg-blue-500"
                                 }
-                                ${(isLoading || (step === 1 && !listName.trim())) ? "opacity-70 cursor-not-allowed" : ""}
+                                ${(isLoading || (step === 1 && (!listName.trim() || !selectedOrgId))) ? "opacity-70 cursor-not-allowed" : ""}
                             `}
                         >
                             {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
