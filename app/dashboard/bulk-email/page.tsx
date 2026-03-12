@@ -218,7 +218,7 @@ export default function BulkEmailPage() {
             <ul className="space-y-3">
               <li className="flex gap-3 text-xs text-muted-foreground">
                 <div className="mt-1 h-1 w-1 shrink-0 rounded-full bg-blue-500" />
-                Keep your subject lines short and relevant to {{company}}.
+                Keep your subject lines short and relevant to {'{{company}}'}.
               </li>
               <li className="flex gap-3 text-xs text-muted-foreground">
                 <div className="mt-1 h-1 w-1 shrink-0 rounded-full bg-blue-500" />
@@ -226,7 +226,7 @@ export default function BulkEmailPage() {
               </li>
               <li className="flex gap-3 text-xs text-muted-foreground">
                 <div className="mt-1 h-1 w-1 shrink-0 rounded-full bg-blue-500" />
-                Always use a personalized greeting like Hi {{first_name}}.
+                Always use a personalized greeting like Hi {'{{first_name}}'}.
               </li>
             </ul>
           </div>
