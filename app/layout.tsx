@@ -37,7 +37,7 @@ export default function RootLayout({
                   'platform-telemetry', 'li/apfcDf', 'MutationObserver', 'visitor.publishDestinations', 
                   'WebGL context', 'WebGL contexts', 'preloaded using link preload',
                   'link rel=preload', 'ERR_BLOCKED_BY_CLIENT', 'Failed to load resource',
-                  'parameter 1 is not of type node', 'unload is not allowed', 
+                  'parameter 1 is not of type node', 'failed to execute', 'unload is not allowed', 
                   'Permissions policy violation', 'Self-XSS', 'attackers to impersonate you',
                   'Do not enter or paste code', 'permissions policy', 'violation'
                 ].map(s => s.toLowerCase());
@@ -47,9 +47,13 @@ export default function RootLayout({
                     return args.some(arg => {
                       if (!arg) return false;
                       let str = "";
-                      if (typeof arg === 'string') str = arg;
-                      else if (arg instanceof Error) str = arg.message + arg.stack;
-                      else { try { str = JSON.stringify(arg); } catch(e) { str = String(arg); } }
+                      if (arg instanceof Error) {
+                        str = (arg.message || "") + " " + (arg.stack || "");
+                      } else if (typeof arg === 'object') {
+                        try { str = JSON.stringify(arg); } catch(e) { str = String(arg); }
+                      } else {
+                        str = String(arg);
+                      }
                       str = str.toLowerCase();
                       return silenceStrings.some(s => str.includes(s));
                     });
