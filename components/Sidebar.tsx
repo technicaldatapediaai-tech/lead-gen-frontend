@@ -19,7 +19,6 @@ const navItems = [
   { label: "Enrichment", href: "/dashboard/enrichment", icon: WandIcon },
   { label: "Campaigns", href: "/dashboard/campaigns", icon: PlayIcon },
   { label: "CRM", href: "/dashboard/crm", icon: CRMIcon },
-  { label: "AI Call Bot", href: "/dashboard/call-bot", icon: BotIcon },
 ];
 
 interface Organization {

@@ -236,17 +236,6 @@ export default function DashboardPage() {
               action=">"
             />
           </Link>
-
-          <Link href="/dashboard/call-bot" className="contents">
-            <ActionCard
-              icon={<Bot className="h-5 w-5 text-blue-500" />}
-              iconBg="bg-blue-500/10"
-              title="AI Call Bot"
-              desc="Automated voice outreach."
-              action=">"
-              badge="New"
-            />
-          </Link>
         </div>
 
         {/* Email Outreach Resource Pool */}
