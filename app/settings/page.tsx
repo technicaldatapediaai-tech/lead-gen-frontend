@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, ChevronDown, Mail } from "lucide-react";
+import { Bell, ChevronDown, Mail, Rocket } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/lib/api";
@@ -45,6 +45,8 @@ export default function SettingsPage() {
     // Settings state
     const [language, setLanguage] = useState("English");
     const [settings, setSettings] = useState<UserSettings | null>(null);
+    const [instantlyKey, setInstantlyKey] = useState("");
+    const [instantlyConnected, setInstantlyConnected] = useState(false);
 
     useEffect(() => {
         fetchUserData();
@@ -69,6 +71,12 @@ export default function SettingsPage() {
             if (settingsRes.data) {
                 setSettings(settingsRes.data);
                 setLanguage(settingsRes.data.language_preference === "en" ? "English" : settingsRes.data.language_preference);
+            }
+
+            // Fetch Instantly status
+            const instRes = await api.get<any>("/api/integrations/instantly/status");
+            if (instRes.data?.connected) {
+                setInstantlyConnected(true);
             }
         } catch (error) {
             console.error("Failed to fetch user data:", error);
@@ -116,6 +124,33 @@ export default function SettingsPage() {
             }
         } catch (error) {
             toast.error("An error occurred");
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleConnectInstantly = async () => {
+        if (!instantlyKey && !instantlyConnected) {
+            toast.error("Please enter an API key");
+            return;
+        }
+        
+        setIsSaving(true);
+        try {
+            const res = await api.post("/api/integrations/instantly/connect", {
+                api_key: instantlyKey
+            });
+
+            if (res.error) {
+                toast.error(res.error.detail || "Failed to connect to Instantly");
+            } else {
+                toast.success("Instantly.ai connected!");
+                setInstantlyConnected(true);
+                setInstantlyKey("");
+            }
+        } catch (error) {
+            toast.error("An error occurred during connection");
+            console.error(error);
         } finally {
             setIsSaving(false);
         }
@@ -209,6 +244,52 @@ export default function SettingsPage() {
                                 >
                                     <span className="relative z-10">{isSaving ? "Synchronizing..." : "Save Profile Details"}</span>
                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shimmer" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Connected Services (Instantly.ai Integration) */}
+                <div className="mb-6 rounded-3xl border border-border bg-card p-8 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/5 group">
+                    <div className="flex items-start gap-5 mb-10">
+                        <div className="grid h-12 w-12 place-items-center rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-500 transition-transform hover:rotate-6">
+                            <Rocket size={24} />
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-bold text-foreground">Advanced Outreach</h3>
+                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mt-1.5">Connect external platforms to supercharge your campaigns</p>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-8">
+                        <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-6 rounded-2xl bg-muted/30 border border-border/50">
+                            <div className="flex items-center gap-4">
+                                <div className="h-12 w-12 rounded-xl bg-white p-2 shadow-sm border border-border">
+                                    <img src="https://instantly.ai/favicon.ico" alt="Instantly" className="h-full w-full object-contain" />
+                                </div>
+                                <div className="flex flex-col">
+                                    <h4 className="font-bold text-foreground">Instantly.ai</h4>
+                                    <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest mt-0.5">Automated Email Engine</p>
+                                </div>
+                            </div>
+                            
+                            <div className="flex items-center gap-4 w-full md:w-auto">
+                                <div className="relative flex-1 md:w-64">
+                                    <input 
+                                        type="password" 
+                                        placeholder={instantlyConnected ? "Connected - ••••••••" : "Enter API Key"}
+                                        value={instantlyKey}
+                                        onChange={(e) => setInstantlyKey(e.target.value)}
+                                        className="w-full rounded-xl border border-input bg-background/50 px-5 py-3 text-sm outline-none focus:border-blue-500/50 transition-all"
+                                    />
+                                </div>
+                                <button 
+                                    onClick={handleConnectInstantly}
+                                    disabled={isSaving}
+                                    className={`rounded-xl px-10 py-3 text-[10px] font-black uppercase tracking-widest transition-all ${instantlyConnected ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-blue-600 text-white hover:bg-blue-500 shadow-xl shadow-blue-500/20'}`}
+                                >
+                                    {isSaving ? "Syncing..." : instantlyConnected ? "Connected" : "Connect"}
                                 </button>
                             </div>
                         </div>
