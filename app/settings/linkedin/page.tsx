@@ -44,7 +44,7 @@ export default function LinkedInSettingsPage() {
         fetchLinkedInStatus();
 
         // Sync with extension if available
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("access_token");
         if (token) {
             window.postMessage({ type: "LEAD_GENIUS_CONNECT", payload: { token } }, "*");
         }
