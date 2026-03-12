@@ -11,6 +11,7 @@ import {
   Calendar,
   CloudLightning,
   CheckCircle2,
+  Mail,
   MoreVertical,
   Loader2,
   ChevronRight,
@@ -46,9 +47,9 @@ export default function DashboardPage() {
   // Transform stats for display
   const displayStats = stats ? [
     {
-      title: "TOTAL EXTRACTED",
+      title: "Lead Pipeline",
       value: stats.total_leads?.toLocaleString() || "0",
-      change: "Total leads in system",
+      change: `${stats.qualified_leads || 0} Qualified Leads`,
       trend: "up",
       icon: Database,
       color: "text-blue-500",
@@ -56,29 +57,9 @@ export default function DashboardPage() {
       changeColor: "text-emerald-500"
     },
     {
-      title: "QUALIFIED LEADS",
-      value: stats.qualified_leads?.toLocaleString() || "0",
-      change: "High Intent",
-      trend: "up",
-      icon: FileCheck,
-      color: "text-emerald-500",
-      bgColor: "bg-emerald-500/10",
-      changeColor: "text-emerald-500"
-    },
-    {
-      title: "ACTIVE CAMPAIGNS",
-      value: stats.active_campaigns?.toString() || "0",
-      change: "Running smoothly",
-      trend: "neutral",
-      icon: Rocket,
-      color: "text-purple-500",
-      bgColor: "bg-purple-500/10",
-      changeColor: "text-slate-400"
-    },
-    {
-      title: "RESPONSE RATE",
+      title: "Engagement",
       value: stats.response_rate || "0%",
-      change: "Reply rate",
+      change: `${stats.active_campaigns || 0} Active Campaigns`,
       trend: "up",
       icon: MessageSquare,
       color: "text-indigo-500",
@@ -86,9 +67,9 @@ export default function DashboardPage() {
       changeColor: "text-emerald-500"
     },
     {
-      title: "PENDING TASKS",
+      title: "Pending Actions",
       value: stats.pending_tasks?.toString() || "0",
-      change: "Items to review",
+      change: "Items requiring review",
       trend: "down",
       icon: AlertCircle,
       color: "text-amber-500",
@@ -180,8 +161,8 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* --- Stats Row --- */}
-      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      {/* --- Executive Stats Row (3 Boxes) --- */}
+      <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
         {displayStats.map((stat, i) => (
           <div key={i} className="rounded-xl border border-border bg-card p-5 shadow-sm transition hover:border-blue-500/50">
             <div className="mb-4 flex items-center justify-between">
@@ -199,109 +180,75 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* --- Main Grid --- */}
+      {/* --- Quick Actions Row (3 Boxes) --- */}
+      <div className="mb-8">
+        <h3 className="text-sm font-bold text-foreground mb-4">Quick Actions</h3>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
+          <Link href="/dashboard/extraction" className="h-full">
+            <ActionCard
+              icon={<CloudLightning className="h-5 w-5 text-white" />}
+              iconBg="bg-blue-600"
+              title="Extraction"
+              desc="Prospecting Tool"
+              action="›"
+              active
+            />
+          </Link>
+
+          <Link href="/dashboard/scoring" className="h-full">
+            <ActionCard
+              icon={<CheckCircle2 className="h-5 w-5 text-emerald-500" />}
+              iconBg="bg-emerald-500/10"
+              title="Scoring"
+              desc="Quality Audit"
+              action="›"
+            />
+          </Link>
+
+          <Link href="/dashboard/bulk-email" className="h-full">
+            <ActionCard
+              icon={<Mail className="h-5 w-5 text-blue-500" />}
+              iconBg="bg-blue-500/10"
+              title="Bulk Mail"
+              desc="Manual/CSV Blast"
+              action="›"
+            />
+          </Link>
+
+          <Link href="/dashboard/campaigns/create?template=invitation" className="h-full">
+            <ActionCard
+              icon={<Rocket className="h-5 w-5 text-purple-500" />}
+              iconBg="bg-purple-500/10"
+              title="Campaign"
+              desc="Outreach Setup"
+              action="›"
+            />
+          </Link>
+        </div>
+      </div>
+
+      {/* --- Main Analytics Row (3 Boxes) --- */}
       <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-12">
 
-        {/* Quick Actions (Horizontal Row) */}
-        <div className="lg:col-span-12">
-          <div className="mb-4">
-            <h3 className="text-sm font-bold text-foreground">Quick Actions</h3>
-          </div>
-          <div className="flex flex-row gap-6 w-full">
-            <Link href="/dashboard/extraction" className="flex-1 min-w-0">
-              <ActionCard
-                icon={<CloudLightning className="h-5 w-5 text-white" />}
-                iconBg="bg-blue-600"
-                title="Start Extraction"
-                desc="Import list or scrape URL"
-                action=">"
-                active
-              />
-            </Link>
-
-            <Link href="/dashboard/scoring" className="flex-1 min-w-0">
-              <ActionCard
-                icon={<CheckCircle2 className="h-5 w-5 text-emerald-500" />}
-                iconBg="bg-emerald-500/10"
-                title="View Scored Leads"
-                desc={`Review ${stats?.qualified_leads || 0} leads.`}
-                action=">"
-              />
-            </Link>
-
-            <Link href="/dashboard/campaigns/create?template=invitation" className="flex-1 min-w-0">
-              <ActionCard
-                icon={<Rocket className="h-5 w-5 text-purple-500" />}
-                iconBg="bg-purple-500/10"
-                title="Launch Campaign"
-                desc="Select template & audience."
-                action=">"
-              />
-            </Link>
-          </div>
-        </div>
-
-        {/* Email Outreach Resource Pool */}
-        <div className="rounded-xl border border-border bg-card p-6 lg:col-span-12">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-lg font-bold text-card-foreground">Email Outreach Resource Pool</h3>
-              <p className="text-sm text-muted-foreground mt-1">Monitoring {stats?.email_productivity?.accounts_active || 0} employee accounts and their daily limits.</p>
-            </div>
-            <Link href="/settings/email">
-              <button className="text-xs font-medium text-blue-500 hover:text-blue-400">Manage Pool</button>
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="rounded-xl bg-muted/30 p-4 border border-border/50">
-              <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Pooled Capacity</div>
-              <div className="text-2xl font-bold text-foreground">
-                {stats?.email_productivity?.total_sent || 0} / {stats?.email_productivity?.total_limit || 0}
-              </div>
-              <div className="mt-2 h-2 w-full rounded-full bg-secondary overflow-hidden">
-                <div 
-                  className="h-full bg-blue-600 transition-all duration-1000" 
-                  style={{ width: `${Math.min(((stats?.email_productivity?.total_sent || 0) / (stats?.email_productivity?.total_limit || 1)) * 100, 100)}%` }}
-                />
-              </div>
-              <p className="text-[10px] text-muted-foreground mt-2">Daily sending volume across all employee IDs</p>
-            </div>
-
-            <div className="col-span-2 flex flex-col justify-center">
-              <div className="flex items-center gap-4">
-                <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-500">
-                  <CheckCircle2 size={24} />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-foreground">Automatic Account Switching Active</h4>
-                  <p className="text-xs text-muted-foreground">The system will rotate to the next available employee ID when limits are reached.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Lead Quality Distribution (Center Col) */}
+        {/* Row 2: Analytics, Performance, Recent Activity (3 Boxes) */}
         <div className="rounded-xl border border-border bg-card p-6 lg:col-span-4">
           <div className="mb-6 flex items-start justify-between">
             <div>
-              <h3 className="text-lg font-bold text-card-foreground">Performance Analytics</h3>
-              <p className="mt-1 text-sm font-medium text-muted-foreground">Lead Quality Distribution</p>
+              <h3 className="text-sm font-bold text-card-foreground">Performance</h3>
+              <p className="mt-1 text-xs text-muted-foreground">Lead Quality</p>
             </div>
-            <button className="text-muted-foreground hover:text-foreground">•••</button>
           </div>
 
-          <div className="flex items-center gap-6">
-            <div className="relative h-48 w-48 flex-shrink-0">
+          <div className="flex flex-col items-center gap-4">
+            <div className="relative h-32 w-32 flex-shrink-0">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={leadQualityData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
+                    innerRadius={40}
+                    outerRadius={55}
                     paddingAngle={0}
                     dataKey="value"
                     stroke="none"
@@ -312,119 +259,95 @@ export default function DashboardPage() {
                   </Pie>
                 </PieChart>
               </ResponsiveContainer>
-              {/* Center Text */}
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-xl font-bold text-card-foreground">
+                <span className="text-lg font-bold text-card-foreground">
                   {stats?.total_leads ? (stats.total_leads >= 1000 ? `${(stats.total_leads / 1000).toFixed(1)}k` : stats.total_leads) : '0'}
                 </span>
-                <span className="text-[10px] text-muted-foreground">Total Leads</span>
               </div>
             </div>
 
-            <div className="flex flex-col gap-3">
-              <LegendItem label={`Hot (${leadQualityData[2]?.value || 0}%)`} sub="Highly Qualified" color="bg-emerald-500" />
-              <LegendItem label={`Warm (${leadQualityData[1]?.value || 0}%)`} sub="Engagement detected" color="bg-blue-500" />
-              <LegendItem label={`Cold (${leadQualityData[0]?.value || 0}%)`} sub="No activity" color="bg-sky-500" />
+            <div className="grid grid-cols-3 gap-2 w-full mt-2">
+              <div className="text-center">
+                <div className="h-1 w-full bg-emerald-500 rounded-full mb-1" />
+                <div className="text-[10px] font-bold text-foreground">{leadQualityData[2]?.value || 0}%</div>
+                <div className="text-[8px] text-muted-foreground uppercase">Hot</div>
+              </div>
+              <div className="text-center">
+                <div className="h-1 w-full bg-blue-500 rounded-full mb-1" />
+                <div className="text-[10px] font-bold text-foreground">{leadQualityData[1]?.value || 0}%</div>
+                <div className="text-[8px] text-muted-foreground uppercase">Warm</div>
+              </div>
+              <div className="text-center">
+                <div className="h-1 w-full bg-sky-500 rounded-full mb-1" />
+                <div className="text-[10px] font-bold text-foreground">{leadQualityData[0]?.value || 0}%</div>
+                <div className="text-[8px] text-muted-foreground uppercase">Cold</div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Outreach Performance (Right Col) */}
         <div className="rounded-xl border border-border bg-card p-6 lg:col-span-5">
           <div className="mb-6 flex items-center justify-between">
-            <h3 className="text-sm font-bold text-card-foreground">Outreach Performance</h3>
-            <span className="text-xs text-muted-foreground">Last 7 Days</span>
+            <h3 className="text-sm font-bold text-card-foreground">Outreach History</h3>
+            <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">7D</span>
           </div>
 
-          <div className="h-64 w-full">
+          <div className="h-44 w-full">
             {chartLoading ? (
               <div className="h-full flex items-center justify-center">
-                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
               </div>
             ) : outreachData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={outreachData} barSize={32}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(150,150,150,0.1)" />
+                <BarChart data={outreachData} barSize={24}>
                   <XAxis
                     dataKey="day"
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: '#64748b', fontSize: 12 }}
-                    dy={10}
+                    tick={{ fill: '#64748b', fontSize: 10 }}
+                    dy={5}
                   />
                   <Tooltip
                     cursor={{ fill: 'rgba(150,150,150,0.05)' }}
-                    contentStyle={{ backgroundColor: 'var(--popover)', borderColor: 'var(--border)', color: 'var(--popover-foreground)' }}
+                    contentStyle={{ backgroundColor: 'var(--popover)', borderColor: 'var(--border)', fontSize: '10px' }}
                   />
-                  <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="value" fill="#3b82f6" radius={[2, 2, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
-                No data available
-              </div>
+              <div className="h-full flex items-center justify-center text-muted-foreground text-[10px]">No Data</div>
             )}
           </div>
         </div>
-      </div>
 
-      {/* --- Recent Activity Table --- */}
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-bold text-foreground">Recent Pipeline Activity</h2>
-        <button className="text-sm font-medium text-blue-500 hover:text-blue-400">View All</button>
-      </div>
-
-      <div className="overflow-hidden rounded-xl border border-border bg-card">
-        {/* Table Header */}
-        <div className="grid grid-cols-12 gap-4 border-b border-border bg-muted/50 px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-          <div className="col-span-4">Lead / Campaign</div>
-          <div className="col-span-4">Action</div>
-          <div className="col-span-2">Status</div>
-          <div className="col-span-1">Date</div>
-          <div className="col-span-1 text-right">Action</div>
-        </div>
-
-        {/* Table Rows */}
-        <div className="divide-y divide-border">
-          {activityLoading ? (
-            <div className="px-6 py-8 flex items-center justify-center">
-              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-            </div>
-          ) : recentActivity.length > 0 ? (
-            recentActivity.map((item) => (
-              <div key={item.id} className="grid grid-cols-12 gap-4 px-6 py-4 items-center transition hover:bg-muted/50">
-                <div className="col-span-4 flex items-center gap-3">
-                  <div className={`flex h-10 w-10 items-center justify-center rounded-lg text-xs font-bold text-white ${item.appColor}`}>
+        {/* Lead Activity (3rd Box in Grid) */}
+        <div className="rounded-xl border border-border bg-card p-6 lg:col-span-3">
+          <div className="mb-6 flex items-center justify-between">
+            <h3 className="text-sm font-bold text-card-foreground">Recent Activity</h3>
+            <Link href="/dashboard/activity" className="text-[10px] font-bold text-blue-500 uppercase tracking-widest hover:text-blue-400">View All</Link>
+          </div>
+          
+          <div className="flex flex-col gap-4">
+            {activityLoading ? (
+              <div className="py-4 flex items-center justify-center">
+                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+              </div>
+            ) : recentActivity.length > 0 ? (
+              recentActivity.slice(0, 5).map((item) => (
+                <div key={item.id} className="flex items-center gap-3">
+                  <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[10px] font-bold text-white ${item.appColor}`}>
                     {item.initials}
                   </div>
-                  <div>
-                    <div className="text-sm font-semibold text-card-foreground">{item.name}</div>
-                    <div className="text-xs text-muted-foreground">{item.sub}</div>
+                  <div className="min-w-0">
+                    <div className="text-xs font-semibold text-card-foreground truncate">{item.name}</div>
+                    <div className="text-[10px] text-muted-foreground truncate">{item.action}</div>
                   </div>
                 </div>
-
-                <div className="col-span-4 text-sm text-foreground/80">
-                  {item.action}
-                </div>
-
-                <div className="col-span-2">
-                  <StatusBadge status={item.status} color={item.statusColor} />
-                </div>
-
-                <div className="col-span-1 text-sm text-muted-foreground">
-                  {item.date}
-                </div>
-
-                <div className="col-span-1 flex justify-end">
-                  <button className="text-muted-foreground hover:text-foreground"><MoreVertical size={16} /></button>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="px-6 py-8 text-center text-sm text-muted-foreground">
-              No recent activity
-            </div>
-          )}
+              ))
+            ) : (
+              <div className="text-center py-4 text-xs text-muted-foreground">No recent activity</div>
+            )}
+          </div>
         </div>
       </div>
 
