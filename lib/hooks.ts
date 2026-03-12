@@ -18,6 +18,11 @@ interface DashboardStats {
         by_source: Record<string, number>;
     };
     message_stats: Record<string, number>;
+    email_productivity: {
+        total_sent: number;
+        total_limit: number;
+        accounts_active: number;
+    };
 }
 
 interface ActivityItem {

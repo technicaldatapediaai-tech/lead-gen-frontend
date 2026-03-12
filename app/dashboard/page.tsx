@@ -237,6 +237,47 @@ export default function DashboardPage() {
           </Link>
         </div>
 
+        {/* Email Outreach Resource Pool */}
+        <div className="rounded-xl border border-border bg-card p-6 lg:col-span-12">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-lg font-bold text-card-foreground">Email Outreach Resource Pool</h3>
+              <p className="text-sm text-muted-foreground mt-1">Monitoring {stats?.email_productivity?.accounts_active || 0} employee accounts and their daily limits.</p>
+            </div>
+            <Link href="/settings/email">
+              <button className="text-xs font-medium text-blue-500 hover:text-blue-400">Manage Pool</button>
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="rounded-xl bg-muted/30 p-4 border border-border/50">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Pooled Capacity</div>
+              <div className="text-2xl font-bold text-foreground">
+                {stats?.email_productivity?.total_sent || 0} / {stats?.email_productivity?.total_limit || 0}
+              </div>
+              <div className="mt-2 h-2 w-full rounded-full bg-secondary overflow-hidden">
+                <div 
+                  className="h-full bg-blue-600 transition-all duration-1000" 
+                  style={{ width: `${Math.min(((stats?.email_productivity?.total_sent || 0) / (stats?.email_productivity?.total_limit || 1)) * 100, 100)}%` }}
+                />
+              </div>
+              <p className="text-[10px] text-muted-foreground mt-2">Daily sending volume across all employee IDs</p>
+            </div>
+
+            <div className="col-span-2 flex flex-col justify-center">
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-500">
+                  <CheckCircle2 size={24} />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-foreground">Automatic Account Switching Active</h4>
+                  <p className="text-xs text-muted-foreground">The system will rotate to the next available employee ID when limits are reached.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Lead Quality Distribution (Center Col) */}
         <div className="rounded-xl border border-border bg-card p-6 lg:col-span-4">
           <div className="mb-6 flex items-start justify-between">

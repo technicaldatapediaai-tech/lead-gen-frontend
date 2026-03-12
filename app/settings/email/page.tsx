@@ -16,6 +16,8 @@ interface EmailAccount {
     sender_name?: string;
     is_active: boolean;
     is_org_shared: boolean;
+    daily_limit: number;
+    sent_count_today: number;
 }
 
 export default function EmailSettingsPage() {
@@ -69,6 +71,48 @@ export default function EmailSettingsPage() {
         }
     };
 
+    const handleBulkUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+            const text = event.target?.result as string;
+            const lines = text.split("\n");
+            const headers = lines[0].split(",").map(h => h.trim().toLowerCase());
+            
+            const accounts = lines.slice(1).filter(l => l.trim()).map(line => {
+                const values = line.split(",").map(v => v.trim());
+                const acc: any = {};
+                headers.forEach((h, i) => {
+                    if (h === "name" || h === "sender_name") acc.sender_name = values[i];
+                    else if (h === "email") acc.email = values[i];
+                    else if (h === "password" || h === "smtp_password") acc.smtp_password = values[i];
+                    else acc[h] = values[i];
+                });
+                return acc;
+            });
+
+            if (accounts.length === 0) return;
+
+            setIsLoading(true);
+            try {
+                const res = await api.post("/api/email/accounts/bulk-upload", accounts);
+                if (!res.error) {
+                    toast.success(`Successfully uploaded ${accounts.length} email accounts`);
+                    fetchEmailAccounts();
+                } else {
+                    toast.error(res.error.detail || "Bulk upload failed");
+                }
+            } catch (error) {
+                toast.error("Failed to process CSV file");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        reader.readAsText(file);
+    };
+
     const handleDeleteAccount = async (id: string) => {
         if (!confirm("Are you sure you want to disconnect this email account?")) return;
 
@@ -111,9 +155,9 @@ export default function EmailSettingsPage() {
 
                     {/* Table Header */}
                     <div className="mb-2 grid grid-cols-12 px-4 text-xs font-bold uppercase tracking-wider text-muted-foreground font-mono">
-                        <div className="col-span-3">Provider</div>
+                        <div className="col-span-3">Provider / Identity</div>
                         <div className="col-span-4">Email Address</div>
-                        <div className="col-span-3">Sender Name</div>
+                        <div className="col-span-3">Daily Limit / Activity</div>
                         <div className="col-span-2 text-right px-2">Actions</div>
                     </div>
 
@@ -146,9 +190,20 @@ export default function EmailSettingsPage() {
                                     </div>
                                     <div className="col-span-4 text-sm font-medium text-foreground/80">
                                         {item.email}
+                                        <div className="text-[10px] text-muted-foreground mt-0.5">{item.sender_name || "Not set"}</div>
                                     </div>
-                                    <div className="col-span-3 text-sm text-muted-foreground italic">
-                                        {item.sender_name || "Not set"}
+                                    <div className="col-span-3">
+                                        <div className="flex items-center gap-2">
+                                            <div className="flex-1 h-1.5 rounded-full bg-secondary overflow-hidden max-w-[100px]">
+                                                <div 
+                                                    className={`h-full transition-all duration-500 ${item.sent_count_today >= item.daily_limit ? 'bg-rose-500' : 'bg-blue-500'}`}
+                                                    style={{ width: `${Math.min((item.sent_count_today / item.daily_limit) * 100, 100)}%` }}
+                                                />
+                                            </div>
+                                            <span className="text-xs font-mono font-bold text-foreground">
+                                                {item.sent_count_today}/{item.daily_limit}
+                                            </span>
+                                        </div>
                                     </div>
                                     <div className="col-span-2 flex justify-end gap-2">
                                         <button
@@ -167,66 +222,78 @@ export default function EmailSettingsPage() {
                         )}
                     </div>
 
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <button className="mt-8 flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-500 transition-colors group">
-                                <div className="p-1 rounded-md bg-blue-600/10 group-hover:bg-blue-600/20 transition-all">
-                                    <Plus size={16} />
+                    <div className="flex items-center gap-4 mt-8">
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <button className="flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-500 transition-colors group">
+                                    <div className="p-1 rounded-md bg-blue-600/10 group-hover:bg-blue-600/20 transition-all">
+                                        <Plus size={16} />
+                                    </div>
+                                    <span>Add an account</span>
+                                </button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-2xl bg-card border-border">
+                                <DialogHeader>
+                                    <DialogTitle className="text-2xl font-bold tracking-tight text-foreground">Connect an email account</DialogTitle>
+                                    <DialogDescription className="text-base text-muted-foreground mt-2">
+                                        Select your email provider to connect it for sending out outreach campaigns. We support one-click OAuth for Google and Microsoft.
+                                    </DialogDescription>
+                                </DialogHeader>
+
+                                <div className="grid grid-cols-2 gap-4 mt-6">
+                                    <button
+                                        onClick={() => handleConnectGoogle(false)}
+                                        disabled={isConnectingGoogle}
+                                        className="flex flex-col items-center justify-center gap-4 p-8 rounded-2xl border-2 border-border bg-background hover:border-red-500 hover:bg-red-500/5 transition-all group text-center disabled:opacity-50"
+                                    >
+                                        <div className="h-14 w-14 rounded-full bg-red-500/10 text-red-500 grid place-items-center group-hover:scale-110 group-hover:bg-red-500/20 transition-all">
+                                            {isConnectingGoogle ? <Loader2 className="animate-spin" size={28} /> : <Mail size={28} />}
+                                        </div>
+                                        <div>
+                                            <span className="block font-bold text-foreground text-lg mb-1">Google</span>
+                                            <span className="text-sm text-muted-foreground">Gmail, Google Workspace</span>
+                                        </div>
+                                    </button>
+
+                                    <button
+                                        onClick={() => toast.info("Microsoft OAuth coming soon! Use Custom IMAP/SMTP for now.")}
+                                        className="flex flex-col items-center justify-center gap-4 p-8 rounded-2xl border-2 border-border bg-background hover:border-blue-500 hover:bg-blue-500/5 transition-all group text-center"
+                                    >
+                                        <div className="h-14 w-14 rounded-full bg-blue-500/10 text-blue-500 grid place-items-center group-hover:scale-110 group-hover:bg-blue-500/20 transition-all">
+                                            <Mail size={28} />
+                                        </div>
+                                        <div>
+                                            <span className="block font-bold text-foreground text-lg mb-1">Microsoft</span>
+                                            <span className="text-sm text-muted-foreground">Outlook, Office 365, Exchange</span>
+                                        </div>
+                                    </button>
+
+                                    <button
+                                        onClick={() => (window as any).location.href = "/settings/email/connect"}
+                                        className="flex items-center justify-center gap-4 p-6 rounded-2xl border-2 border-border bg-background hover:border-indigo-500 hover:bg-indigo-500/5 transition-all group col-span-2 text-left"
+                                    >
+                                        <div className="h-12 w-12 rounded-full bg-indigo-500/10 text-indigo-500 grid place-items-center group-hover:scale-110 group-hover:bg-indigo-500/20 transition-all">
+                                            <Server size={24} />
+                                        </div>
+                                        <div className="flex-1">
+                                            <span className="block font-bold text-foreground text-lg">Any Other Provider (IMAP / SMTP)</span>
+                                            <span className="text-sm text-muted-foreground">Connect any email using IMAP and SMTP credentials manually.</span>
+                                        </div>
+                                    </button>
                                 </div>
-                                <span>Add an email address</span>
-                            </button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-2xl bg-card border-border">
-                            <DialogHeader>
-                                <DialogTitle className="text-2xl font-bold tracking-tight text-foreground">Connect an email account</DialogTitle>
-                                <DialogDescription className="text-base text-muted-foreground mt-2">
-                                    Select your email provider to connect it for sending out outreach campaigns. We support one-click OAuth for Google and Microsoft.
-                                </DialogDescription>
-                            </DialogHeader>
+                            </DialogContent>
+                        </Dialog>
 
-                            <div className="grid grid-cols-2 gap-4 mt-6">
-                                <button
-                                    onClick={() => handleConnectGoogle(false)}
-                                    disabled={isConnectingGoogle}
-                                    className="flex flex-col items-center justify-center gap-4 p-8 rounded-2xl border-2 border-border bg-background hover:border-red-500 hover:bg-red-500/5 transition-all group text-center disabled:opacity-50"
-                                >
-                                    <div className="h-14 w-14 rounded-full bg-red-500/10 text-red-500 grid place-items-center group-hover:scale-110 group-hover:bg-red-500/20 transition-all">
-                                        {isConnectingGoogle ? <Loader2 className="animate-spin" size={28} /> : <Mail size={28} />}
-                                    </div>
-                                    <div>
-                                        <span className="block font-bold text-foreground text-lg mb-1">Google</span>
-                                        <span className="text-sm text-muted-foreground">Gmail, Google Workspace</span>
-                                    </div>
-                                </button>
+                        <div className="h-4 w-px bg-border mx-2" />
 
-                                <button
-                                    onClick={() => toast.info("Microsoft OAuth coming soon! Use Custom IMAP/SMTP for now.")}
-                                    className="flex flex-col items-center justify-center gap-4 p-8 rounded-2xl border-2 border-border bg-background hover:border-blue-500 hover:bg-blue-500/5 transition-all group text-center"
-                                >
-                                    <div className="h-14 w-14 rounded-full bg-blue-500/10 text-blue-500 grid place-items-center group-hover:scale-110 group-hover:bg-blue-500/20 transition-all">
-                                        <Mail size={28} />
-                                    </div>
-                                    <div>
-                                        <span className="block font-bold text-foreground text-lg mb-1">Microsoft</span>
-                                        <span className="text-sm text-muted-foreground">Outlook, Office 365, Exchange</span>
-                                    </div>
-                                </button>
-
-                                <button
-                                    onClick={() => (window as any).location.href = "/settings/email/connect"}
-                                    className="flex items-center justify-center gap-4 p-6 rounded-2xl border-2 border-border bg-background hover:border-indigo-500 hover:bg-indigo-500/5 transition-all group col-span-2 text-left"
-                                >
-                                    <div className="h-12 w-12 rounded-full bg-indigo-500/10 text-indigo-500 grid place-items-center group-hover:scale-110 group-hover:bg-indigo-500/20 transition-all">
-                                        <Server size={24} />
-                                    </div>
-                                    <div className="flex-1">
-                                        <span className="block font-bold text-foreground text-lg">Any Other Provider (IMAP / SMTP)</span>
-                                        <span className="text-sm text-muted-foreground">Connect any email using IMAP and SMTP credentials manually.</span>
-                                    </div>
-                                </button>
+                        <label className="flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-500 transition-colors group cursor-pointer">
+                            <input type="file" accept=".csv" onChange={handleBulkUpload} className="hidden" />
+                            <div className="p-1 rounded-md bg-blue-600/10 group-hover:bg-blue-600/20 transition-all">
+                                <Mail size={16} />
                             </div>
-                        </DialogContent>
-                    </Dialog>
+                            <span>Bulk upload Employees (CSV)</span>
+                        </label>
+                    </div>
                 </div>
 
                 {/* Signatures Card */}
