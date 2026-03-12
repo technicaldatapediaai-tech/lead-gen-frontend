@@ -64,12 +64,19 @@ export default function LoginPage() {
                     <div className="mt-6 grid grid-cols-2 gap-3">
                         <button
                             type="button"
+                            onClick={() => {
+                                const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://lead-gen-backend-dcxf.onrender.com';
+                                window.location.href = `${API_URL}/api/auth/google/login`;
+                            }}
                             className="flex h-11 items-center justify-center gap-2 rounded-xl border border-input bg-background text-sm font-semibold text-foreground hover:bg-accent transition-colors"
                         >
                             Google
                         </button>
                         <button
                             type="button"
+                            onClick={() => {
+                                toast.info("LinkedIn login coming soon");
+                            }}
                             className="flex h-11 items-center justify-center gap-2 rounded-xl border border-input bg-background text-sm font-semibold text-foreground hover:bg-accent transition-colors"
                         >
                             LinkedIn
