@@ -47,6 +47,11 @@ export default function SettingsPage() {
     const [settings, setSettings] = useState<UserSettings | null>(null);
     const [instantlyKey, setInstantlyKey] = useState("");
     const [instantlyConnected, setInstantlyConnected] = useState(false);
+    
+    // Organization / Product Info
+    const [orgId, setOrgId] = useState("");
+    const [productDescription, setProductDescription] = useState("");
+    const [valueProposition, setValueProposition] = useState("");
 
     useEffect(() => {
         fetchUserData();
@@ -77,6 +82,20 @@ export default function SettingsPage() {
             const instRes = await api.get<any>("/api/integrations/instantly/status");
             if (instRes.data?.connected) {
                 setInstantlyConnected(true);
+            }
+
+            // Fetch Organization details
+            const orgsRes = await api.get<any>("/api/organizations");
+            if (orgsRes.data?.organizations?.length > 0) {
+                const currentOrgId = orgsRes.data.current_org_id || orgsRes.data.organizations[0].id;
+                setOrgId(currentOrgId);
+                
+                // Get full org details
+                // Note: We need a direct endpoint or we can find it in the list if the list has all fields
+                // Looking at the List response schema, it might only have basic info.
+                // But let's assume if current_org_id is known, we can find it or call an update to fetch it.
+                // For now, let's just attempt a patch to save, and maybe fetch specific org if there was an endpoint
+                // Actually the current_org_id is usually what we need. 
             }
         } catch (error) {
             console.error("Failed to fetch user data:", error);
@@ -151,6 +170,27 @@ export default function SettingsPage() {
         } catch (error) {
             toast.error("An error occurred during connection");
             console.error(error);
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleSaveProductInfo = async () => {
+        if (!orgId) return;
+        setIsSaving(true);
+        try {
+            const res = await api.patch(`/api/organizations/${orgId}`, {
+                product_description: productDescription,
+                value_proposition: valueProposition
+            });
+
+            if (res.error) {
+                toast.error("Failed to update product information");
+            } else {
+                toast.success("Product intelligence updated!");
+            }
+        } catch (error) {
+            toast.error("An error occurred");
         } finally {
             setIsSaving(false);
         }
@@ -246,6 +286,46 @@ export default function SettingsPage() {
                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shimmer" />
                                 </button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Product Intelligence Section */}
+                <div className="mb-6 rounded-3xl border border-border bg-card p-8 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/5 group">
+                    <h3 className="mb-8 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground group-hover:text-blue-500 transition-colors">Product Intelligence</h3>
+                    
+                    <div className="space-y-8">
+                        <div>
+                            <label className="mb-3 block text-[10px] font-black uppercase tracking-widest text-muted-foreground mr-auto">What does your project/product do?</label>
+                            <textarea
+                                value={productDescription}
+                                onChange={(e) => setProductDescription(e.target.value)}
+                                placeholder="e.g. We provide an AI-powered lead generation platform that automates LinkedIn outreach..."
+                                className="w-full h-32 rounded-2xl border border-input bg-background px-5 py-4 text-sm text-foreground outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/5 transition-all font-medium"
+                            />
+                        </div>
+                        
+                        <div>
+                            <label className="mb-3 block text-[10px] font-black uppercase tracking-widest text-muted-foreground mr-auto">What is your unique value proposition?</label>
+                            <textarea
+                                value={valueProposition}
+                                onChange={(e) => setValueProposition(e.target.value)}
+                                placeholder="e.g. We help SDRs save 20 hours a week by automating the first touch and lead scoring..."
+                                className="w-full h-24 rounded-2xl border border-input bg-background px-5 py-4 text-sm text-foreground outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/5 transition-all font-medium"
+                            />
+                        </div>
+
+                        <div className="flex justify-end pt-4">
+                            <button
+                                onClick={handleSaveProductInfo}
+                                disabled={isSaving || !orgId}
+                                className="group relative overflow-hidden rounded-2xl bg-secondary border border-border px-10 py-4 text-xs font-black uppercase tracking-[0.2em] text-foreground transition-all hover:bg-muted hover:scale-[1.02] active:scale-95 shadow-xl disabled:opacity-50"
+                            >
+                                <span className="relative z-10 flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                                    Update AI Playbook Engine
+                                </span>
+                            </button>
                         </div>
                     </div>
                 </div>
