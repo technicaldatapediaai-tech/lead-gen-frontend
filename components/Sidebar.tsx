@@ -18,7 +18,8 @@ const navItems = [
   { label: "Scoring", href: "/dashboard/scoring", icon: SparkIcon },
   { label: "Enrichment", href: "/dashboard/enrichment", icon: WandIcon },
   { label: "Campaigns", href: "/dashboard/campaigns", icon: PlayIcon },
-  { label: "CRM", href: "/dashboard/crm", icon: PlugIcon },
+  { label: "CRM", href: "/dashboard/crm", icon: CRMIcon },
+  { label: "AI Call Bot", href: "/dashboard/call-bot", icon: BotIcon },
 ];
 
 interface Organization {
@@ -593,6 +594,33 @@ function ChevronUpIcon({ className }: { className?: string }) {
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
         <path
           d="M18 15l-6-6-6 6"
+          stroke="currentColor"
+          strokeWidth="1.7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </IconWrap>
+  );
+}
+
+function CRMIcon(props: any) {
+  return <PlugIcon {...props} />;
+}
+
+function BotIcon({ className }: { className?: string }) {
+  return (
+    <IconWrap className={className}>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <path
+          d="M12 8V4m0 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm-8 4h2m12 0h2m-2-4l1-1m-13 1l-1-1"
+          stroke="currentColor"
+          strokeWidth="1.7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M7 16l-2 4h14l-2-4"
           stroke="currentColor"
           strokeWidth="1.7"
           strokeLinecap="round"
