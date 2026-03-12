@@ -33,17 +33,31 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
-                const silenceStrings = ['platform-telemetry', 'li/apfcDf', 'MutationObserver', 'visitor.publishDestinations', 'WebGL context', 'WebGL contexts', 'preloaded using link preload'];
+                const silenceStrings = [
+                  'platform-telemetry', 
+                  'li/apfcDf', 
+                  'MutationObserver', 
+                  'visitor.publishDestinations', 
+                  'WebGL context', 
+                  'WebGL contexts', 
+                  'preloaded using link preload',
+                  'link rel=preload',
+                  'ERR_BLOCKED_BY_CLIENT',
+                  'Failed to load resource',
+                  'parameter 1 is not of type \'Node\'',
+                  'unload is not allowed',
+                  'Permissions policy violation',
+                  'Self-XSS',
+                  'attackers to impersonate you',
+                  'Do not enter or paste code'
+                ];
                 
                 function shouldSilence(args) {
                   try {
-                    const str = args.map(a => {
-                      if (typeof a === 'string') return a;
-                      if (a && a.message) return a.message;
-                      if (a && a.stack) return a.stack;
-                      return String(a);
-                    }).join(' ');
-                    return silenceStrings.some(s => str.includes(s));
+                    return args.some(arg => {
+                      const str = String(arg).toLowerCase();
+                      return silenceStrings.some(s => str.includes(s.toLowerCase()));
+                    });
                   } catch (e) { return false; }
                 }
 
