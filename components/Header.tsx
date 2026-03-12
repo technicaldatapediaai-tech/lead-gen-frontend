@@ -30,11 +30,11 @@ export default function Header() {
 
                 <Link href="/settings">
                     <div className="flex items-center gap-3 cursor-pointer hover:bg-muted p-1 pr-2 rounded-full transition-all">
-                        <div className="h-8 w-8 rounded-full bg-gradient-to-br from-pink-500 to-rose-400 ring-2 ring-background overflow-hidden flex-shrink-0">
+                        <div className="h-8 w-8 rounded-full bg-blue-500/10 ring-2 ring-blue-500/20 overflow-hidden flex-shrink-0">
                             <img
                                 src={user?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.id || 'User'}`}
                                 alt="Avatar"
-                                className="h-full w-full rounded-full object-cover"
+                                className="h-full w-full rounded-full object-cover bg-white"
                             />
                         </div>
                         <div className="hidden md:flex flex-col items-start leading-none">

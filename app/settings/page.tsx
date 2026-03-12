@@ -39,7 +39,7 @@ export default function SettingsPage() {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
-    const [avatarUrl, setAvatarUrl] = useState(avatarOptions[0]);
+    const [avatarUrl, setAvatarUrl] = useState("");
     const [showAvatarPicker, setShowAvatarPicker] = useState(false);
 
     // Settings state
@@ -54,23 +54,21 @@ export default function SettingsPage() {
     const [valueProposition, setValueProposition] = useState("");
 
     useEffect(() => {
+        if (user) {
+            const fullName = user.full_name || "";
+            const names = fullName.split(" ");
+            setFirstName(names[0] || "");
+            setLastName(names.slice(1).join(" ") || "");
+            setEmail(user.email || "");
+            const defaultAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id || 'User'}`;
+            setAvatarUrl(user.avatar_url || defaultAvatar);
+        }
         fetchUserData();
-    }, []);
+    }, [user]);
 
     const fetchUserData = async () => {
         setIsLoading(true);
         try {
-            // Fetch user profile
-            const userRes = await api.get<any>("/api/users/me");
-            if (userRes.data) {
-                const fullName = userRes.data.full_name || "";
-                const names = fullName.split(" ");
-                setFirstName(names[0] || "");
-                setLastName(names.slice(1).join(" ") || "");
-                setEmail(userRes.data.email || "");
-                setAvatarUrl(userRes.data.avatar_url || avatarOptions[0]);
-            }
-
             // Fetch user settings
             const settingsRes = await api.get<UserSettings>("/api/users/me/settings");
             if (settingsRes.data) {
