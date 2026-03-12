@@ -28,6 +28,59 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                const silenceStrings = ['platform-telemetry', 'li/apfcDf', 'MutationObserver', 'visitor.publishDestinations'];
+                
+                function shouldSilence(args) {
+                  try {
+                    const str = args.map(a => {
+                      if (typeof a === 'string') return a;
+                      if (a && a.message) return a.message;
+                      if (a && a.stack) return a.stack;
+                      return String(a);
+                    }).join(' ');
+                    return silenceStrings.some(s => str.includes(s));
+                  } catch (e) { return false; }
+                }
+
+                // Intercept console.error
+                const origError = console.error;
+                console.error = function(...args) {
+                  if (shouldSilence(args)) return;
+                  origError.apply(console, args);
+                };
+                
+                // Intercept console.warn
+                const origWarn = console.warn;
+                console.warn = function(...args) {
+                  if (shouldSilence(args)) return;
+                  origWarn.apply(console, args);
+                };
+
+                // Catch uncaught exceptions
+                window.addEventListener('error', function(e) {
+                  if (shouldSilence([e.message, e.filename, e.error])) {
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                  }
+                }, true);
+
+                // Catch uncaught promise rejections
+                window.addEventListener('unhandledrejection', function(e) {
+                  if (shouldSilence([e.reason])) {
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                  }
+                }, true);
+              })();
+            `,
+          }}
+        />
+      </head>
       <body
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
