@@ -65,8 +65,8 @@ export default function BulkEmailPage() {
   const handleManualImport = () => {
     const lines = manualInput.split('\n').map(l => l.trim()).filter(l => l.length > 0);
     const newLeads: Lead[] = lines.map(line => {
-      // Basic comma or space separated parsing: email, name, company
-      const parts = line.split(/[,\s]+/).map(p => p.trim());
+      // Split by comma only: email, name, company
+      const parts = line.split(',').map(p => p.trim());
       return {
         email: parts[0],
         first_name: parts[1] || "",
