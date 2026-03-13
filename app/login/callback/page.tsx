@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
-export default function GoogleCallbackPage() {
+function CallbackHandler() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -24,18 +24,33 @@ export default function GoogleCallbackPage() {
             router.push("/dashboard");
         } else {
             const error = searchParams.get("error");
-            toast.error(error || "Login failed. Please try again.");
-            router.push("/login");
+            if (error) {
+                toast.error(error || "Login failed. Please try again.");
+                router.push("/login");
+            }
         }
     }, [router, searchParams]);
 
     return (
+        <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-10 w-10 animate-spin text-blue-600" />
+            <h1 className="text-xl font-semibold">Completing login...</h1>
+            <p className="text-muted-foreground">You will be redirected shortly.</p>
+        </div>
+    );
+}
+
+export default function GoogleCallbackPage() {
+    return (
         <div className="flex min-h-screen items-center justify-center bg-background">
-            <div className="flex flex-col items-center gap-4">
-                <Loader2 className="h-10 w-10 animate-spin text-blue-600" />
-                <h1 className="text-xl font-semibold">Completing login...</h1>
-                <p className="text-muted-foreground">You will be redirected shortly.</p>
-            </div>
+            <Suspense fallback={
+                <div className="flex flex-col items-center gap-4">
+                    <Loader2 className="h-10 w-10 animate-spin text-blue-600" />
+                    <h1 className="text-xl font-semibold">Loading...</h1>
+                </div>
+            }>
+                <CallbackHandler />
+            </Suspense>
         </div>
     );
 }
