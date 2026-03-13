@@ -48,6 +48,10 @@ export default function SettingsPage() {
     const [instantlyKey, setInstantlyKey] = useState("");
     const [instantlyConnected, setInstantlyConnected] = useState(false);
     
+    // OTP states for email verification
+    const [verifyingOTP, setVerifyingOTP] = useState(false);
+    const [otp, setOtp] = useState("");
+    
     // Organization / Product Info
     const [orgId, setOrgId] = useState("");
     const [productDescription, setProductDescription] = useState("");
@@ -187,11 +191,39 @@ export default function SettingsPage() {
             if (res.error) {
                 toast.error(res.error.detail || "Failed to update email");
             } else {
-                toast.success("Primary email updated successfully!");
+                toast.success("Primary email updated! Verification code sent.");
+                setVerifyingOTP(true);
                 await refreshUser();
             }
         } catch (error) {
             toast.error("An error occurred");
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleVerifyEmailOTP = async () => {
+        if (otp.length < 6) {
+            toast.error("Please enter the 6-digit code");
+            return;
+        }
+
+        setIsSaving(true);
+        try {
+            const res = await api.post("/api/auth/verify-email", {
+                token: otp
+            });
+
+            if (res.error) {
+                toast.error(res.error.detail || "Invalid verification code");
+            } else {
+                toast.success("Email verified successfully!");
+                setVerifyingOTP(false);
+                setOtp("");
+                await refreshUser();
+            }
+        } catch (error) {
+            toast.error("Verification failed");
         } finally {
             setIsSaving(false);
         }
@@ -417,12 +449,26 @@ export default function SettingsPage() {
 
                     <div className="flex flex-col md:flex-row items-end gap-6 max-w-3xl">
                         <div className="flex-1 w-full">
-                            <label className="mb-3 block text-[10px] font-black uppercase tracking-widest text-muted-foreground mr-auto">Primary contact email</label>
+                            <div className="flex items-center justify-between mb-3">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Primary contact email</label>
+                                {user?.is_verified ? (
+                                    <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-500 uppercase tracking-widest">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                                        Verified
+                                    </span>
+                                ) : (
+                                    <span className="flex items-center gap-1 text-[10px] font-bold text-amber-500 uppercase tracking-widest">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                                        Pending Verification
+                                    </span>
+                                )}
+                            </div>
                             <input
                                 type="text"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="w-full rounded-2xl border border-input bg-background px-5 py-4 text-sm text-foreground outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/5 transition-all font-medium"
+                                placeholder="name@company.com"
                             />
                         </div>
                         <button 
@@ -433,6 +479,47 @@ export default function SettingsPage() {
                             {isSaving ? "Updating..." : "Update Email"}
                         </button>
                     </div>
+
+                    {/* OTP Verification Section (visible if pending) */}
+                    {(!user?.is_verified || verifyingOTP) && (
+                        <div className="mt-8 p-6 rounded-2xl bg-amber-500/5 border border-amber-500/20">
+                            <h4 className="text-sm font-bold text-amber-500 uppercase tracking-widest mb-2 flex items-center gap-2">
+                                <span className="relative flex h-2 w-2">
+                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                                  <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                                </span>
+                                Verify your email
+                            </h4>
+                            <p className="text-xs text-muted-foreground mb-4">Enter the 6-digit code we sent to your inbox to complete verification.</p>
+                            
+                            <div className="flex items-center gap-4">
+                                <input
+                                    type="text"
+                                    maxLength={6}
+                                    value={otp}
+                                    onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, ""))}
+                                    placeholder="000000"
+                                    className="w-40 rounded-xl border border-input bg-background px-4 py-3 text-center text-lg font-bold tracking-widest outline-none focus:border-amber-500/50 transition-all"
+                                />
+                                <button 
+                                    onClick={handleVerifyEmailOTP}
+                                    disabled={isSaving || otp.length < 6}
+                                    className="rounded-xl bg-amber-500 px-6 py-3 text-[10px] font-black uppercase tracking-widest text-white hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/10 disabled:opacity-50"
+                                >
+                                    {isSaving ? "Verifying..." : "Verify"}
+                                </button>
+                                <button 
+                                    onClick={async () => {
+                                        await api.post("/api/auth/resend-verification", { email: user?.email });
+                                        toast.success("New code sent!");
+                                    }}
+                                    className="text-[10px] font-bold text-amber-500 uppercase tracking-widest hover:underline"
+                                >
+                                    Resend Code
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Application Language */}
