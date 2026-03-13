@@ -39,12 +39,22 @@ function addRefreshSubscriber(cb: (token: string) => void) {
 }
 
 /**
+ * Ensures an endpoint has a trailing slash before query parameters
+ */
+function normalizeEndpoint(endpoint: string): string {
+    const [path, query] = endpoint.split('?');
+    const pathWithSlash = path.endsWith('/') ? path : `${path}/`;
+    return query ? `${pathWithSlash}?${query}` : pathWithSlash;
+}
+
+/**
  * Make an authenticated API request
  */
 export async function apiRequest<T>(
     endpoint: string,
     options: RequestInit = {}
 ): Promise<ApiResponse<T>> {
+    const normalizedEndpoint = normalizeEndpoint(endpoint);
     const token = getAccessToken();
 
     const headers: HeadersInit = {
@@ -57,7 +67,7 @@ export async function apiRequest<T>(
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        const response = await fetch(`${API_BASE_URL}${normalizedEndpoint}`, {
             ...options,
             headers,
         });
@@ -182,8 +192,9 @@ export const api = {
      * Special method for OAuth2 form data (login endpoint)
      */
     postForm: async <T>(endpoint: string, formData: Record<string, string>): Promise<ApiResponse<T>> => {
+        const normalizedEndpoint = normalizeEndpoint(endpoint);
         try {
-            const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+            const response = await fetch(`${API_BASE_URL}${normalizedEndpoint}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
