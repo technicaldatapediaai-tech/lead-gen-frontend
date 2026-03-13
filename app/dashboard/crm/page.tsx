@@ -205,7 +205,7 @@ export default function CRMPage() {
     useEffect(() => {
         async function fetchCampaigns() {
             try {
-                const res = await api.get<{ items: Campaign[] }>("/api/campaigns");
+                const res = await api.get<{ items: Campaign[] }>("/api/campaigns/");
                 if (res.data?.items) {
                     const sorted = res.data.items.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
                     setLatestCampaigns(sorted.slice(0, 3));
@@ -235,7 +235,7 @@ export default function CRMPage() {
         }
 
         try {
-            const res = await api.post("/api/leads", newLead);
+            const res = await api.post("/api/leads/", newLead);
             if (res.error) {
                 toast.error(res.error.detail || "Failed to create lead");
             } else {

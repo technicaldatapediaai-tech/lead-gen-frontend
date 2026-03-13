@@ -84,7 +84,7 @@ export default function CampaignsPage() {
             } else {
                 toast.success(`Campaign ${action} successful`);
                 // Refresh list
-                const { data } = await api.get<CampaignsResponse>("/api/campaigns");
+                const { data } = await api.get<CampaignsResponse>("/api/campaigns/");
                 if (data) setCampaigns(data.items || []);
             }
         } catch (error) {
@@ -97,7 +97,7 @@ export default function CampaignsPage() {
             setIsLoading(true);
             try {
                 const [campaignsRes, statsRes] = await Promise.all([
-                    api.get<CampaignsResponse>("/api/campaigns"),
+                    api.get<CampaignsResponse>("/api/campaigns/"),
                     api.get<any>("/api/campaigns/overview-stats")
                 ]);
 

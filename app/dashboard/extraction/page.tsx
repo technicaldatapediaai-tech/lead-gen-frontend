@@ -49,7 +49,7 @@ export default function LeadExtractionPage() {
     setIsLoading(true);
 
     // Fetch leads
-    const leadsRes = await api.get<LeadsResponse>(`/api/leads?page=${page}&limit=10`);
+    const leadsRes = await api.get<LeadsResponse>(`/api/leads/?page=${page}&limit=20`);
     if (!leadsRes.error && leadsRes.data) {
       setLeads(leadsRes.data.items || []); // Fixed: backend returns 'items'
       setTotal(leadsRes.data.total || 0);

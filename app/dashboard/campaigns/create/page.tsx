@@ -38,7 +38,7 @@ function CampaignCreationContent() {
         setIsLaunching(true);
         try {
             // 1. Create Campaign
-            const campaignRes = await api.post<any>("/api/campaigns", {
+            const campaignRes = await api.post<any>("/api/campaigns/", {
                 name: campaignName,
                 type: 'social',
                 status: 'active',
@@ -59,7 +59,7 @@ function CampaignCreationContent() {
             // 2. Create Leads and Outreach Messages
             let successCount = 0;
             for (const url of leadUrls) {
-                const leadRes = await api.post<any>("/api/leads", {
+                const leadRes = await api.post<any>("/api/leads/", {
                     name: "Prospective Lead",
                     linkedin_url: url,
                     status: 'new',
@@ -67,7 +67,7 @@ function CampaignCreationContent() {
                 });
 
                 if (leadRes.data) {
-                    await api.post("/api/outreach", {
+                    await api.post("/api/outreach/", {
                         lead_id: leadRes.data.id,
                         campaign_id: campaignId,
                         message: messageContent,

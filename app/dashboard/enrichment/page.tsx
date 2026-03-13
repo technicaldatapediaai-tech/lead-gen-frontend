@@ -43,7 +43,7 @@ export default function EnrichmentPage() {
         setIsLoading(true);
         try {
             const [leadsRes, statsRes] = await Promise.all([
-                api.get<{ items: Lead[] }>("/api/leads?limit=50"),
+                api.get<{ items: Lead[] }>("/api/leads/?limit=50"),
                 api.get<LeadStats>("/api/leads/stats")
             ]);
 

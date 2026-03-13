@@ -118,10 +118,23 @@ export async function apiRequest<T>(
         }
 
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({ detail: 'Request failed' }));
+            let errorDetail = `HTTP Error ${response.status}`;
+            try {
+                const errorData = await response.json();
+                if (errorData.detail) {
+                    if (Array.isArray(errorData.detail)) {
+                        errorDetail = errorData.detail.map((err: any) => `${err.loc.join('.')}: ${err.msg}`).join(', ');
+                    } else {
+                        errorDetail = errorData.detail;
+                    }
+                }
+            } catch (jsonError) {
+                // Not JSON
+            }
+            
             return {
                 error: {
-                    detail: errorData.detail || `HTTP Error ${response.status}`,
+                    detail: errorDetail,
                     status: response.status,
                 },
             };
@@ -135,6 +148,7 @@ export async function apiRequest<T>(
         const data = await response.json();
         return { data };
     } catch (error) {
+        console.error("API Request Error:", error);
         return {
             error: {
                 detail: error instanceof Error ? error.message : 'Network error',

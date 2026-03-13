@@ -138,7 +138,7 @@ export default function AddLeads({ onClose, onSuccess }: { onClose: () => void; 
                     }
                 };
 
-                const { data, error } = await api.post<any>("/api/campaigns", payload);
+                const { data, error } = await api.post<any>("/api/campaigns/", payload);
 
                 if (error || !data) {
                     toast.error(`Failed to create list: ${error?.detail || "Unknown error"}`);

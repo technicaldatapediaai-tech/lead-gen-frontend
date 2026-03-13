@@ -41,7 +41,7 @@ function CampaignCreationContent() {
         setIsLaunching(true);
         try {
             // 1. Create Campaign
-            const campaignRes = await api.post<any>("/api/campaigns", {
+            const campaignRes = await api.post<any>("/api/campaigns/", {
                 name: campaignName,
                 type: templateParam === 'invitation' ? 'social' : 'social', // both are social for now
                 status: 'active',
@@ -63,7 +63,7 @@ function CampaignCreationContent() {
             let successCount = 0;
             for (const url of leadUrls) {
                 // Create Lead
-                const leadRes = await api.post<any>("/api/leads", {
+                const leadRes = await api.post<any>("/api/leads/", {
                     name: "Prospective Lead", // Placeholder, extension will update it
                     linkedin_url: url,
                     status: 'new',
@@ -72,7 +72,7 @@ function CampaignCreationContent() {
 
                 if (leadRes.data) {
                     // Create Outreach Message (Queued for Extension)
-                    await api.post("/api/outreach", {
+                    await api.post("/api/outreach/", {
                         lead_id: leadRes.data.id,
                         campaign_id: campaignId,
                         message: messageContent,
