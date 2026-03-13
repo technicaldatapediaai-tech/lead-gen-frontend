@@ -150,6 +150,9 @@ export default function DashboardPage() {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
+              id="dashboard-search"
+              name="dashboard-search"
+              aria-label="Search leads"
               placeholder="Search leads..."
               className="h-10 rounded-lg border border-input bg-card/50 pl-9 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-blue-500 focus:outline-none transition-colors"
             />

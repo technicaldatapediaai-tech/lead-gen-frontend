@@ -66,6 +66,22 @@ export default function BatchLinkedInMessaging({
 
     const [isSending, setIsSending] = useState(false);
     const [progress, setProgress] = useState<SendingProgress[]>([]);
+    const [connectionStatus, setConnectionStatus] = useState<any>(null);
+    const [isCheckingConnection, setIsCheckingConnection] = useState(true);
+
+    useEffect(() => {
+        async function checkStatus() {
+            try {
+                const { data } = await api.get<any>("/api/linkedin/status");
+                if (data) setConnectionStatus(data);
+            } catch (err) {
+                console.error("Failed to check LinkedIn status", err);
+            } finally {
+                setIsCheckingConnection(false);
+            }
+        }
+        checkStatus();
+    }, []);
 
     // Derived selected template
     const selectedTemplate = templates[selectedIndex] || templates[0];
@@ -154,8 +170,8 @@ export default function BatchLinkedInMessaging({
             const res = await api.post<BatchResults>("/api/linkedin/send-batch", {
                 lead_ids: leadIds,
                 message_template: messageTemplate.trim(),
-                message_type: messageType,
-                send_method: sendMethod
+                message_type: messageType || "inmail",
+                send_method: sendMethod || "extension"
             });
 
             if (!res.error && res.data) {
@@ -202,13 +218,28 @@ export default function BatchLinkedInMessaging({
                         onComplete(res.data!);
                     }, 2000);
                 }
-            } else {
-                toast.error("Failed to send batch messages");
+            } else if (res.error) {
+                let detail = res.error.detail || "Failed to send batch messages";
+                if (Array.isArray(detail)) {
+                    detail = detail[0]?.msg || JSON.stringify(detail);
+                } else if (typeof detail === 'object') {
+                    detail = (detail as any).message || JSON.stringify(detail);
+                }
+                toast.error(detail);
                 setIsSending(false);
             }
         } catch (error: any) {
             console.error("Error sending batch:", error);
-            toast.error(error?.message || "Failed to send messages");
+            let detail = error?.error?.detail || error?.message || "Failed to send messages";
+            
+            // Handle Pydantic validation errors (often an array)
+            if (Array.isArray(detail)) {
+                detail = detail[0]?.msg || JSON.stringify(detail);
+            } else if (typeof detail === 'object') {
+                detail = detail.message || JSON.stringify(detail);
+            }
+            
+            toast.error(detail);
             setIsSending(false);
         }
     };
@@ -289,6 +320,17 @@ export default function BatchLinkedInMessaging({
                 ) : page === 1 ? (
                     // PAGE 1: SETUP
                     <div className="p-6 space-y-8 animate-in fade-in zoom-in-95 duration-200">
+                        {/* Connection Status Warning */}
+                        {sendMethod === 'api' && connectionStatus && !connectionStatus.personal_connected && !connectionStatus.org_connected && (
+                            <div className="p-4 rounded-xl bg-orange-500/10 border border-orange-500/20 flex gap-3 text-orange-600 dark:text-orange-400">
+                                <AlertCircle className="h-5 w-5 shrink-0" />
+                                <div className="text-sm">
+                                    <p className="font-bold mb-0.5">No Account Connected</p>
+                                    <p>You haven't connected a LinkedIn account via OAuth. Please use the <strong>Extension</strong> method or connect in settings.</p>
+                                </div>
+                            </div>
+                        )}
+
                         {/* Sending Method */}
                         <div className="space-y-3">
                             <h4 className="font-semibold text-foreground">Sending Method</h4>
@@ -437,10 +479,12 @@ export default function BatchLinkedInMessaging({
                                                         <button
                                                             className="flex-1 py-2 rounded-lg bg-[#0077b5]/10 text-[#0077b5] font-semibold hover:bg-[#0077b5]/20 transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                                                             onClick={handleSend}
-                                                            disabled={!template.content.trim() || leadsWithLinkedIn.length === 0 || isSending}
+                                                            disabled={!template.content.trim() || leadsWithLinkedIn.length === 0 || isSending || (sendMethod === 'api' && connectionStatus && !connectionStatus.personal_connected && !connectionStatus.org_connected)}
                                                         >
                                                             <CheckCircle2 size={18} />
-                                                            Use This Template
+                                                            {sendMethod === 'api' && connectionStatus && !connectionStatus.personal_connected && !connectionStatus.org_connected 
+                                                                ? "Connect Account First" 
+                                                                : "Use This Template"}
                                                         </button>
                                                     </div>
 
@@ -510,11 +554,17 @@ export default function BatchLinkedInMessaging({
                             </button>
                             <button
                                 onClick={handleSend}
-                                disabled={!messageTemplate.trim() || leadsWithLinkedIn.length === 0}
-                                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0077b5] text-white font-semibold hover:bg-[#006396] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                                disabled={isCheckingConnection || !messageTemplate.trim() || leadsWithLinkedIn.length === 0 || (sendMethod === 'api' && connectionStatus && !connectionStatus.personal_connected && !connectionStatus.org_connected)}
+                                className={`flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0077b5] text-white font-semibold hover:bg-[#006396] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer`}
                             >
-                                <Send size={18} />
-                                Send
+                                {isCheckingConnection ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    <Send size={18} />
+                                )}
+                                {isCheckingConnection ? "Checking..." : (sendMethod === 'api' && connectionStatus && !connectionStatus.personal_connected && !connectionStatus.org_connected 
+                                    ? "Connect Account First" 
+                                    : "Send")}
                             </button>
                         </div>
                     )}

@@ -138,27 +138,30 @@ export default function EmailSettingsPage() {
             <Header />
 
             {/* Scrollable Content */}
-            <div className="flex-1 overflow-y-auto bg-background px-8 py-8 transition-colors duration-300">
-                <h2 className="mb-8 text-2xl font-bold text-foreground">Manage my email accounts</h2>
+            <div className="flex-1 overflow-y-auto bg-slate-50/50 px-12 py-10">
+                <div className="max-w-[1200px] mx-auto">
+                    <h2 className="mb-10 text-[32px] font-bold text-[#0f172a] tracking-tight">Manage my email accounts</h2>
 
                 {/* Accounts Card */}
-                <div className="mb-6 rounded-2xl border border-border bg-card p-8 transition-colors duration-300">
-                    <div className="flex items-center gap-4 mb-8">
-                        <div className="grid h-10 w-10 place-items-center rounded-xl bg-secondary border border-border text-foreground">
-                            <AtSign size={20} />
-                        </div>
-                        <div>
-                            <h3 className="text-base font-bold text-foreground">Accounts</h3>
-                            <p className="text-sm text-muted-foreground">Add, edit, or delete your email accounts.</p>
+                <div className="mb-8 rounded-[32px] border border-slate-100 bg-white p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                    <div className="flex items-center justify-between mb-10">
+                        <div className="flex items-center gap-5">
+                            <div className="grid h-12 w-12 place-items-center rounded-2xl bg-indigo-50 text-indigo-600 shadow-sm">
+                                <AtSign size={24} />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold text-[#0f172a]">Active Accounts</h3>
+                                <p className="text-[15px] text-slate-500 font-medium">Add and manage your outreach identities.</p>
+                            </div>
                         </div>
                     </div>
 
                     {/* Table Header */}
-                    <div className="mb-2 grid grid-cols-12 px-4 text-xs font-bold uppercase tracking-wider text-muted-foreground font-mono">
-                        <div className="col-span-3">Provider / Identity</div>
-                        <div className="col-span-4">Email Address</div>
-                        <div className="col-span-3">Daily Limit / Activity</div>
-                        <div className="col-span-2 text-right px-2">Actions</div>
+                    <div className="mb-4 grid grid-cols-12 px-6 text-[11px] font-bold uppercase tracking-[0.1em] text-slate-400">
+                        <div className="col-span-3">Provider</div>
+                        <div className="col-span-4">identity</div>
+                        <div className="col-span-3">Activity</div>
+                        <div className="col-span-2 text-right">Actions</div>
                     </div>
 
                     {/* Email List */}
@@ -175,28 +178,28 @@ export default function EmailSettingsPage() {
                             </div>
                         ) : (
                             emails.map((item) => (
-                                <div key={item.id} className="grid grid-cols-12 items-center rounded-xl border border-border bg-background/50 backdrop-blur-sm px-4 py-4 transition-all hover:border-blue-500/30 hover:bg-background/80 group">
-                                    <div className="col-span-3 flex items-center gap-3">
-                                        <div className={`grid h-8 w-8 place-items-center rounded-lg ${item.provider === 'google' ? 'bg-red-500/10 text-red-500' :
-                                            item.provider === 'microsoft' ? 'bg-blue-500/10 text-blue-500' :
-                                                'bg-indigo-500/10 text-indigo-500'
+                                <div key={item.id} className="grid grid-cols-12 items-center rounded-2xl border border-slate-50 bg-slate-50/30 px-6 py-5 transition-all hover:border-indigo-500/20 hover:bg-white hover:shadow-md group">
+                                    <div className="col-span-3 flex items-center gap-4">
+                                        <div className={`grid h-10 w-10 place-items-center rounded-xl ${item.provider === 'google' ? 'bg-red-50 text-red-500' :
+                                            item.provider === 'microsoft' ? 'bg-blue-50 text-blue-500' :
+                                                'bg-indigo-50 text-indigo-600'
                                             }`}>
-                                            <Mail size={16} />
+                                            <Mail size={18} />
                                         </div>
-                                        <span className="text-sm font-semibold text-foreground capitalize">{item.provider}</span>
+                                        <span className="text-sm font-bold text-[#0f172a] capitalize">{item.provider}</span>
                                         {item.is_org_shared && (
                                             <span className="text-[10px] bg-amber-500/10 text-amber-600 px-1.5 py-0.5 rounded font-bold uppercase tracking-tight">Org</span>
                                         )}
                                     </div>
-                                    <div className="col-span-4 text-sm font-medium text-foreground/80">
+                                    <div className="col-span-4 text-[15px] font-bold text-slate-700">
                                         {item.email}
-                                        <div className="text-[10px] text-muted-foreground mt-0.5">{item.sender_name || "Not set"}</div>
+                                        <div className="text-xs text-slate-400 font-medium mt-0.5">{item.sender_name || "No sender name"}</div>
                                     </div>
                                     <div className="col-span-3">
-                                        <div className="flex items-center gap-2">
-                                            <div className="flex-1 h-1.5 rounded-full bg-secondary overflow-hidden max-w-[100px]">
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden max-w-[120px]">
                                                 <div 
-                                                    className={`h-full transition-all duration-500 ${item.sent_count_today >= item.daily_limit ? 'bg-rose-500' : 'bg-blue-500'}`}
+                                                    className={`h-full transition-all duration-500 ${item.sent_count_today >= item.daily_limit ? 'bg-rose-500' : 'bg-[#2563eb]'}`}
                                                     style={{ width: `${Math.min((item.sent_count_today / item.daily_limit) * 100, 100)}%` }}
                                                 />
                                             </div>
@@ -205,16 +208,16 @@ export default function EmailSettingsPage() {
                                             </span>
                                         </div>
                                     </div>
-                                    <div className="col-span-2 flex justify-end gap-2">
+                                    <div className="col-span-2 flex justify-end gap-3">
                                         <button
                                             onClick={() => handleDeleteAccount(item.id)}
                                             disabled={isDeleting === item.id}
-                                            className="p-2 text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-all"
+                                            className="p-3 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all"
                                         >
-                                            {isDeleting === item.id ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
+                                            {isDeleting === item.id ? <Loader2 size={20} className="animate-spin" /> : <Trash2 size={20} />}
                                         </button>
-                                        <button className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-all">
-                                            <MoreHorizontal size={18} />
+                                        <button className="p-3 text-slate-400 hover:text-[#0f172a] hover:bg-slate-50 rounded-xl transition-all">
+                                            <MoreHorizontal size={20} />
                                         </button>
                                     </div>
                                 </div>
@@ -232,54 +235,56 @@ export default function EmailSettingsPage() {
                                     <span>Add an account</span>
                                 </button>
                             </DialogTrigger>
-                            <DialogContent className="max-w-2xl bg-card border-border">
-                                <DialogHeader>
-                                    <DialogTitle className="text-2xl font-bold tracking-tight text-foreground">Connect an email account</DialogTitle>
-                                    <DialogDescription className="text-base text-muted-foreground mt-2">
-                                        Select your email provider to connect it for sending out outreach campaigns. We support one-click OAuth for Google and Microsoft.
-                                    </DialogDescription>
-                                </DialogHeader>
+                            <DialogContent className="max-w-2xl bg-white border-none rounded-[40px] p-0 overflow-hidden shadow-2xl">
+                                <div className="p-10">
+                                    <DialogHeader className="mb-8">
+                                        <DialogTitle className="text-3xl font-bold text-[#0f172a] text-center">Connect an email account</DialogTitle>
+                                        <DialogDescription className="text-center text-[15px] text-slate-500 font-medium mt-3 max-w-md mx-auto">
+                                            Choose your provider to scale your outreach safely.
+                                        </DialogDescription>
+                                    </DialogHeader>
 
-                                <div className="grid grid-cols-2 gap-4 mt-6">
-                                    <button
-                                        onClick={() => handleConnectGoogle(false)}
-                                        disabled={isConnectingGoogle}
-                                        className="flex flex-col items-center justify-center gap-4 p-8 rounded-2xl border-2 border-border bg-background hover:border-red-500 hover:bg-red-500/5 transition-all group text-center disabled:opacity-50"
-                                    >
-                                        <div className="h-14 w-14 rounded-full bg-red-500/10 text-red-500 grid place-items-center group-hover:scale-110 group-hover:bg-red-500/20 transition-all">
-                                            {isConnectingGoogle ? <Loader2 className="animate-spin" size={28} /> : <Mail size={28} />}
-                                        </div>
-                                        <div>
-                                            <span className="block font-bold text-foreground text-lg mb-1">Google</span>
-                                            <span className="text-sm text-muted-foreground">Gmail, Google Workspace</span>
-                                        </div>
-                                    </button>
+                                    <div className="grid grid-cols-2 gap-5">
+                                        <button
+                                            onClick={() => handleConnectGoogle(false)}
+                                            disabled={isConnectingGoogle}
+                                            className="flex flex-col items-center justify-center gap-5 p-10 rounded-[32px] border-2 border-slate-50 bg-slate-50/30 hover:border-red-500/20 hover:bg-red-500/5 transition-all group text-center disabled:opacity-50"
+                                        >
+                                            <div className="h-16 w-16 rounded-3xl bg-white shadow-sm grid place-items-center group-hover:scale-110 group-hover:shadow-md transition-all">
+                                                {isConnectingGoogle ? <Loader2 className="animate-spin text-red-500" size={32} /> : <div className="text-2xl font-bold text-red-500">G</div>}
+                                            </div>
+                                            <div>
+                                                <span className="block font-bold text-[#0f172a] text-xl mb-1">Google</span>
+                                                <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">Workspace</span>
+                                            </div>
+                                        </button>
 
-                                    <button
-                                        onClick={() => toast.info("Microsoft OAuth coming soon! Use Custom IMAP/SMTP for now.")}
-                                        className="flex flex-col items-center justify-center gap-4 p-8 rounded-2xl border-2 border-border bg-background hover:border-blue-500 hover:bg-blue-500/5 transition-all group text-center"
-                                    >
-                                        <div className="h-14 w-14 rounded-full bg-blue-500/10 text-blue-500 grid place-items-center group-hover:scale-110 group-hover:bg-blue-500/20 transition-all">
-                                            <Mail size={28} />
-                                        </div>
-                                        <div>
-                                            <span className="block font-bold text-foreground text-lg mb-1">Microsoft</span>
-                                            <span className="text-sm text-muted-foreground">Outlook, Office 365, Exchange</span>
-                                        </div>
-                                    </button>
+                                        <button
+                                            onClick={() => toast.info("Microsoft OAuth coming soon!")}
+                                            className="flex flex-col items-center justify-center gap-5 p-10 rounded-[32px] border-2 border-slate-50 bg-slate-50/30 hover:border-blue-500/20 hover:bg-blue-500/5 transition-all group text-center"
+                                        >
+                                            <div className="h-16 w-16 rounded-3xl bg-white shadow-sm grid place-items-center group-hover:scale-110 group-hover:shadow-md transition-all">
+                                                <div className="text-2xl font-bold text-blue-500">M</div>
+                                            </div>
+                                            <div>
+                                                <span className="block font-bold text-[#0f172a] text-xl mb-1">Microsoft</span>
+                                                <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">Office 365</span>
+                                            </div>
+                                        </button>
 
-                                    <button
-                                        onClick={() => (window as any).location.href = "/settings/email/connect"}
-                                        className="flex items-center justify-center gap-4 p-6 rounded-2xl border-2 border-border bg-background hover:border-indigo-500 hover:bg-indigo-500/5 transition-all group col-span-2 text-left"
-                                    >
-                                        <div className="h-12 w-12 rounded-full bg-indigo-500/10 text-indigo-500 grid place-items-center group-hover:scale-110 group-hover:bg-indigo-500/20 transition-all">
-                                            <Server size={24} />
-                                        </div>
-                                        <div className="flex-1">
-                                            <span className="block font-bold text-foreground text-lg">Any Other Provider (IMAP / SMTP)</span>
-                                            <span className="text-sm text-muted-foreground">Connect any email using IMAP and SMTP credentials manually.</span>
-                                        </div>
-                                    </button>
+                                        <button
+                                            onClick={() => (window as any).location.href = "/settings/email/connect"}
+                                            className="flex items-center gap-6 p-8 rounded-[32px] border-2 border-slate-50 bg-slate-50/30 hover:border-indigo-500/20 hover:bg-indigo-500/5 transition-all group col-span-2 text-left shadow-sm"
+                                        >
+                                            <div className="h-16 w-16 rounded-3xl bg-white shadow-sm grid place-items-center group-hover:scale-110 group-hover:shadow-md transition-all">
+                                                <Server size={32} className="text-[#6366f1]" />
+                                            </div>
+                                            <div className="flex-1">
+                                                <span className="block font-bold text-[#0f172a] text-xl mb-1">Custom SMTP / IMAP</span>
+                                                <span className="text-[15px] text-slate-500 font-medium font-medium">Connect any other provider manually.</span>
+                                            </div>
+                                        </button>
+                                    </div>
                                 </div>
                             </DialogContent>
                         </Dialog>
@@ -297,30 +302,30 @@ export default function EmailSettingsPage() {
                 </div>
 
                 {/* Signatures Card */}
-                <div className="rounded-2xl border border-border bg-card p-8 transition-colors duration-300">
-                    <div className="flex items-center gap-4 mb-8">
-                        <div className="grid h-10 w-10 place-items-center rounded-xl bg-secondary border border-border text-foreground">
-                            <PenTool size={18} />
+                <div className="rounded-[32px] border border-slate-100 bg-white p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-10">
+                    <div className="flex items-center gap-5 mb-10">
+                        <div className="grid h-12 w-12 place-items-center rounded-2xl bg-slate-50 text-slate-600 shadow-sm">
+                            <PenTool size={22} />
                         </div>
                         <div>
-                            <h3 className="text-base font-bold text-foreground">Signatures</h3>
-                            <p className="text-sm text-muted-foreground">Add your signature at the end of every email you send</p>
+                            <h3 className="text-lg font-bold text-[#0f172a]">Signatures</h3>
+                            <p className="text-[15px] text-slate-500 font-medium">Add your signature at the end of every email.</p>
                         </div>
                     </div>
 
                     <div className="grid gap-8 lg:grid-cols-3">
                         {/* Sidebar controls */}
                         <div className="lg:col-span-1">
-                            <label className="mb-2 block text-xs font-semibold text-muted-foreground">Default signature</label>
-                            <div className="relative mb-6">
-                                <select className="w-full appearance-none rounded-xl border border-input bg-background px-4 py-3 text-sm text-foreground outline-none focus:border-blue-500/50 transition-colors">
+                            <label className="mb-3 block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Default signature</label>
+                            <div className="relative mb-8">
+                                <select className="w-full appearance-none rounded-2xl border-2 border-slate-50 bg-slate-50/50 px-5 py-3.5 text-sm font-semibold text-slate-900 outline-none focus:border-indigo-500/30 transition-all cursor-pointer">
                                     <option>No signature</option>
                                     <option>My Business Sig</option>
                                 </select>
-                                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" size={16} />
+                                <ChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={18} />
                             </div>
 
-                            <div className="mb-2 block text-xs font-semibold text-muted-foreground font-mono uppercase tracking-widest opacity-60">Your signatures</div>
+                            <div className="mb-4 block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Your signatures</div>
                             <button className="flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-500 mt-2">
                                 <Plus size={16} />
                                 Add a signature
@@ -328,13 +333,14 @@ export default function EmailSettingsPage() {
                         </div>
 
                         {/* Preview Area */}
-                        <div className="rounded-xl border border-dashed border-border bg-muted/30 p-12 text-center lg:col-span-2 transition-colors">
-                            <h4 className="text-lg font-semibold text-foreground">Find your signatures here</h4>
-                            <p className="mt-2 text-sm text-muted-foreground">Select a signature to edit or preview it</p>
+                        <div className="rounded-[24px] border-2 border-dashed border-slate-100 bg-slate-50/30 p-16 text-center lg:col-span-2 transition-all">
+                            <h4 className="text-xl font-bold text-[#0f172a]">Find your signatures here</h4>
+                            <p className="mt-3 text-[15px] text-slate-500 font-medium">Select a signature from the list to edit or preview it in real-time.</p>
                         </div>
                     </div>
                 </div>
 
+                </div>
             </div>
         </div>
     );

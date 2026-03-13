@@ -18,8 +18,8 @@ export default function Footer({ variant = "default" }: { variant?: "default" | 
                 </div>
 
                 <div className={cn("flex gap-6 text-xs", isDark ? "text-gray-400" : "text-muted-foreground")}>
-                    <Link href="#" className="hover:text-foreground transition-colors">Privacy Policy</Link>
-                    <Link href="#" className="hover:text-foreground transition-colors">Terms of Service</Link>
+                    <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
+                    <Link href="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link>
                     <Link href="#" className="hover:text-foreground transition-colors">Contact</Link>
                 </div>
 

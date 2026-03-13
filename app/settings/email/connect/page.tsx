@@ -116,41 +116,42 @@ export default function ConnectEmailPage() {
 
     return (
         <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-            <div className="w-full max-w-[600px] bg-white rounded-[32px] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+            <div className="w-full max-w-[650px] bg-white rounded-[40px] shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden animate-in fade-in zoom-in duration-300">
                 {/* Header Actions */}
-                <div className="flex items-center justify-between p-6">
+                <div className="relative flex items-center justify-between px-8 py-6">
                     <button 
                         onClick={() => router.back()}
-                        className="flex items-center gap-1 text-slate-900 font-medium hover:opacity-70 transition-opacity"
+                        className="flex items-center gap-1 text-slate-900 font-semibold hover:opacity-70 transition-opacity"
                     >
                         <ChevronLeft size={20} />
                         <span>Back</span>
                     </button>
+                    
                     <button 
                         onClick={() => router.push("/settings/email")}
-                        className="p-2 bg-slate-100 rounded-full text-slate-400 hover:text-slate-600 transition-colors"
+                        className="absolute right-8 top-1/2 -translate-y-1/2 p-2.5 bg-slate-50 rounded-2xl text-slate-400 hover:text-slate-600 transition-colors"
                     >
                         <X size={20} />
                     </button>
                 </div>
 
-                <div className="px-10 pb-10">
+                <div className="px-12 pb-12">
                     {/* Centered Title & Icon */}
-                    <div className="flex flex-col items-center mb-8">
-                        <h1 className="text-3xl font-bold text-slate-900 mb-4">Set up mail account</h1>
-                        <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 bg-[#6366f1] rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-200">
-                                <Mail size={24} />
+                    <div className="flex flex-col items-center mb-10 text-center">
+                        <h1 className="text-[32px] font-bold text-[#0f172a] mb-6">Set up mail account</h1>
+                        <div className="flex items-center gap-4">
+                            <div className="w-14 h-14 bg-[#7c3aed] rounded-2xl flex items-center justify-center text-white shadow-xl shadow-purple-100">
+                                <Mail size={28} />
                             </div>
-                            <span className="text-lg font-semibold text-slate-800 tracking-tight">Other</span>
+                            <span className="text-xl font-bold text-slate-800">Other</span>
                         </div>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-8">
                         {/* Main Fields */}
-                        <div className="space-y-4">
-                            <div className="space-y-1.5">
-                                <label className="text-sm font-semibold text-slate-600 ml-1">Email*</label>
+                        <div className="space-y-5">
+                            <div className="space-y-2">
+                                <label className="text-[15px] font-bold text-slate-600 ml-1">Email*</label>
                                 <div className="relative">
                                     <input
                                         required
@@ -159,13 +160,13 @@ export default function ConnectEmailPage() {
                                         value={formData.email}
                                         onChange={handleChange}
                                         placeholder="donald.duck@mail.com"
-                                        className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-2xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium"
+                                        className="w-full px-6 py-4 bg-white border-2 border-slate-100 rounded-[22px] text-slate-900 placeholder:text-slate-300 focus:outline-none focus:border-indigo-500 transition-all font-semibold"
                                     />
                                 </div>
                             </div>
 
-                            <div className="space-y-1.5">
-                                <label className="text-sm font-semibold text-slate-600 ml-1">Sender Name*</label>
+                            <div className="space-y-2">
+                                <label className="text-[15px] font-bold text-slate-600 ml-1">Sender Name*</label>
                                 <input
                                     required
                                     type="text"
@@ -173,15 +174,15 @@ export default function ConnectEmailPage() {
                                     value={formData.sender_name}
                                     onChange={handleChange}
                                     placeholder="Donald Duck Official"
-                                    className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-2xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium"
+                                    className="w-full px-6 py-4 bg-white border-2 border-slate-100 rounded-[22px] text-slate-900 placeholder:text-slate-300 focus:outline-none focus:border-indigo-500 transition-all font-semibold"
                                 />
                             </div>
 
-                            <div className="space-y-1.5">
-                                <label className="text-sm font-semibold text-slate-600 ml-1">Password*</label>
+                            <div className="space-y-2">
+                                <label className="text-[15px] font-bold text-slate-600 ml-1">Password*</label>
                                 <div className="relative">
-                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-                                        <Mail size={16} /> {/* Placeholder for lock icon or key */}
+                                    <div className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400">
+                                        <Server size={18} className="opacity-50" /> {/* Symbolizing a secure server/lock */}
                                     </div>
                                     <input
                                         required
@@ -190,63 +191,63 @@ export default function ConnectEmailPage() {
                                         value={formData.smtp_password}
                                         onChange={handleChange}
                                         placeholder="Enter your password"
-                                        className="w-full pl-12 pr-12 py-3.5 bg-white border border-slate-200 rounded-2xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium"
+                                        className="w-full pl-14 pr-14 py-4 bg-white border-2 border-slate-100 rounded-[22px] text-slate-900 placeholder:text-slate-300 focus:outline-none focus:border-indigo-500 transition-all font-semibold"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                        className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500"
                                     >
-                                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                                     </button>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Advanced Toggle */}
+                        {/* Advanced Settings */}
                         <div>
                             <button
                                 type="button"
                                 onClick={() => setShowAdvanced(!showAdvanced)}
-                                className="flex items-center gap-2 text-indigo-600 font-bold hover:underline transition-all"
+                                className="flex items-center gap-1.5 text-blue-600 font-bold text-[15px] hover:opacity-80 transition-all"
                             >
                                 <span>Advanced settings</span>
                                 {showAdvanced ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                             </button>
 
                             {showAdvanced && (
-                                <div className="mt-6 space-y-6 animate-in slide-in-from-top-2 duration-300">
+                                <div className="mt-8 space-y-8 animate-in slide-in-from-top-4 duration-500">
                                     {/* SMTP Connection */}
-                                    <div className="space-y-3">
-                                        <h3 className="text-lg font-bold text-slate-900">SMTP connection</h3>
-                                        <div className="flex gap-4">
-                                            <div className="flex-[2] space-y-1.5">
-                                                <label className="text-xs font-bold text-slate-500 ml-1 uppercase">SMTP Host*</label>
+                                    <div className="space-y-4">
+                                        <h3 className="text-[17px] font-bold text-slate-900 uppercase tracking-tight">SMTP connection</h3>
+                                        <div className="grid grid-cols-12 gap-4">
+                                            <div className="col-span-8 space-y-2">
+                                                <label className="text-xs font-bold text-slate-400 ml-1 uppercase">SMTP Host*</label>
                                                 <input
                                                     type="text"
                                                     name="smtp_host"
                                                     value={formData.smtp_host}
                                                     onChange={handleChange}
                                                     placeholder="Search on google"
-                                                    className="w-full px-5 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 font-medium"
+                                                    className="w-full px-5 py-3.5 bg-white border-2 border-slate-100 rounded-2xl text-slate-900 font-bold placeholder:text-slate-300 focus:outline-none focus:border-indigo-500"
                                                 />
                                             </div>
-                                            <div className="flex-1 space-y-1.5">
-                                                <label className="text-xs font-bold text-slate-500 ml-1 uppercase">SMTP Port*</label>
-                                                <div className="flex gap-3">
+                                            <div className="col-span-4 space-y-2">
+                                                <label className="text-xs font-bold text-slate-400 ml-1 uppercase">SMTP Port*</label>
+                                                <div className="flex gap-2">
                                                     <input
                                                         type="number"
                                                         name="smtp_port"
                                                         value={formData.smtp_port}
                                                         onChange={handleChange}
                                                         placeholder="xxx"
-                                                        className="w-full px-5 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 font-medium"
+                                                        className="w-full px-4 py-3.5 bg-white border-2 border-slate-100 rounded-2xl text-slate-900 font-bold placeholder:text-slate-300 focus:outline-none"
                                                     />
                                                     <button
                                                         type="button"
                                                         onClick={handleTestSmtp}
                                                         disabled={testingSmtp}
-                                                        className="px-6 py-3 border-2 border-indigo-600 rounded-xl text-indigo-600 font-bold hover:bg-indigo-50 transition-all disabled:opacity-50"
+                                                        className="px-6 py-3.5 border-2 border-blue-600 rounded-2xl text-blue-600 font-bold hover:bg-blue-50 transition-all disabled:opacity-50 text-sm"
                                                     >
                                                         {testingSmtp ? <Loader2 size={18} className="animate-spin" /> : "Test"}
                                                     </button>
@@ -256,36 +257,36 @@ export default function ConnectEmailPage() {
                                     </div>
 
                                     {/* IMAP Connection */}
-                                    <div className="space-y-3">
-                                        <h3 className="text-lg font-bold text-slate-900">IMAP connection</h3>
-                                        <div className="flex gap-4">
-                                            <div className="flex-[2] space-y-1.5">
-                                                <label className="text-xs font-bold text-slate-500 ml-1 uppercase">IMAP Host*</label>
+                                    <div className="space-y-4">
+                                        <h3 className="text-[17px] font-bold text-slate-900 uppercase tracking-tight">IMAP connection</h3>
+                                        <div className="grid grid-cols-12 gap-4">
+                                            <div className="col-span-8 space-y-2">
+                                                <label className="text-xs font-bold text-slate-400 ml-1 uppercase">IMAP Host*</label>
                                                 <input
                                                     type="text"
                                                     name="imap_host"
                                                     value={formData.imap_host}
                                                     onChange={handleChange}
                                                     placeholder="Search on google"
-                                                    className="w-full px-5 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 font-medium"
+                                                    className="w-full px-5 py-3.5 bg-white border-2 border-slate-100 rounded-2xl text-slate-900 font-bold placeholder:text-slate-300 focus:outline-none focus:border-indigo-500"
                                                 />
                                             </div>
-                                            <div className="flex-1 space-y-1.5">
-                                                <label className="text-xs font-bold text-slate-500 ml-1 uppercase">IMAP Port*</label>
-                                                <div className="flex gap-3">
+                                            <div className="col-span-4 space-y-2">
+                                                <label className="text-xs font-bold text-slate-400 ml-1 uppercase">IMAP Port*</label>
+                                                <div className="flex gap-2">
                                                     <input
                                                         type="number"
                                                         name="imap_port"
                                                         value={formData.imap_port}
                                                         onChange={handleChange}
                                                         placeholder="xxx"
-                                                        className="w-full px-5 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 font-medium"
+                                                        className="w-full px-4 py-3.5 bg-white border-2 border-slate-100 rounded-2xl text-slate-900 font-bold placeholder:text-slate-300 focus:outline-none"
                                                     />
                                                     <button
                                                         type="button"
                                                         onClick={handleTestImap}
                                                         disabled={testingImap}
-                                                        className="px-6 py-3 border-2 border-indigo-600 rounded-xl text-indigo-600 font-bold hover:bg-indigo-50 transition-all disabled:opacity-50"
+                                                        className="px-6 py-3.5 border-2 border-blue-600 rounded-2xl text-blue-600 font-bold hover:bg-blue-50 transition-all disabled:opacity-50 text-sm"
                                                     >
                                                         {testingImap ? <Loader2 size={18} className="animate-spin" /> : "Test"}
                                                     </button>
@@ -298,14 +299,18 @@ export default function ConnectEmailPage() {
                         </div>
 
                         {/* Submit Button */}
-                        <div className="flex justify-end pt-4">
+                        <div className="flex justify-end pt-6">
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="px-10 py-4 bg-indigo-600 rounded-2xl text-white font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all disabled:opacity-50 flex items-center gap-2"
+                                className="px-12 py-4.5 bg-[#2563eb] rounded-[24px] text-white font-bold text-lg hover:bg-blue-700 shadow-xl shadow-blue-100 transition-all disabled:opacity-50 flex items-center justify-center min-w-[180px]"
                             >
-                                {isLoading && <Loader2 size={20} className="animate-spin" />}
-                                {isLoading ? "Validating..." : "Validate"}
+                                {isLoading ? (
+                                    <div className="flex items-center gap-3">
+                                        <Loader2 size={22} className="animate-spin" />
+                                        <span>Validating...</span>
+                                    </div>
+                                ) : "Validate"}
                             </button>
                         </div>
                     </form>

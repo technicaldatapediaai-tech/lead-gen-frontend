@@ -14,6 +14,7 @@ import {
   Loader2, 
   X, 
   ChevronRight,
+  ChevronLeft,
   Sparkles,
   Info
 } from "lucide-react";
@@ -36,6 +37,7 @@ export default function BulkEmailPage() {
   const [importMode, setImportMode] = useState<'csv' | 'manual'>('manual');
   const [isSending, setIsSending] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
+  const [previewIndex, setPreviewIndex] = useState(0);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -50,6 +52,7 @@ export default function BulkEmailPage() {
         const parsedLeads = results.data as Lead[];
         const validLeads = parsedLeads.filter(l => l.email && l.email.includes('@'));
         setLeads(validLeads);
+        setPreviewIndex(0);
         toast.success(`Imported ${validLeads.length} leads from CSV`);
       },
       error: (error) => {
@@ -72,6 +75,7 @@ export default function BulkEmailPage() {
     }).filter(l => l.email.includes('@'));
 
     setLeads(newLeads);
+    setPreviewIndex(0);
     toast.success(`Imported ${newLeads.length} leads manually`);
   };
 
@@ -110,7 +114,7 @@ export default function BulkEmailPage() {
   };
 
   return (
-    <div className="flex h-full w-full flex-col bg-background p-8">
+    <div className="flex h-full w-full flex-col overflow-y-auto bg-background p-8">
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -167,10 +171,12 @@ export default function BulkEmailPage() {
 
               {importMode === 'manual' ? (
                 <div className="space-y-4">
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider font-mono">
+                  <label htmlFor="manual-leads" className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider font-mono">
                     Format: email, first_name, company
-                  </p>
+                  </label>
                   <textarea
+                    id="manual-leads"
+                    name="manual-leads"
                     value={manualInput}
                     onChange={(e) => setManualInput(e.target.value)}
                     placeholder="john@example.com, John, Google&#10;jane@company.com, Jane, Apple"
@@ -189,7 +195,7 @@ export default function BulkEmailPage() {
                   onClick={() => fileInputRef.current?.click()}
                   className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-border py-12 transition hover:border-emerald-500/50 hover:bg-emerald-50/10"
                 >
-                  <input type="file" ref={fileInputRef} onChange={handleCsvUpload} accept=".csv" className="hidden" />
+                  <input type="file" id="csv-upload" name="csv-upload" aria-label="Upload CSV" ref={fileInputRef} onChange={handleCsvUpload} accept=".csv" className="hidden" />
                   <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500">
                     <FileText className="h-8 w-8" />
                   </div>
@@ -248,9 +254,11 @@ export default function BulkEmailPage() {
             
             <div className="p-6 space-y-6">
               <div>
-                <label className="mb-2 block text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Subject Line</label>
+                <label htmlFor="email-subject" className="mb-2 block text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Subject Line</label>
                 <input
                   type="text"
+                  id="email-subject"
+                  name="email-subject"
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
                   className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm font-semibold text-foreground focus:ring-1 focus:ring-blue-500"
@@ -258,8 +266,10 @@ export default function BulkEmailPage() {
               </div>
 
               <div>
-                <label className="mb-2 block text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Email Body</label>
+                <label htmlFor="email-body" className="mb-2 block text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Email Body</label>
                 <textarea
+                  id="email-body"
+                  name="email-body"
                   value={body}
                   onChange={(e) => setBody(e.target.value)}
                   rows={12}
@@ -269,7 +279,28 @@ export default function BulkEmailPage() {
 
               {/* Preview Card */}
               <div className="rounded-2xl border border-border bg-muted/5 p-6 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-3">
+                <div className="absolute top-0 right-0 p-3 flex items-center gap-2">
+                  {leads.length > 1 && (
+                    <div className="flex items-center gap-1 mr-4">
+                      <button 
+                        onClick={() => setPreviewIndex(prev => Math.max(0, prev - 1))}
+                        disabled={previewIndex === 0}
+                        className="p-1 rounded bg-background border border-border hover:bg-muted disabled:opacity-30 transition-colors"
+                      >
+                        <ChevronLeft className="h-3 w-3" />
+                      </button>
+                      <span className="text-[10px] font-mono font-bold px-2">
+                        {previewIndex + 1} / {leads.length}
+                      </span>
+                      <button 
+                        onClick={() => setPreviewIndex(prev => Math.min(leads.length - 1, prev + 1))}
+                        disabled={previewIndex === leads.length - 1}
+                        className="p-1 rounded bg-background border border-border hover:bg-muted disabled:opacity-30 transition-colors"
+                      >
+                        <ChevronRight className="h-3 w-3" />
+                      </button>
+                    </div>
+                  )}
                   <Sparkles className="h-4 w-4 text-blue-500 opacity-20 group-hover:opacity-100 transition-opacity" />
                 </div>
                 
@@ -277,17 +308,22 @@ export default function BulkEmailPage() {
                 <div className="space-y-4">
                   <div>
                     <span className="text-[10px] font-bold text-muted-foreground uppercase">To:</span>
-                    <span className="ml-2 text-xs font-mono text-foreground">{leads[0]?.email || "prospect@example.com"}</span>
+                    <span className="ml-2 text-xs font-mono text-foreground">{leads[previewIndex]?.email || "prospect@example.com"}</span>
                   </div>
                   <div>
                     <span className="text-[10px] font-bold text-muted-foreground uppercase">Subject:</span>
                     <span className="ml-2 text-sm font-bold text-foreground">
-                      {subject.replace('{{company}}', 'Google').replace('{{first_name}}', 'Jordan')}
+                      {subject
+                        .replace(/\{\{company\}\}/g, leads[previewIndex]?.company || 'Your Company')
+                        .replace(/\{\{first_name\}\}/g, leads[previewIndex]?.first_name || 'there')}
                     </span>
                   </div>
                   <div className="rounded-xl bg-background p-4 border border-border/50">
                     <p className="whitespace-pre-wrap text-sm italic text-foreground/80">
-                      {body.replace('{{company}}', 'Google').replace('{{first_name}}', 'Jordan').replace('{{email}}', leads[0]?.email || "prospect@example.com")}
+                      {body
+                        .replace(/\{\{company\}\}/g, leads[previewIndex]?.company || 'your company')
+                        .replace(/\{\{first_name\}\}/g, leads[previewIndex]?.first_name || 'friend')
+                        .replace(/\{\{email\}\}/g, leads[previewIndex]?.email || "prospect@example.com")}
                     </p>
                   </div>
                 </div>

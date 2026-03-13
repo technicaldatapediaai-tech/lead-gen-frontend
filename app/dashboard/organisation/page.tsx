@@ -527,11 +527,13 @@ export default function OrganisationPage() {
 
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-xs font-medium text-muted-foreground mb-2">
+                                <label htmlFor="invite-email" className="block text-xs font-medium text-muted-foreground mb-2">
                                     Email Address
                                 </label>
                                 <input
                                     type="email"
+                                    id="invite-email"
+                                    name="invite-email"
                                     value={inviteEmail}
                                     onChange={(e) => setInviteEmail(e.target.value)}
                                     placeholder="colleague@company.com"
@@ -540,10 +542,12 @@ export default function OrganisationPage() {
                             </div>
 
                             <div>
-                                <label className="block text-xs font-medium text-muted-foreground mb-2">
+                                <label htmlFor="invite-role" className="block text-xs font-medium text-muted-foreground mb-2">
                                     Role
                                 </label>
                                 <select
+                                    id="invite-role"
+                                    name="invite-role"
                                     value={inviteRole}
                                     onChange={(e) => setInviteRole(e.target.value)}
                                     className="w-full h-10 rounded-lg border border-input bg-background px-3 text-sm outline-none focus:border-blue-500 transition-colors"
@@ -592,11 +596,13 @@ export default function OrganisationPage() {
 
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-xs font-medium text-muted-foreground mb-2">
+                                <label htmlFor="edit-name" className="block text-xs font-medium text-muted-foreground mb-2">
                                     Organization Name
                                 </label>
                                 <input
                                     type="text"
+                                    id="edit-name"
+                                    name="edit-name"
                                     value={editName}
                                     onChange={(e) => setEditName(e.target.value)}
                                     className="w-full h-10 rounded-lg border border-input bg-background px-3 text-sm outline-none focus:border-blue-500 transition-colors"
@@ -604,11 +610,13 @@ export default function OrganisationPage() {
                             </div>
 
                             <div>
-                                <label className="block text-xs font-medium text-muted-foreground mb-2">
+                                <label htmlFor="edit-domain" className="block text-xs font-medium text-muted-foreground mb-2">
                                     Website Domain
                                 </label>
                                 <input
                                     type="text"
+                                    id="edit-domain"
+                                    name="edit-domain"
                                     value={editDomain}
                                     onChange={(e) => setEditDomain(e.target.value)}
                                     placeholder="example.com"
@@ -617,10 +625,12 @@ export default function OrganisationPage() {
                             </div>
 
                             <div>
-                                <label className="block text-xs font-medium text-muted-foreground mb-2">
+                                <label htmlFor="edit-industry" className="block text-xs font-medium text-muted-foreground mb-2">
                                     Industry
                                 </label>
                                 <select
+                                    id="edit-industry"
+                                    name="edit-industry"
                                     value={editIndustry}
                                     onChange={(e) => setEditIndustry(e.target.value)}
                                     className="w-full h-10 rounded-lg border border-input bg-background px-3 text-sm outline-none focus:border-blue-500 transition-colors"
@@ -638,10 +648,12 @@ export default function OrganisationPage() {
                             </div>
 
                             <div>
-                                <label className="block text-xs font-medium text-muted-foreground mb-2">
+                                <label htmlFor="edit-business-model" className="block text-xs font-medium text-muted-foreground mb-2">
                                     Business Model
                                 </label>
                                 <select
+                                    id="edit-business-model"
+                                    name="edit-business-model"
                                     value={editBusinessModel}
                                     onChange={(e) => setEditBusinessModel(e.target.value)}
                                     className="w-full h-10 rounded-lg border border-input bg-background px-3 text-sm outline-none focus:border-blue-500 transition-colors"

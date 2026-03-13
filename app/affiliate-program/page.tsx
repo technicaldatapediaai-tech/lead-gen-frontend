@@ -395,8 +395,8 @@ export default function AffiliateProgramPage() {
                     </div>
 
                     <div className="flex gap-8 text-sm font-medium text-muted-foreground">
-                        <Link href="#" className="hover:text-blue-600 transition-colors">Privacy Policy</Link>
-                        <Link href="#" className="hover:text-blue-600 transition-colors">Terms of Service</Link>
+                        <Link href="/privacy" className="hover:text-blue-600 transition-colors">Privacy Policy</Link>
+                        <Link href="/terms" className="hover:text-blue-600 transition-colors">Terms of Service</Link>
                         <Link href="#" className="hover:text-blue-600 transition-colors">Contact</Link>
                     </div>
 
