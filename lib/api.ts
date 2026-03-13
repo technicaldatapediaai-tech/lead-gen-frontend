@@ -42,7 +42,15 @@ function addRefreshSubscriber(cb: (token: string) => void) {
  * Ensures an endpoint has a trailing slash before query parameters
  */
 function normalizeEndpoint(endpoint: string): string {
+    // These endpoints should NOT have a trailing slash as they cause 404s on the backend
+    const excludedEndpoints = ['/api/auth/login', '/api/auth/register', '/api/auth/token'];
+    
     const [path, query] = endpoint.split('?');
+    
+    if (excludedEndpoints.some(ex => path === ex)) {
+        return endpoint;
+    }
+    
     const pathWithSlash = path.endsWith('/') ? path : `${path}/`;
     return query ? `${pathWithSlash}?${query}` : pathWithSlash;
 }
