@@ -93,7 +93,7 @@ export default function CampaignDetailsPage() {
     useEffect(() => {
         async function fetchCampaign() {
             try {
-                const { data, error } = await api.get<Campaign>(`/api/campaigns/${campaignId}`);
+                const { data, error } = await api.get<Campaign>(`/api/campaigns/${campaignId}/`);
                 if (data) {
                     setCampaign(data);
                 } else if (error) {
@@ -120,7 +120,7 @@ export default function CampaignDetailsPage() {
                     limit: "50",
                     search: searchTerm
                 });
-                const { data } = await api.get<LeadsResponse>(`/api/leads?${query.toString()}`);
+                const { data } = await api.get<LeadsResponse>(`/api/leads/?${query.toString()}`);
                 if (data) {
                     setLeads(data.items);
                 }

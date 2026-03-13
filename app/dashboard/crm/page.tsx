@@ -177,7 +177,7 @@ export default function CRMPage() {
                 params.append("search", searchTerm);
             }
 
-            const leadsRes = await api.get<LeadsResponse>(`/api/leads?${params.toString()}`);
+            const leadsRes = await api.get<LeadsResponse>(`/api/leads/?${params.toString()}`);
             if (!leadsRes.error && leadsRes.data) {
                 setLeads(leadsRes.data.items || []);
                 setTotalPages(leadsRes.data.pages || 1);
@@ -188,7 +188,7 @@ export default function CRMPage() {
                 }
             }
 
-            const statsRes = await api.get<LeadStats>("/api/leads/stats");
+            const statsRes = await api.get<LeadStats>("/api/leads/stats/");
             if (!statsRes.error && statsRes.data) {
                 setStats(statsRes.data);
             }
@@ -251,7 +251,7 @@ export default function CRMPage() {
 
     const handleStatusChange = async (leadId: string, newStatus: string) => {
         try {
-            const res = await api.patch(`/api/leads/${leadId}`, { status: newStatus });
+            const res = await api.patch(`/api/leads/${leadId}/`, { status: newStatus });
             if (res.error) {
                 toast.error("Failed to update status");
             } else {
@@ -268,7 +268,7 @@ export default function CRMPage() {
     const handleDeleteLead = async (leadId: string) => {
         if (!confirm("Are you sure you want to delete this lead?")) return;
         try {
-            await api.delete(`/api/leads/${leadId}`);
+            await api.delete(`/api/leads/${leadId}/`);
             toast.success("Lead deleted");
             setLeads(leads.filter(l => l.id !== leadId));
             if (selectedLead?.id === leadId) setSelectedLead(null);
@@ -282,7 +282,7 @@ export default function CRMPage() {
         if (activeFilter !== "All") {
             params.append("status", activeFilter.toLowerCase());
         }
-        const url = `/api/leads/export?${params.toString()}`;
+        const url = `/api/leads/export/?${params.toString()}`;
         const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
         window.open(`${API_BASE_URL}${url}`, '_blank');
         toast.success("Export started!");
@@ -296,7 +296,7 @@ export default function CRMPage() {
         formData.append('file', file);
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/leads/import`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/leads/import/`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('access_token')}`
@@ -744,7 +744,7 @@ export default function CRMPage() {
                                 setLeads(prev => prev.map(l => l.id === id ? { ...l, status } : l));
                                 toast.success(`Moved to ${status}`);
                                 try {
-                                    await api.patch(`/api/leads/${id}`, { status });
+                                    await api.patch(`/api/leads/${id}/`, { status });
                                 } catch (e) {
                                     toast.error("Failed to update status");
                                     fetchLeads();

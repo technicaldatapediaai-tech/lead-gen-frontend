@@ -66,7 +66,7 @@ export default function ScoringPage() {
         async function fetchData() {
             setIsLoading(true);
 
-            let url = "/api/leads?limit=50";
+            let url = "/api/leads/?limit=50";
             if (selectedCampaignId) {
                 url += `&campaign_id=${selectedCampaignId}`;
             }
@@ -84,7 +84,7 @@ export default function ScoringPage() {
 
             // Fetch generic stats (or campaign specific if API supported it, keeping generic for now or filtered)
             // Ideally stats endpoint would take campaign_id too.
-            const statsRes = await api.get<LeadStats>("/api/leads/stats");
+            const statsRes = await api.get<LeadStats>("/api/leads/stats/");
             if (!statsRes.error && statsRes.data) {
                 setStats(statsRes.data);
             }
@@ -104,7 +104,7 @@ export default function ScoringPage() {
         setIsRecalculating(true);
         toast.info("Recalculating scores...");
 
-        const res = await api.post(`/api/scoring/campaign/${selectedCampaignId}/recalculate`, {});
+        const res = await api.post(`/api/scoring/campaign/${selectedCampaignId}/recalculate/`, {});
 
         if (!res.error) {
             toast.success("Scores updated successfully!");

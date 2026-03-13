@@ -33,7 +33,7 @@ export default function CampaignKanbanPage() {
         async function fetchData() {
             try {
                 // Fetch Campaign Details
-                const { data: campaignData, error: campaignError } = await api.get<Campaign>(`/api/campaigns/${campaignId}`);
+                const { data: campaignData, error: campaignError } = await api.get<Campaign>(`/api/campaigns/${campaignId}/`);
                 if (campaignData) {
                     setCampaign(campaignData);
                 } else {

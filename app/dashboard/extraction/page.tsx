@@ -56,7 +56,7 @@ export default function LeadExtractionPage() {
     }
 
     // Fetch stats
-    const statsRes = await api.get<LeadStats>("/api/leads/stats");
+    const statsRes = await api.get<LeadStats>("/api/leads/stats/");
     if (!statsRes.error && statsRes.data) {
       setStats(statsRes.data);
     }

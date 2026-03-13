@@ -48,7 +48,7 @@ export default function LeadDetailsPage({ params }: { params: Promise<{ id: stri
         async function fetchLead() {
             setIsLoading(true);
             try {
-                const res = await api.get<Lead>(`/api/leads/${id}`);
+                const res = await api.get<Lead>(`/api/leads/${id}/`);
                 if (res.data) {
                     setLead(res.data);
                 } else {
@@ -68,13 +68,13 @@ export default function LeadDetailsPage({ params }: { params: Promise<{ id: stri
         if (!lead) return;
         setIsEnriching(true);
         try {
-            const res = await api.post(`/api/leads/${lead.id}/enrich`);
+            const res = await api.post(`/api/leads/${lead.id}/enrich/`, {});
             if (res.error) {
                 toast.error(res.error.detail || "Enrichment failed");
             } else {
                 toast.success("Enrichment started/completed");
                 // Refresh lead data
-                const updated = await api.get<Lead>(`/api/leads/${lead.id}`);
+                const updated = await api.get<Lead>(`/api/leads/${lead.id}/`);
                 if (updated.data) setLead(updated.data);
             }
         } catch (error) {

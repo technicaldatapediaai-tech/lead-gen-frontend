@@ -44,7 +44,7 @@ export default function EnrichmentPage() {
         try {
             const [leadsRes, statsRes] = await Promise.all([
                 api.get<{ items: Lead[] }>("/api/leads/?limit=50"),
-                api.get<LeadStats>("/api/leads/stats")
+                api.get<LeadStats>("/api/leads/stats/")
             ]);
 
             if (leadsRes.data) {
@@ -85,7 +85,7 @@ export default function EnrichmentPage() {
         setIsEnriching(true);
         toast.info(`Enriching ${selectedLeads.size} leads...`);
 
-        const res = await api.post("/api/leads/bulk-enrich", {
+        const res = await api.post("/api/leads/bulk-enrich/", {
             lead_ids: Array.from(selectedLeads)
         });
 
@@ -101,7 +101,7 @@ export default function EnrichmentPage() {
 
     const handleSingleEnrich = async (id: string) => {
         toast.info("Enriching lead...");
-        const res = await api.post(`/api/leads/${id}/enrich`, {});
+        const res = await api.post(`/api/leads/${id}/enrich/`, {});
         if (!res.error) {
             toast.success("Lead enriched!");
             fetchData();

@@ -66,16 +66,16 @@ export default function CampaignsPage() {
             let response;
             switch (action) {
                 case 'run':
-                    response = await api.post(`/api/campaigns/${id}/run`);
+                    response = await api.post(`/api/campaigns/${id}/run/`);
                     break;
                 case 'pause':
-                    response = await api.post(`/api/campaigns/${id}/pause`);
+                    response = await api.post(`/api/campaigns/${id}/pause/`);
                     break;
                 case 'resume':
-                    response = await api.post(`/api/campaigns/${id}/resume`);
+                    response = await api.post(`/api/campaigns/${id}/resume/`);
                     break;
                 case 'delete':
-                    response = await api.delete(`/api/campaigns/${id}`);
+                    response = await api.delete(`/api/campaigns/${id}/`);
                     break;
             }
 
@@ -98,7 +98,7 @@ export default function CampaignsPage() {
             try {
                 const [campaignsRes, statsRes] = await Promise.all([
                     api.get<CampaignsResponse>("/api/campaigns/"),
-                    api.get<any>("/api/campaigns/overview-stats")
+                    api.get<any>("/api/campaigns/overview-stats/")
                 ]);
 
                 if (campaignsRes.data) {
