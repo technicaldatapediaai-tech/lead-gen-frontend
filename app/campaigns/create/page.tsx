@@ -217,9 +217,11 @@ function CampaignCreationContent() {
                                 <div className="mb-6">
                                     <div className="mb-3 flex items-center justify-between">
                                         <label className="text-sm font-bold text-foreground">Message Content</label>
-                                        <div className="flex gap-2">
+                                        <div className="flex flex-wrap gap-2">
                                             <VariableChip label="First Name" onClick={() => insertVariable('first_name')} />
                                             <VariableChip label="Company" onClick={() => insertVariable('company')} />
+                                            <VariableChip label="Role" onClick={() => insertVariable('role')} />
+                                            <VariableChip label="My Company" onClick={() => insertVariable('organization_name')} />
                                         </div>
                                     </div>
                                     <textarea
@@ -234,7 +236,11 @@ function CampaignCreationContent() {
                                             <Sparkles className="h-3 w-3" /> Preview
                                         </h4>
                                         <p className="text-sm text-foreground italic">
-                                            "{messageContent.replace('{{first_name}}', 'Jordan').replace('{{company}}', 'Google')}"
+                                            "{messageContent
+                                                .replace(/{{first_name}}|{first_name}/g, 'Jordan')
+                                                .replace(/{{company}}|{company}/g, 'Google')
+                                                .replace(/{{role}}|{role}/g, 'Product Manager')
+                                                .replace(/{{organization_name}}|{organization_name}/g, 'Acme Corp')}"
                                         </p>
                                     </div>
                                 </div>

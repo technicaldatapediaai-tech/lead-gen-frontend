@@ -18,6 +18,7 @@ const navItems = [
   { label: "Scoring", href: "/dashboard/scoring", icon: SparkIcon },
   { label: "Enrichment", href: "/dashboard/enrichment", icon: WandIcon },
   { label: "Campaigns", href: "/dashboard/campaigns", icon: PlayIcon },
+  { label: "Outreach Hub", href: "/dashboard/outreach", icon: RocketIcon },
   { label: "Bulk Email", href: "/dashboard/bulk-email", icon: EmailIcon },
   { label: "CRM", href: "/dashboard/crm", icon: CRMIcon },
 ];
@@ -637,6 +638,17 @@ function BotIcon({ className }: { className?: string }) {
           strokeLinecap="round"
           strokeLinejoin="round"
         />
+      </svg>
+    </IconWrap>
+  );
+}
+function RocketIcon({ className }: { className?: string }) {
+  return (
+    <IconWrap className={className}>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.71-2.13.71-2.13l-1.58-1.58s-1.29 0-2.13.71Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="m12 15-3-3m1.35-2.025C11.516 8.52 13.911 6.368 16.946 4.39c.62-.405 1.341.316.936.935-1.977 3.036-4.13 5.43-5.586 6.597l2.025 2.025c1.167-1.457 3.56-3.61 6.597-5.586.62-.405 1.34-.316.935.936-1.978 3.035-4.13 5.43-5.586 6.597l-2.025-2.025Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M15 9l3-3m-6 6l-3-3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
     </IconWrap>
   );

@@ -62,6 +62,7 @@ interface LeadsResponse {
 interface LeadStats {
     total: number;
     by_status: Record<string, number>;
+    by_source: Record<string, number>;
     avg_score: number;
 }
 
@@ -393,28 +394,71 @@ export default function CRMPage() {
                         Export CSV
                     </Button>
 
-                    {/* Import Button */}
-                    <label htmlFor="import-leads" className="cursor-pointer">
-                        <input
-                            id="import-leads"
-                            type="file"
-                            accept=".csv"
-                            onChange={handleImportLeads}
-                            className="hidden"
-                        />
-                        <Button type="button" variant="outline" className="flex items-center gap-2">
-                            <Upload className="h-4 w-4" />
-                            Import CSV
-                        </Button>
-                    </label>
+                    {/* Add Lead Dropdown Hub */}
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20 px-6">
+                                <Plus className="h-4 w-4" />
+                                Add Prospects
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-56 p-2 rounded-xl border-border bg-card shadow-2xl">
+                            <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70 mb-1">Select Acquisition Method</DropdownMenuLabel>
+                            <DropdownMenuItem 
+                                onClick={() => setIsCreateOpen(true)}
+                                className="flex items-center gap-3 py-3 rounded-lg cursor-pointer hover:bg-blue-600/10 focus:bg-blue-600/10"
+                            >
+                                <div className="p-2 rounded-md bg-blue-600/15 text-blue-500">
+                                    <User className="h-4 w-4" />
+                                </div>
+                                <div>
+                                    <div className="font-semibold text-sm">Manual Entry</div>
+                                    <div className="text-[10px] text-muted-foreground">Add one prospect at a time</div>
+                                </div>
+                            </DropdownMenuItem>
+                            
+                            <DropdownMenuItem 
+                                asChild
+                                className="flex items-center gap-3 py-3 rounded-lg cursor-pointer hover:bg-emerald-600/10 focus:bg-emerald-600/10"
+                            >
+                                <label htmlFor="import-leads-nav" className="w-full flex items-center gap-3">
+                                    <input
+                                        id="import-leads-nav"
+                                        type="file"
+                                        accept=".csv"
+                                        onChange={handleImportLeads}
+                                        className="hidden"
+                                    />
+                                    <div className="p-2 rounded-md bg-emerald-600/15 text-emerald-500">
+                                        <Upload className="h-4 w-4" />
+                                    </div>
+                                    <div>
+                                        <div className="font-semibold text-sm">Upload CSV</div>
+                                        <div className="text-[10px] text-muted-foreground">Import leads from a spreadsheet</div>
+                                    </div>
+                                </label>
+                            </DropdownMenuItem>
+
+                            <DropdownMenuSeparator className="my-2 bg-border/50" />
+
+                            <DropdownMenuItem 
+                                asChild
+                                className="flex items-center gap-3 py-3 rounded-lg cursor-pointer hover:bg-purple-600/10 focus:bg-purple-600/10"
+                            >
+                                <Link href="/dashboard/extraction" className="w-full flex items-center gap-3">
+                                    <div className="p-2 rounded-md bg-purple-600/15 text-purple-500">
+                                        <Search className="h-4 w-4" />
+                                    </div>
+                                    <div>
+                                        <div className="font-semibold text-sm text-purple-600">Advanced Scraping</div>
+                                        <div className="text-[10px] text-muted-foreground">Extract from LinkedIn automagically</div>
+                                    </div>
+                                </Link>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
 
                     <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-                        <DialogTrigger asChild>
-                            <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20">
-                                <Plus className="h-4 w-4" />
-                                New Lead
-                            </Button>
-                        </DialogTrigger>
                         <DialogContent className="sm:max-w-[425px]">
                             <DialogHeader>
                                 <DialogTitle>Add New Lead</DialogTitle>
@@ -458,22 +502,32 @@ export default function CRMPage() {
                 {/* Hero Stats */}
                 <div className="relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 to-blue-900 p-8 shadow-2xl">
                     <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
-                    <div className="relative z-10 flex justify-between items-end">
+                    <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                         <div>
-                            <h1 className="text-3xl font-bold text-white mb-6">Sales Pipeline</h1>
-                            <div className="flex gap-12 text-white">
+                            <h1 className="text-3xl font-bold text-white mb-6 tracking-tight">Lead Intelligence Hub</h1>
+                            <div className="flex flex-wrap gap-8 text-white">
                                 <div>
                                     <div className="text-3xl font-bold">{isLoading ? "..." : stats?.total || 0}</div>
-                                    <div className="text-sm font-medium text-blue-200">Total Leads</div>
+                                    <div className="text-[10px] font-bold uppercase tracking-widest text-blue-200 opacity-80">Total Prospects</div>
                                 </div>
                                 <div>
                                     <div className="text-3xl font-bold">{isLoading ? "..." : stats?.by_status?.['qualified'] || 0}</div>
-                                    <div className="text-sm font-medium text-blue-200">Qualified</div>
+                                    <div className="text-[10px] font-bold uppercase tracking-widest text-blue-200 opacity-80">Qualified (Ready)</div>
                                 </div>
                                 <div>
                                     <div className="text-3xl font-bold">{isLoading ? "..." : Math.round(stats?.avg_score || 0)}</div>
-                                    <div className="text-sm font-medium text-blue-200">Avg. Score</div>
+                                    <div className="text-[10px] font-bold uppercase tracking-widest text-blue-200 opacity-80">Avg. Intent Score</div>
                                 </div>
+                            </div>
+                        </div>
+
+                        {/* Source Distribution Visualization */}
+                        <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10 w-full md:w-64">
+                            <h4 className="text-[10px] font-bold uppercase tracking-wider text-blue-100 mb-3 opacity-90">Acquisition Sources</h4>
+                            <div className="space-y-3">
+                                <SourceBar label="Manual" count={stats?.by_source?.['manual'] || 0} total={stats?.total || 1} color="bg-blue-400" />
+                                <SourceBar label="Scraping" count={stats?.by_source?.['linkedin'] || 0} total={stats?.total || 1} color="bg-purple-400" />
+                                <SourceBar label="CSV Import" count={stats?.by_source?.['csv'] || 0} total={stats?.total || 1} color="bg-emerald-400" />
                             </div>
                         </div>
                     </div>
@@ -558,11 +612,12 @@ export default function CRMPage() {
 
                             {/* Table Header */}
                             <div className="grid grid-cols-12 gap-2 border-b border-border bg-muted/30 px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                                <div className="col-span-3">Lead Name</div>
-                                <div className="col-span-3">Company & Email</div>
+                                <div className="col-span-3">Prospect</div>
+                                <div className="col-span-2">Company</div>
+                                <div className="col-span-1">Source</div>
                                 <div className="col-span-1">Score</div>
                                 <div className="col-span-2">Status</div>
-                                <div className="col-span-3 text-right">Added</div>
+                                <div className="col-span-3 text-right">Added On</div>
                             </div>
 
                             {/* Table Rows (Scrollable) */}
@@ -690,6 +745,15 @@ export default function CRMPage() {
                                         <div>
                                             <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">Contact Info</h4>
                                             <div className="space-y-2 text-sm">
+                                                <div className="grid grid-cols-3">
+                                                    <span className="text-muted-foreground">Source:</span>
+                                                    <span className="col-span-2 flex items-center gap-2 text-foreground capitalize">
+                                                        <span className="p-1 rounded bg-secondary/50">
+                                                            {getSourceIcon(selectedLead.source)}
+                                                        </span>
+                                                        {selectedLead.source || "manual"}
+                                                    </span>
+                                                </div>
                                                 <div className="grid grid-cols-3">
                                                     <span className="text-muted-foreground">Email:</span>
                                                     <span className="col-span-2 text-foreground truncate">{selectedLead.email || "-"}</span>
@@ -831,6 +895,16 @@ export default function CRMPage() {
 
 // Subcomponents
 
+const getSourceIcon = (source: string) => {
+    switch (source?.toLowerCase()) {
+        case 'csv': return <Upload className="h-3 w-3" />;
+        case 'linkedin':
+        case 'scraping': return <Linkedin className="h-3 w-3" />;
+        case 'manual': return <User className="h-3 w-3" />;
+        default: return <Briefcase className="h-3 w-3" />;
+    }
+};
+
 function TabButton({ label, count, active, onClick }: { label: string, count?: number, active: boolean, onClick: () => void }) {
     return (
         <button
@@ -868,19 +942,28 @@ function LeadRow({ lead, selected, onClick }: { lead: Lead, selected: boolean, o
             className={`grid grid-cols-12 gap-2 px-6 py-4 items-center cursor-pointer transition hover:bg-muted/50 border-l-2 ${selected ? 'bg-blue-600/[0.04] border-blue-600' : 'border-transparent'
                 }`}
         >
-            <div className="col-span-4 flex items-center gap-3">
-                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${lead.score >= 80 ? 'bg-blue-600' : 'bg-slate-500'
-                    }`}>
-                    {(lead.name || "U").substring(0, 2).toUpperCase()}
+            <div className="col-span-3 flex items-center gap-3">
+                <div className="relative">
+                    <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${lead.score >= 80 ? 'bg-blue-600' : 'bg-slate-500'
+                        }`}>
+                        {(lead.name || "U").substring(0, 2).toUpperCase()}
+                    </div>
                 </div>
                 <div className="min-w-0 overflow-hidden">
                     <div className="text-sm font-semibold text-foreground truncate">{lead.name || "Unknown"}</div>
-                    <div className="text-xs text-muted-foreground truncate">{lead.title || "No Title"}</div>
+                    <div className="text-[10px] text-muted-foreground truncate">{lead.email || "No Email"}</div>
                 </div>
             </div>
 
-            <div className="col-span-3 text-sm text-foreground truncate">
+            <div className="col-span-2 text-sm text-foreground truncate">
                 {lead.company || "-"}
+            </div>
+
+            <div className="col-span-1 flex items-center">
+                <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-tighter text-muted-foreground/80 bg-secondary/30 px-1.5 py-0.5 rounded border border-border/50">
+                    {getSourceIcon(lead.source)}
+                    <span className="truncate">{lead.source || 'manual'}</span>
+                </div>
             </div>
 
             <div className="col-span-1">
@@ -895,9 +978,24 @@ function LeadRow({ lead, selected, onClick }: { lead: Lead, selected: boolean, o
                 </span>
             </div>
 
-            <div className="col-span-2 text-right text-xs text-muted-foreground">
-                {new Date(lead.created_at).toLocaleDateString()}
+            <div className="col-span-3 text-right text-[10px] font-medium text-muted-foreground">
+                {new Date(lead.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
             </div>
         </div>
     )
+}
+
+function SourceBar({ label, count, total, color }: { label: string, count: number, total: number, color: string }) {
+    const percentage = Math.max(2, (count / (total || 1)) * 100);
+    return (
+        <div className="space-y-1">
+            <div className="flex items-center justify-between text-[10px] text-white/70">
+                <span>{label}</span>
+                <span className="font-bold text-white">{count}</span>
+            </div>
+            <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+                <div className={`h-full ${color} rounded-full transition-all duration-500`} style={{ width: `${percentage}%` }} />
+            </div>
+        </div>
+    );
 }

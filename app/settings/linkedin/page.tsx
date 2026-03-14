@@ -1,6 +1,6 @@
 "use client";
 
-import { Linkedin, Lock, X, Loader2 } from "lucide-react";
+import { Linkedin, Lock, X, Loader2, Rocket } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/lib/api";
@@ -15,6 +15,8 @@ interface LinkedInCredential {
     has_sales_navigator: boolean;
     connected_by?: string;
     connected_at: string;
+    sent_count_today: number;
+    daily_limit: number;
 }
 
 interface LinkedInStatus {
@@ -115,25 +117,44 @@ export default function LinkedInSettingsPage() {
         }
     };
 
-    const handleDisconnect = async (credentialType: "personal" | "organization") => {
-        if (!confirm(`Are you sure you want to disconnect your ${credentialType} LinkedIn account?`)) {
+    const handleDisconnect = async (credentialType: "personal" | "organization", credentialId?: string) => {
+        if (!confirm(`Are you sure you want to disconnect this ${credentialType} LinkedIn account?`)) {
             return;
         }
 
         setIsDisconnecting(true);
         try {
-            const res = await api.delete(`/api/linkedin/disconnect/${credentialType}`);
+            const endpoint = credentialId 
+                ? `/api/linkedin/credentials/${credentialId}`
+                : `/api/linkedin/disconnect/${credentialType}`;
+                
+            const res = await api.delete(endpoint);
             if (!res.error) {
-                toast.success(`${credentialType} LinkedIn account disconnected`);
+                toast.success("Account disconnected");
                 await fetchLinkedInStatus();
             } else {
-                toast.error("Failed to disconnect");
+                toast.error(res.error.detail || "Failed to disconnect");
             }
         } catch (error) {
             console.error("Error disconnecting:", error);
             toast.error("Failed to disconnect LinkedIn");
         } finally {
             setIsDisconnecting(false);
+        }
+    };
+
+    const handleUpdateLimit = async (credentialId: string, limit: number) => {
+        try {
+            const res = await api.patch(`/api/linkedin/credentials/${credentialId}/limit`, { daily_limit: limit });
+            if (!res.error) {
+                toast.success("Daily limit updated");
+                await fetchLinkedInStatus();
+            } else {
+                toast.error(res.error.detail || "Failed to update limit");
+            }
+        } catch (error) {
+            console.error("Error updating limit:", error);
+            toast.error("Failed to update limit");
         }
     };
 
@@ -162,7 +183,8 @@ export default function LinkedInSettingsPage() {
     };
 
     const personalCredential = status?.credentials.find(c => c.type === "personal");
-    const orgCredential = status?.credentials.find(c => c.type === "organization");
+    const orgCredentials = status?.credentials.filter(c => c.type === "organization") || [];
+    const hasOrgCredential = orgCredentials.length > 0;
 
     return (
         <div className="flex h-full flex-col bg-background text-foreground transition-colors duration-300">
@@ -206,14 +228,23 @@ export default function LinkedInSettingsPage() {
                                                 )}
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-3">
-                                            <div className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                                                Connected
+                                        <div className="flex items-center gap-4">
+                                            <div className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
+                                                {personalCredential.sent_count_today}/{personalCredential.daily_limit} SENT TODAY
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Limit</span>
+                                                <input
+                                                    type="number"
+                                                    className="w-16 h-8 rounded-lg border border-border bg-background px-2 text-xs font-bold"
+                                                    defaultValue={personalCredential.daily_limit}
+                                                    onBlur={(e) => handleUpdateLimit(personalCredential.id, parseInt(e.target.value))}
+                                                />
                                             </div>
                                             <button
                                                 onClick={() => handleDisconnect("personal")}
                                                 disabled={isDisconnecting}
-                                                className="text-rose-500 hover:text-rose-600 disabled:opacity-50"
+                                                className="p-1.5 rounded-lg hover:bg-rose-500/10 text-rose-500 transition-colors disabled:opacity-50"
                                             >
                                                 <X size={18} />
                                             </button>
@@ -221,7 +252,7 @@ export default function LinkedInSettingsPage() {
                                     </div>
 
                                     {/* Preference Toggle */}
-                                    {orgCredential && (
+                                    {hasOrgCredential && (
                                         <div className="flex items-center justify-between rounded-xl border border-border bg-muted/30 px-4 py-3">
                                             <span className="text-sm font-medium text-foreground">Use for campaigns</span>
                                             <button
@@ -270,92 +301,141 @@ export default function LinkedInSettingsPage() {
 
                         {/* Organization LinkedIn */}
                         <div className="mb-6 rounded-2xl border border-border bg-card p-8 transition-colors duration-300">
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="grid h-8 w-8 place-items-center rounded bg-[#0077b5] text-white">
-                                    <Linkedin size={18} fill="currentColor" />
+                            <div className="flex items-center justify-between mb-6">
+                                <div className="flex items-center gap-3">
+                                    <div className="grid h-8 w-8 place-items-center rounded bg-[#0077b5] text-white">
+                                        <Linkedin size={18} fill="currentColor" />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-foreground">Organization LinkedIn</h3>
+                                    <span className="text-xs text-muted-foreground">(Shared across team)</span>
                                 </div>
-                                <h3 className="text-lg font-bold text-foreground">Organization LinkedIn</h3>
-                                <span className="text-xs text-muted-foreground">(Shared across team)</span>
+                                {hasOrgCredential && (
+                                    <div className="flex gap-4">
+                                        <button
+                                            onClick={() => handleConnect("organization")}
+                                            className="text-[10px] font-black uppercase tracking-[0.2em] text-[#0077b5] hover:text-blue-400 transition-colors"
+                                        >
+                                            + Add OAuth
+                                        </button>
+                                        <button
+                                            onClick={() => openCredentialModal("organization")}
+                                            className="text-[10px] font-black uppercase tracking-[0.2em] text-[#0077b5] hover:text-blue-400 transition-colors"
+                                        >
+                                            + Add Account
+                                        </button>
+                                    </div>
+                                )}
                             </div>
 
-                            {orgCredential ? (
+                            {hasOrgCredential ? (
                                 <div className="space-y-4">
-                                    <div className="flex items-center justify-between rounded-xl border border-border bg-background p-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 p-[2px]">
-                                                <div className="h-full w-full rounded-full bg-white grid place-items-center">
-                                                    <Linkedin size={20} className="text-[#0077b5]" />
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <div className="font-semibold text-foreground">
-                                                    {orgCredential.profile_name || "Organization Account"}
-                                                </div>
-                                                {orgCredential.connected_by && (
-                                                    <div className="text-xs text-muted-foreground">
-                                                        Connected by {orgCredential.connected_by}
+                                    {orgCredentials.map((cred) => (
+                                        <div key={cred.id} className="flex flex-col gap-4 p-5 rounded-2xl border border-border bg-background hover:border-[#0077b5]/30 transition-all group">
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 p-[2px] transition-transform group-hover:rotate-6">
+                                                        <div className="h-full w-full rounded-2xl bg-white grid place-items-center">
+                                                            <Linkedin size={24} className="text-[#0077b5]" />
+                                                        </div>
                                                     </div>
-                                                )}
+                                                    <div>
+                                                        <div className="font-bold text-foreground text-lg">
+                                                            {cred.profile_name || "Organization Account"}
+                                                        </div>
+                                                        {cred.connected_by && (
+                                                            <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">
+                                                                Linked by {cred.connected_by}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-6">
+                                                    <div className="flex flex-col items-end">
+                                                        <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Daily Usage</div>
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="h-2 w-24 bg-muted rounded-full overflow-hidden">
+                                                                <div
+                                                                    className="h-full bg-blue-500"
+                                                                    style={{ width: `${Math.min(100, (cred.sent_count_today / cred.daily_limit) * 100)}%` }}
+                                                                />
+                                                            </div>
+                                                            <span className="text-xs font-bold text-foreground">{cred.sent_count_today}/{cred.daily_limit}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex flex-col items-start">
+                                                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Quota</span>
+                                                        <input
+                                                            type="number"
+                                                            className="w-20 h-9 rounded-xl border border-border bg-muted/50 px-3 text-xs font-bold focus:border-blue-500/50 outline-none transition-all"
+                                                            defaultValue={cred.daily_limit}
+                                                            onBlur={(e) => handleUpdateLimit(cred.id, parseInt(e.target.value))}
+                                                        />
+                                                    </div>
+                                                    <button
+                                                        onClick={() => handleDisconnect("organization", cred.id)}
+                                                        className="p-2.5 rounded-xl hover:bg-rose-500/10 text-rose-500 transition-colors"
+                                                        title="Disconnect account"
+                                                    >
+                                                        <X size={20} />
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-3">
-                                            <div className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                                                Connected
-                                            </div>
-                                            <button
-                                                onClick={() => handleDisconnect("organization")}
-                                                disabled={isDisconnecting}
-                                                className="text-rose-500 hover:text-rose-600 disabled:opacity-50"
-                                            >
-                                                <X size={18} />
-                                            </button>
-                                        </div>
-                                    </div>
+                                    ))}
 
-                                    {/* Preference Toggle */}
+                                    {/* Rotation Mode Selector */}
                                     {personalCredential && (
-                                        <div className="flex items-center justify-between rounded-xl border border-border bg-muted/30 px-4 py-3">
-                                            <span className="text-sm font-medium text-foreground">Use for campaigns</span>
+                                        <div className="mt-8 flex items-center justify-between rounded-2xl border border-blue-500/10 bg-blue-500/5 p-6 border-dashed">
+                                            <div className="flex items-start gap-4">
+                                                <div className="grid h-10 w-10 place-items-center rounded-xl bg-blue-500/10 text-blue-500">
+                                                    <Rocket size={20} />
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-sm font-bold text-foreground">Outreach Priority: Team Shared</span>
+                                                    <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest mt-1">
+                                                        Campaigns will use organization accounts in a round-robin rotation
+                                                    </p>
+                                                </div>
+                                            </div>
                                             <button
                                                 onClick={() => handleSetPreference(false)}
-                                                className={`relative w-11 h-6 rounded-full transition-colors ${!status?.using_personal ? "bg-blue-600" : "bg-gray-300"
-                                                    }`}
+                                                className={`relative w-14 h-7 rounded-full transition-all duration-300 ${!status?.using_personal ? "bg-blue-600 shadow-lg shadow-blue-500/20" : "bg-muted"}`}
                                             >
                                                 <div
-                                                    className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white transition-transform ${!status?.using_personal ? "translate-x-5" : "translate-x-0"
-                                                        }`}
+                                                    className={`absolute top-1 left-1 h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-300 ${!status?.using_personal ? "translate-x-7 scale-110" : "translate-x-0"}`}
                                                 />
                                             </button>
                                         </div>
                                     )}
                                 </div>
                             ) : (
-                                <div className="space-y-3">
-                                    <div className="flex items-center justify-between rounded-xl border border-border bg-background p-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="h-10 w-10 rounded-full bg-muted grid place-items-center">
-                                                <Linkedin size={20} />
-                                            </div>
-                                            <div>
-                                                <div className="font-semibold text-muted-foreground">Not Connected</div>
-                                                <div className="text-xs text-muted-foreground">Requires admin role</div>
-                                            </div>
+                                <div className="space-y-6">
+                                    <div className="flex flex-col items-center justify-center py-12 px-6 rounded-3xl border border-dashed border-border bg-muted/5">
+                                        <div className="h-16 w-16 rounded-3xl bg-muted/20 grid place-items-center mb-6">
+                                            <Linkedin size={32} className="text-muted-foreground/40" />
                                         </div>
-                                        <div className="flex items-center gap-2">
+                                        <div className="text-center mb-8">
+                                            <h4 className="font-bold text-foreground mb-2">No organization accounts connected</h4>
+                                            <p className="text-xs text-muted-foreground max-w-[280px] mx-auto leading-relaxed">
+                                                Share account access with your entire team to scale your LinkedIn outreach safely.
+                                            </p>
+                                        </div>
+                                        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                                             <button
                                                 onClick={() => handleConnect("organization")}
                                                 disabled={isConnecting}
-                                                className="flex items-center gap-2 rounded-lg bg-[#0077b5] px-4 py-2 text-xs font-bold text-white hover:bg-[#006396] transition-colors disabled:opacity-50"
+                                                className="group relative overflow-hidden rounded-2xl bg-[#0077b5] px-8 py-4 text-xs font-black uppercase tracking-widest text-white transition-all hover:bg-[#006396] hover:scale-[1.02] active:scale-95 shadow-xl shadow-[#0077b5]/20 disabled:opacity-50"
                                             >
-                                                {isConnecting && <Loader2 className="h-3 w-3 animate-spin" />}
-                                                Connect via OAuth
+                                                <span className="relative z-10 flex items-center justify-center gap-2">
+                                                    {isConnecting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Linkedin size={16} />}
+                                                    Connect via OAuth
+                                                </span>
                                             </button>
                                             <button
                                                 onClick={() => openCredentialModal("organization")}
-                                                className="flex items-center gap-2 rounded-lg border border-[#0077b5] bg-transparent px-4 py-2 text-xs font-bold text-[#0077b5] hover:bg-[#0077b5]/10 transition-colors"
+                                                className="rounded-2xl border border-border bg-card px-8 py-4 text-xs font-black uppercase tracking-widest text-foreground transition-all hover:bg-muted hover:scale-[1.02] active:scale-95"
                                             >
-                                                <Linkedin size={14} />
-                                                Connect with Credentials
+                                                Use Credentials
                                             </button>
                                         </div>
                                     </div>

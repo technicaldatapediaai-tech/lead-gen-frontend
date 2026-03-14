@@ -54,6 +54,10 @@ export default function SettingsPage() {
     
     // Organization / Product Info
     const [orgId, setOrgId] = useState("");
+    const [orgName, setOrgName] = useState("");
+    const [orgIndustry, setOrgIndustry] = useState("");
+    const [orgWebsite, setOrgWebsite] = useState("");
+    const [orgLinkedIn, setOrgLinkedIn] = useState("");
     const [productDescription, setProductDescription] = useState("");
     const [valueProposition, setValueProposition] = useState("");
 
@@ -92,12 +96,16 @@ export default function SettingsPage() {
                 const currentOrgId = orgsRes.data.current_org_id || orgsRes.data.organizations[0].id;
                 setOrgId(currentOrgId);
                 
-                // Get full org details
-                // Note: We need a direct endpoint or we can find it in the list if the list has all fields
-                // Looking at the List response schema, it might only have basic info.
-                // But let's assume if current_org_id is known, we can find it or call an update to fetch it.
-                // For now, let's just attempt a patch to save, and maybe fetch specific org if there was an endpoint
-                // Actually the current_org_id is usually what we need. 
+                // Find current org in the list
+                const currentOrg = orgsRes.data.organizations.find((o: any) => o.id === currentOrgId);
+                if (currentOrg) {
+                    setOrgName(currentOrg.name || "");
+                    setOrgIndustry(currentOrg.industry || "");
+                    setOrgWebsite(currentOrg.website || "");
+                    setOrgLinkedIn(currentOrg.linkedin_company_page || "");
+                    setProductDescription(currentOrg.product_description || "");
+                    setValueProposition(currentOrg.value_proposition || "");
+                }
             }
         } catch (error) {
             console.error("Failed to fetch user data:", error);
@@ -229,6 +237,29 @@ export default function SettingsPage() {
         }
     };
 
+    const handleSaveOrgProfile = async () => {
+        if (!orgId) return;
+        setIsSaving(true);
+        try {
+            const res = await api.patch(`/api/organizations/${orgId}`, {
+                name: orgName,
+                industry: orgIndustry,
+                website: orgWebsite,
+                linkedin_company_page: orgLinkedIn
+            });
+
+            if (res.error) {
+                toast.error("Failed to update organization profile");
+            } else {
+                toast.success("Organization profile updated!");
+            }
+        } catch (error) {
+            toast.error("An error occurred");
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
     const handleSaveProductInfo = async () => {
         if (!orgId) return;
         setIsSaving(true);
@@ -340,6 +371,31 @@ export default function SettingsPage() {
                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shimmer" />
                                 </button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Organization Profile Section */}
+                <div className="mb-6 rounded-3xl border border-border bg-card p-8 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/5 group">
+                    <h3 className="mb-8 text-xs font-black uppercase tracking-[0.2em] text-muted-foreground group-hover:text-blue-500 transition-colors">Organization profile</h3>
+
+                    <div className="space-y-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <InputField label="Organization Name" value={orgName} onChange={setOrgName} />
+                            <InputField label="Industry" value={orgIndustry} onChange={setOrgIndustry} />
+                            <InputField label="Website" value={orgWebsite} onChange={setOrgWebsite} />
+                            <InputField label="LinkedIn Page" value={orgLinkedIn} onChange={setOrgLinkedIn} />
+                        </div>
+
+                        <div className="pt-4 flex justify-end">
+                            <button
+                                onClick={handleSaveOrgProfile}
+                                disabled={isSaving || !orgId}
+                                className="group relative overflow-hidden rounded-2xl bg-blue-600 px-12 py-4 text-xs font-black uppercase tracking-[0.2em] text-white transition-all hover:bg-blue-500 hover:scale-[1.02] active:scale-95 shadow-xl shadow-blue-500/20 disabled:opacity-50"
+                            >
+                                <span className="relative z-10">{isSaving ? "Updating..." : "Save Org Details"}</span>
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shimmer" />
+                            </button>
                         </div>
                     </div>
                 </div>

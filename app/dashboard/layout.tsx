@@ -6,6 +6,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 
 import { useEffect } from "react";
+import { API_BASE_URL } from "@/lib/api";
 
 export default function DashboardLayout({
     children,
@@ -20,7 +21,8 @@ export default function DashboardLayout({
                 window.postMessage({
                     type: "LEAD_GENIUS_CONNECT",
                     payload: {
-                        token: token
+                        token: token,
+                        apiUrl: API_BASE_URL
                     }
                 }, "*");
             }
