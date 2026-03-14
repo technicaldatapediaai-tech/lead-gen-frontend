@@ -146,6 +146,7 @@ export default function ForgotPasswordPage() {
                                         placeholder="000000"
                                         type="text"
                                         maxLength={6}
+                                        autoComplete="one-time-code"
                                         required
                                         value={otp}
                                         onChange={(e) => setOtp(e.target.value)}
@@ -162,6 +163,7 @@ export default function ForgotPasswordPage() {
                                             className="h-11 w-full rounded-xl border border-input bg-background px-4 pr-12 text-sm text-foreground outline-none placeholder:text-muted-foreground/50 focus:border-blue-500/60 focus:ring-4 focus:ring-blue-500/10 transition-colors"
                                             placeholder="••••••••"
                                             type={showPassword ? "text" : "password"}
+                                            autoComplete="new-password"
                                             required
                                             value={newPassword}
                                             onChange={(e) => setNewPassword(e.target.value)}
