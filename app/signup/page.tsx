@@ -71,15 +71,22 @@ export default function SignupPage() {
         }
 
         if (data) {
-            toast.success("Registration successful! Please check your email for the OTP.");
+            // Use the status message from the backend
+            if ((data as any).email_sent === false) {
+                toast.warning((data as any).message || "Registration successful, but email delivery failed.");
+            } else {
+                toast.success((data as any).message || "Registration successful! Please check your email for the OTP.");
+            }
+            
             setIsVerifying(true);
             
-            // For development purposes, if the backend returns the token, log it
+            // For troubleshooting: if the backend returns the token (fallback or dev), log it
             if ((data as any)._dev_verification_token) {
-                console.log("DEV: Verification Token is", (data as any)._dev_verification_token);
-                // Optionally auto-fill it for developers
-                if (process.env.NODE_ENV === 'development') {
-                    setOtp((data as any)._dev_verification_token);
+                console.log("OTP Debug Information:", (data as any)._dev_verification_token);
+                
+                // If it's a known failure or dev mode, we can help the user
+                if (process.env.NODE_ENV === 'development' || (data as any).email_sent === false) {
+                    console.info("Registration OTP captured from fallback response.");
                 }
             }
         }
