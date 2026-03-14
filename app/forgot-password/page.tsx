@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
@@ -13,6 +13,16 @@ export default function ForgotPasswordPage() {
     const [newPassword, setNewPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isResending, setIsResending] = useState(false);
+    const [countdown, setCountdown] = useState(0);
+
+    // Initial countdown check/timer
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCountdown((prev) => (prev > 0 ? prev - 1 : 0));
+        }, 1000);
+        return () => clearInterval(timer);
+    }, []);
 
     const handleEmailSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -27,12 +37,43 @@ export default function ForgotPasswordPage() {
             if (res.error) throw res.error;
             
             const data = res.data;
-            toast.success("If the email exists, a reset code has been sent!");
+            if (data?._dev_reset_token) {
+                console.log("OTP Backup Information (Forgot Password):", data._dev_reset_token);
+                if (data.message?.includes("could not send")) {
+                    toast.warning(data.message);
+                } else {
+                    toast.success("If the email exists, a reset code has been sent!");
+                }
+            } else {
+                toast.success("If the email exists, a reset code has been sent!");
+            }
+            
             setView("otp");
+            setCountdown(30); // Start cooldown
         } catch (error: any) {
             toast.error(error?.detail || "Failed to send reset code. Please try again.");
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    const handleResendCode = async () => {
+        if (countdown > 0 || isResending) return;
+        setIsResending(true);
+        try {
+            const res = await api.post<any>("/api/auth/forgot-password", { email });
+            if (res.error) throw res.error;
+            
+            if (res.data?._dev_reset_token) {
+                console.log("OTP Backup Information (Resend Forgot):", res.data._dev_reset_token);
+            }
+            
+            toast.success("A new verification code has been generated.");
+            setCountdown(30);
+        } catch (error: any) {
+            toast.error("Failed to resend code.");
+        } finally {
+            setIsResending(false);
         }
     };
 
@@ -194,15 +235,30 @@ export default function ForgotPasswordPage() {
                                     )}
                                 </button>
 
-                                <p className="pt-2 text-center text-xs text-muted-foreground pt-4 mt-4">
+                                <div className="text-center space-y-4 pt-4 mt-2">
+                                    <p className="text-xs text-muted-foreground p-2 rounded-lg bg-secondary/30">
+                                        Didn't receive the code?{" "}
+                                        {countdown > 0 ? (
+                                            <span className="font-semibold text-blue-400">Resend in {countdown}s</span>
+                                        ) : (
+                                            <button 
+                                                type="button"
+                                                onClick={handleResendCode}
+                                                disabled={isResending}
+                                                className="font-semibold text-blue-400 hover:text-blue-300 hover:underline disabled:opacity-50"
+                                            >
+                                                {isResending ? "Sending..." : "Resend Code"}
+                                            </button>
+                                        )}
+                                    </p>
                                     <button
                                         type="button"
                                         onClick={() => setView("email")}
-                                        className="font-semibold text-muted-foreground hover:text-foreground transition-colors"
+                                        className="text-xs text-muted-foreground hover:text-foreground hover:underline transition-colors"
                                     >
-                                        Back to email entry
+                                        ← Back to email entry
                                     </button>
-                                </p>
+                                </div>
                             </form>
                         </div>
                     )}
