@@ -9,23 +9,17 @@ import { api } from "@/lib/api";
 export default function LoginPage() {
     const router = useRouter();
     const { login, isAuthenticated, isLoading: authLoading } = useAuth();
-    const [view, setView] = useState<"login" | "forgot_email" | "forgot_otp">("login");
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    
-    // For forgot password
-    const [otp, setOtp] = useState("");
-    const [newPassword, setNewPassword] = useState("");
-    
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Redirect if already authenticated
     useEffect(() => {
-        if (!authLoading && isAuthenticated && view === "login") {
+        if (!authLoading && isAuthenticated) {
             router.push("/dashboard");
         }
-    }, [isAuthenticated, authLoading, router, view]);
+    }, [isAuthenticated, authLoading, router]);
 
     const handleLoginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -41,58 +35,6 @@ export default function LoginPage() {
         }
 
         setIsSubmitting(false);
-    };
-
-    const handleForgotEmailSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!email) {
-            toast.error("Please enter your email");
-            return;
-        }
-        setIsSubmitting(true);
-
-        try {
-            const res = await api.post<any>("/api/auth/forgot-password", { email });
-            if (res.error) throw res.error;
-            
-            const data = res.data;
-            if (data && data._dev_reset_token) {
-                toast.info(`[DEV Mode] OTP Code: ${data._dev_reset_token}`, { duration: 8000 });
-                setOtp(data._dev_reset_token);
-            }
-            
-            toast.success("If the email exists, a reset code has been sent!");
-            setView("forgot_otp");
-        } catch (error: any) {
-            toast.error(error?.detail || "Failed to send reset code. Please try again.");
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-    const handleResetPasswordSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!otp || !newPassword) {
-            toast.error("Please enter the verification code and your new password");
-            return;
-        }
-        setIsSubmitting(true);
-
-        try {
-            const res = await api.post("/api/auth/reset-password", { token: otp, new_password: newPassword });
-            if (res.error) throw res.error;
-            toast.success("Password reset successfully! Please log in.");
-            setView("login");
-            setPassword("");
-            setOtp("");
-            setNewPassword("");
-        } catch (error: any) {
-            let msg = error?.detail || error?.message || "Failed to reset password.";
-            if (Array.isArray(msg)) msg = msg[0]?.msg;
-            toast.error(typeof msg === 'string' ? msg : "Failed to reset password. Please check your code.");
-        } finally {
-            setIsSubmitting(false);
-        }
     };
 
     return (
@@ -112,266 +54,130 @@ export default function LoginPage() {
                         </div>
                     </div>
 
-                    {view === "login" && (
-                        <>
-                            <h1 className="mt-8 text-3xl font-semibold tracking-tight text-foreground">
-                                Welcome back
-                            </h1>
-                            <p className="mt-2 text-sm text-muted-foreground">
-                                Log in to access your lead intelligence dashboard.
-                            </p>
+                    <h1 className="mt-8 text-3xl font-semibold tracking-tight text-foreground">
+                        Welcome back
+                    </h1>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                        Log in to access your lead intelligence dashboard.
+                    </p>
 
-                            {/* Social buttons */}
-                            <div className="mt-6 grid grid-cols-2 gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-                                        window.location.href = `${API_URL}/api/auth/google/login`;
-                                    }}
-                                    className="flex h-11 items-center justify-center gap-2 rounded-xl border border-input bg-background text-sm font-semibold text-foreground hover:bg-accent transition-colors"
-                                >
-                                    Google
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-                                        window.location.href = `${API_URL}/api/auth/linkedin/login`;
-                                    }}
-                                    className="flex h-11 items-center justify-center gap-2 rounded-xl border border-input bg-background text-sm font-semibold text-foreground hover:bg-accent transition-colors"
-                                >
-                                    LinkedIn
-                                </button>
-                            </div>
+                    {/* Social buttons */}
+                    <div className="mt-6 grid grid-cols-2 gap-3">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+                                window.location.href = `${API_URL}/api/auth/google/login`;
+                            }}
+                            className="flex h-11 items-center justify-center gap-2 rounded-xl border border-input bg-background text-sm font-semibold text-foreground hover:bg-accent transition-colors"
+                        >
+                            Google
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+                                window.location.href = `${API_URL}/api/auth/linkedin/login`;
+                            }}
+                            className="flex h-11 items-center justify-center gap-2 rounded-xl border border-input bg-background text-sm font-semibold text-foreground hover:bg-accent transition-colors"
+                        >
+                            LinkedIn
+                        </button>
+                    </div>
 
-                            {/* Divider */}
-                            <div className="my-6 flex items-center gap-4 text-xs text-muted-foreground">
-                                <div className="h-px flex-1 bg-border" />
-                                <span>Or continue with email</span>
-                                <div className="h-px flex-1 bg-border" />
-                            </div>
+                    {/* Divider */}
+                    <div className="my-6 flex items-center gap-4 text-xs text-muted-foreground">
+                        <div className="h-px flex-1 bg-border" />
+                        <span>Or continue with email</span>
+                        <div className="h-px flex-1 bg-border" />
+                    </div>
 
-                            {/* Login Form */}
-                            <form onSubmit={handleLoginSubmit} className="space-y-4">
-                                <div>
-                                    <label className="mb-2 block text-xs font-medium text-muted-foreground">
-                                        Work Email
-                                    </label>
-                                    <input
-                                        className="h-11 w-full rounded-xl border border-input bg-background px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground/50 focus:border-blue-500/60 focus:ring-4 focus:ring-blue-500/10 transition-colors"
-                                        placeholder="name@company.com"
-                                        type="email"
-                                        required
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        disabled={isSubmitting}
-                                    />
-                                </div>
+                    {/* Login Form */}
+                    <form onSubmit={handleLoginSubmit} className="space-y-4">
+                        <div>
+                            <label className="mb-2 block text-xs font-medium text-muted-foreground">
+                                Work Email
+                            </label>
+                            <input
+                                className="h-11 w-full rounded-xl border border-input bg-background px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground/50 focus:border-blue-500/60 focus:ring-4 focus:ring-blue-500/10 transition-colors"
+                                placeholder="name@company.com"
+                                type="email"
+                                required
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                disabled={isSubmitting}
+                            />
+                        </div>
 
-                                <div>
-                                    <div className="mb-2 flex items-center justify-between">
-                                        <label className="block text-xs font-medium text-muted-foreground">
-                                            Password
-                                        </label>
-                                        <button
-                                            type="button"
-                                            onClick={() => setView("forgot_email")}
-                                            className="text-xs font-semibold text-blue-400 hover:text-blue-300"
-                                        >
-                                            Forgot password?
-                                        </button>
-                                    </div>
-
-                                    <div className="relative">
-                                        <input
-                                            className="h-11 w-full rounded-xl border border-input bg-background px-4 pr-12 text-sm text-foreground outline-none placeholder:text-muted-foreground/50 focus:border-blue-500/60 focus:ring-4 focus:ring-blue-500/10 transition-colors"
-                                            placeholder="••••••••"
-                                            type={showPassword ? "text" : "password"}
-                                            required
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            disabled={isSubmitting}
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowPassword((v) => !v)}
-                                            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg border border-input bg-secondary/50 px-3 py-2 text-xs text-muted-foreground hover:bg-secondary transition-colors"
-                                        >
-                                            {showPassword ? "Hide" : "Show"}
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <label className="flex items-center gap-2 text-xs text-muted-foreground">
-                                    <input type="checkbox" className="h-4 w-4 accent-blue-600" />
-                                    Remember me for 30 days
+                        <div>
+                            <div className="mb-2 flex items-center justify-between">
+                                <label className="block text-xs font-medium text-muted-foreground">
+                                    Password
                                 </label>
-
                                 <button
-                                    type="submit"
+                                    type="button"
+                                    onClick={() => router.push("/forgot-password")}
+                                    className="text-xs font-semibold text-blue-400 hover:text-blue-300"
+                                >
+                                    Forgot password?
+                                </button>
+                            </div>
+
+                            <div className="relative">
+                                <input
+                                    className="h-11 w-full rounded-xl border border-input bg-background px-4 pr-12 text-sm text-foreground outline-none placeholder:text-muted-foreground/50 focus:border-blue-500/60 focus:ring-4 focus:ring-blue-500/10 transition-colors"
+                                    placeholder="••••••••"
+                                    type={showPassword ? "text" : "password"}
+                                    required
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                     disabled={isSubmitting}
-                                    className="mt-2 flex h-11 w-full items-center justify-center rounded-xl bg-blue-600 text-sm font-semibold text-white hover:bg-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    {isSubmitting ? (
-                                        <div className="flex items-center gap-2">
-                                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                                            Logging in...
-                                        </div>
-                                    ) : (
-                                        "Log In"
-                                    )}
-                                </button>
-
-                                <p className="pt-2 text-center text-xs text-muted-foreground">
-                                    New here?{" "}
-                                    <button
-                                        type="button"
-                                        onClick={() => router.push("/signup")}
-                                        className="font-semibold text-blue-400 hover:text-blue-300"
-                                    >
-                                        Create an account
-                                    </button>
-                                </p>
-
-                                <p className="pt-3 text-center text-[11px] text-muted-foreground/60">
-                                    SOC2 Type II Compliant &amp; Encrypted
-                                </p>
-                            </form>
-                        </>
-                    )}
-
-                    {view === "forgot_email" && (
-                        <div className="animate-in fade-in slide-in-from-right-4 duration-300">
-                            <h1 className="mt-8 text-3xl font-semibold tracking-tight text-foreground">
-                                Forgot password?
-                            </h1>
-                            <p className="mt-2 text-sm text-muted-foreground">
-                                Enter your email below to receive a 6-digit verification code.
-                            </p>
-
-                            <form onSubmit={handleForgotEmailSubmit} className="mt-8 space-y-4">
-                                <div>
-                                    <label className="mb-2 block text-xs font-medium text-muted-foreground">
-                                        Work Email
-                                    </label>
-                                    <input
-                                        className="h-11 w-full rounded-xl border border-input bg-background px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground/50 focus:border-blue-500/60 focus:ring-4 focus:ring-blue-500/10 transition-colors"
-                                        placeholder="name@company.com"
-                                        type="email"
-                                        required
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        disabled={isSubmitting}
-                                    />
-                                </div>
-
+                                />
                                 <button
-                                    type="submit"
-                                    disabled={isSubmitting || !email}
-                                    className="mt-4 flex h-11 w-full items-center justify-center rounded-xl bg-blue-600 text-sm font-semibold text-white hover:bg-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    type="button"
+                                    onClick={() => setShowPassword((v) => !v)}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg border border-input bg-secondary/50 px-3 py-2 text-xs text-muted-foreground hover:bg-secondary transition-colors"
                                 >
-                                    {isSubmitting ? (
-                                        <div className="flex items-center gap-2">
-                                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                                            Sending...
-                                        </div>
-                                    ) : (
-                                        "Send Code"
-                                    )}
+                                    {showPassword ? "Hide" : "Show"}
                                 </button>
-
-                                <p className="pt-2 text-center text-xs text-muted-foreground">
-                                    Remember your password?{" "}
-                                    <button
-                                        type="button"
-                                        onClick={() => setView("login")}
-                                        className="font-semibold text-blue-400 hover:text-blue-300"
-                                    >
-                                        Back to login
-                                    </button>
-                                </p>
-                            </form>
+                            </div>
                         </div>
-                    )}
 
-                    {view === "forgot_otp" && (
-                        <div className="animate-in fade-in slide-in-from-right-4 duration-300">
-                            <h1 className="mt-8 text-3xl font-semibold tracking-tight text-foreground">
-                                Reset password
-                            </h1>
-                            <p className="mt-2 text-sm text-muted-foreground">
-                                We've sent a code to <span className="font-semibold text-foreground">{email}</span>.
-                            </p>
+                        <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <input type="checkbox" className="h-4 w-4 accent-blue-600" />
+                            Remember me for 30 days
+                        </label>
 
-                            <form onSubmit={handleResetPasswordSubmit} className="mt-8 space-y-4">
-                                <div>
-                                    <label className="mb-2 block text-xs font-medium text-muted-foreground">
-                                        6-Digit Verification Code
-                                    </label>
-                                    <input
-                                        className="h-11 w-full rounded-xl border border-input bg-background px-4 text-center tracking-widest text-lg font-mono text-foreground outline-none placeholder:text-muted-foreground/50 focus:border-blue-500/60 focus:ring-4 focus:ring-blue-500/10 transition-colors"
-                                        placeholder="000000"
-                                        type="text"
-                                        maxLength={6}
-                                        required
-                                        value={otp}
-                                        onChange={(e) => setOtp(e.target.value)}
-                                        disabled={isSubmitting}
-                                    />
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="mt-2 flex h-11 w-full items-center justify-center rounded-xl bg-blue-600 text-sm font-semibold text-white hover:bg-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {isSubmitting ? (
+                                <div className="flex items-center gap-2">
+                                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                                    Logging in...
                                 </div>
+                            ) : (
+                                "Log In"
+                            )}
+                        </button>
 
-                                <div>
-                                    <label className="mb-2 mt-4 block text-xs font-medium text-muted-foreground">
-                                        New Password
-                                    </label>
-                                    <div className="relative">
-                                        <input
-                                            className="h-11 w-full rounded-xl border border-input bg-background px-4 pr-12 text-sm text-foreground outline-none placeholder:text-muted-foreground/50 focus:border-blue-500/60 focus:ring-4 focus:ring-blue-500/10 transition-colors"
-                                            placeholder="••••••••"
-                                            type={showPassword ? "text" : "password"}
-                                            required
-                                            value={newPassword}
-                                            onChange={(e) => setNewPassword(e.target.value)}
-                                            disabled={isSubmitting}
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowPassword((v) => !v)}
-                                            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg border border-input bg-secondary/50 px-3 py-2 text-xs text-muted-foreground hover:bg-secondary transition-colors"
-                                        >
-                                            {showPassword ? "Hide" : "Show"}
-                                        </button>
-                                    </div>
-                                </div>
+                        <p className="pt-2 text-center text-xs text-muted-foreground">
+                            New here?{" "}
+                            <button
+                                type="button"
+                                onClick={() => router.push("/signup")}
+                                className="font-semibold text-blue-400 hover:text-blue-300"
+                            >
+                                Create an account
+                            </button>
+                        </p>
 
-                                <button
-                                    type="submit"
-                                    disabled={isSubmitting || !otp || !newPassword}
-                                    className="mt-6 flex h-11 w-full items-center justify-center rounded-xl bg-blue-600 text-sm font-semibold text-white hover:bg-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    {isSubmitting ? (
-                                        <div className="flex items-center gap-2">
-                                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                                            Resetting...
-                                        </div>
-                                    ) : (
-                                        "Reset Password"
-                                    )}
-                                </button>
-
-                                <p className="pt-2 text-center text-xs text-muted-foreground border-border pt-4 mt-4">
-                                    <button
-                                        type="button"
-                                        onClick={() => setView("login")}
-                                        className="font-semibold text-muted-foreground hover:text-foreground transition-colors"
-                                    >
-                                        Cancel
-                                    </button>
-                                </p>
-                            </form>
-                        </div>
-                    )}
+                        <p className="pt-3 text-center text-[11px] text-muted-foreground/60">
+                            SOC2 Type II Compliant &amp; Encrypted
+                        </p>
+                    </form>
                 </section>
 
                 {/* RIGHT */}

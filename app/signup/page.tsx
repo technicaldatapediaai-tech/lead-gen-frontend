@@ -72,6 +72,15 @@ export default function SignupPage() {
 
         if (data) {
             toast.success("Registration successful! Please check your email for the OTP.");
+            
+            // @ts-ignore
+            if (data._dev_verification_token) {
+                // @ts-ignore
+                toast.info(`[DEV Mode] Verification Code: ${data._dev_verification_token}`, { duration: 8000 });
+                // @ts-ignore
+                setOtp(data._dev_verification_token);
+            }
+            
             setIsVerifying(true);
         }
 
