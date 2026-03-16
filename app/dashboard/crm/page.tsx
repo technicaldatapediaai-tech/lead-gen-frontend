@@ -440,6 +440,23 @@ export default function CRMPage() {
                                 </label>
                             </DropdownMenuItem>
 
+                            <DropdownMenuSeparator className="my-2 bg-border/50" />
+
+                            <DropdownMenuItem 
+                                asChild
+                                className="flex items-center gap-3 py-3 rounded-lg cursor-pointer hover:bg-purple-600/10 focus:bg-purple-600/10"
+                            >
+                                <Link href="/dashboard/extraction" className="w-full flex items-center gap-3">
+                                    <div className="p-2 rounded-md bg-purple-600/15 text-purple-500">
+                                        <Search className="h-4 w-4" />
+                                    </div>
+                                    <div>
+                                        <div className="font-semibold text-sm text-purple-600">Advanced Scraping</div>
+                                        <div className="text-[10px] text-muted-foreground">Extract from LinkedIn automagically</div>
+                                    </div>
+                                </Link>
+                            </DropdownMenuItem>
+
                         </DropdownMenuContent>
                     </DropdownMenu>
 
