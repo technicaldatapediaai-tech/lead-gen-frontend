@@ -101,7 +101,7 @@ export default function LeadSourcingPage() {
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_360px]">
         {/* LEFT: Tab Content */}
         <div className="space-y-6">
-          <Tabs defaultValue="standard" value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <Tabs defaultValue="csv" value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="bg-muted/50 p-1 rounded-xl h-auto flex-wrap justify-start gap-1">
               <TabsTrigger 
                 value="csv" 

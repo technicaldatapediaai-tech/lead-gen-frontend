@@ -243,8 +243,23 @@ export default function CampaignDetailsPage() {
                         </div>
                     </div>
                     <div className="rounded-lg bg-muted/30 p-4 font-medium text-sm text-foreground leading-relaxed italic border border-border/50">
-                        "{campaign.settings?.message || 'No message configured'}"
+                        {(() => {
+                            const template = campaign.settings?.message || 'No message configured';
+                            const firstLead = leads[0];
+                            const firstName = firstLead?.name?.split(' ')[0] || 'Jordan';
+
+                            const personalized = template
+                                .replace(/\{\{first[\s_]?name\}\}|\[first\s*name\]/gi, firstName)
+                                .replace(/\{\{last[\s_]?name\}\}|\[last\s*name\]/gi, 'Smith')
+                                .replace(/\{\{name\}\}|\[name\]/gi, firstLead?.name || 'Jordan Smith')
+                                .replace(/\{\{company\}\}|\[company\]/gi, firstLead?.company || 'Acme Corp');
+
+                            return `"${personalized}"`;
+                        })()}
                     </div>
+                    <p className="mt-2 text-[10px] text-muted-foreground italic">
+                        * Preview using {leads[0] ? `lead "${leads[0].name}"` : 'sample data'}
+                    </p>
                 </div>
 
                 {/* Leads Table Section */}
@@ -365,32 +380,32 @@ export default function CampaignDetailsPage() {
                                             </td>
                                             <td className="px-6 py-4 text-right">
                                                 <div className="flex items-center justify-end gap-2">
-                                                    {lead.linkedin_url && (
-                                                        <a
-                                                            href={lead.linkedin_url}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="p-1.5 text-blue-500 hover:bg-blue-50 rounded transition"
-                                                            onClick={(e) => e.stopPropagation()}
-                                                        >
-                                                            <Briefcase className="h-4 w-4" />
-                                                        </a>
-                                                    )}
-                                                    <Link href={`/dashboard/crm/${lead.id}`}>
-                                                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                                                            <ExternalLink className="h-4 w-4" />
-                                                        </Button>
-                                                    </Link>
-                                                </div>
-                                            </td>
+                                                {lead.linkedin_url && (
+                                                    <a
+                                                        href={lead.linkedin_url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="p-1.5 text-blue-500 hover:bg-blue-50 rounded transition"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        <Briefcase className="h-4 w-4" />
+                                                    </a>
+                                                )}
+                                                <Link href={`/dashboard/crm/${lead.id}`}>
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                                                        <ExternalLink className="h-4 w-4" />
+                                                    </Button>
+                                                </Link>
+                                            </div>
+                                        </td>
                                         </tr>
-                                    ))
+                            ))
                                 )}
-                            </tbody>
-                        </table>
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
             </div>
+        </div>
 
             {/* Batch LinkedIn Modal */}
             <Dialog open={showBatchLinkedIn} onOpenChange={setShowBatchLinkedIn}>

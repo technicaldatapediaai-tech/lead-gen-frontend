@@ -54,8 +54,8 @@ export default function LinkedInMessaging({
 
         return template
             .replace(/\{\{name\}\}|\[name\]/gi, name)
-            .replace(/\{\{first_?name\}\}|\[first\s*name\]/gi, firstName)
-            .replace(/\{\{last_?name\}\}|\[last\s*name\]/gi, lastName)
+            .replace(/\{\{first[\s_]?name\}\}|\[first\s*name\]/gi, firstName)
+            .replace(/\{\{last[\s_]?name\}\}|\[last\s*name\]/gi, lastName)
             .replace(/\{\{company\}\}|\[company\]/gi, leadCompany || "")
             .replace(/\{\{title\}\}|\[title\]/gi, leadTitle || "")
             .replace(/\{\{email\}\}|\[email\]/gi, leadEmail || "")
@@ -79,11 +79,14 @@ export default function LinkedInMessaging({
         setIsSending(true);
         try {
             if (sendMethod === "extension") {
-                // Queue message for Chrome extension
+                // Queue message for Chrome extension - Personalize BEFORE sending to extension
+                // to ensure the extension doesn't have to deal with variable replacement
+                const personalizedMessage = personalizePreview(message.trim());
+                
                 const res = await api.post("/api/outreach/", {
                     lead_id: leadId,
                     channel: "linkedin",
-                    message: message.trim(),
+                    message: personalizedMessage,
                     message_type: messageType,
                     send_method: "extension",
                     status: "queued",

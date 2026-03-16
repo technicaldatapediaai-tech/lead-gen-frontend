@@ -263,8 +263,8 @@ export default function BatchLinkedInMessaging({
 
         return template
             .replace(/\{\{name\}\}|\[name\]/gi, name)
-            .replace(/\{\{first_?name\}\}|\[first\s*name\]/gi, firstName)
-            .replace(/\{\{last_?name\}\}|\[last\s*name\]/gi, lastName)
+            .replace(/\{\{first[\s_]?name\}\}|\[first\s*name\]/gi, firstName)
+            .replace(/\{\{last[\s_]?name\}\}|\[last\s*name\]/gi, lastName)
             .replace(/\{\{company\}\}|\[company\]/gi, lead.company || "")
             .replace(/\{\{title\}\}|\[title\]/gi, lead.title || "")
             .replace(/\{\{email\}\}|\[email\]/gi, lead.email || "")
