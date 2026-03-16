@@ -59,8 +59,8 @@ export default function BatchLinkedInMessaging({
 
     // Page 2 State
     const [templates, setTemplates] = useState<Template[]>([
-        { id: '1', name: 'Template 1', content: '' },
-        { id: '2', name: 'Connection Note', content: '' }
+        { id: '1', name: 'Strategy Intro', content: "Hi {{first_name}}, I'm a marketing strategist with 10+ years helping marketing teams automating their GTM workflows. We have a team of GTM engineers who work with marketing teams to automate processes. Recently we helped startups in fintech, Insurance and retail sector to automate their processes. Would love to connect and explore how we can collaborate!" },
+        { id: '2', name: 'Connection Note', content: "Hi {{first_name}}, I'd love to connect and share some insights on GTM automation." }
     ]);
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false });
     const [selectedIndex, setSelectedIndex] = useState(0);

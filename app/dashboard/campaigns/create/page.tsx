@@ -16,8 +16,8 @@ function CampaignCreationContent() {
     const [campaignName, setCampaignName] = useState(`My ${templateParam.charAt(0).toUpperCase() + templateParam.slice(1)} Campaign`);
     const [messageContent, setMessageContent] = useState(
         templateParam === 'invitation'
-            ? "Hi {{first_name}}, I saw your profile and would love to connect!"
-            : "Hi {{first_name}}, wanted to reach out regarding..."
+            ? "Hi {{first_name}}, I'm a marketing strategist with 10+ years helping marketing teams automating their GTM workflows. We have a team of GTM engineers who work with marketing teams to automate processes. Recently we helped startups in fintech, Insurance and retail sector to automate their processes. Would love to connect and explore how we can collaborate!"
+            : "Hi {{first_name}}, I saw your profile and would love to connect and share some insights on GTM automation."
     );
     const [prospects, setProspects] = useState("");
     const [sendMethod, setSendMethod] = useState<'extension' | 'api'>('extension');

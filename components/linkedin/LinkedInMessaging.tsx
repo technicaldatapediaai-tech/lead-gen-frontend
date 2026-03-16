@@ -39,7 +39,7 @@ export default function LinkedInMessaging({
     onMessageSent,
     onClose
 }: LinkedInMessagingProps) {
-    const [message, setMessage] = useState("");
+    const [message, setMessage] = useState("Hi {{first_name}}, I'm a marketing strategist with 10+ years helping marketing teams automating their GTM workflows. We have a team of GTM engineers who work with marketing teams to automate processes. Recently we helped startups in fintech, Insurance and retail sector to automate their processes. Would love to connect and explore how we can collaborate!");
     const [messageType, setMessageType] = useState<"inmail" | "connection">("inmail");
     const [sendMethod, setSendMethod] = useState<"api" | "extension">("api");
     const [isSending, setIsSending] = useState(false);

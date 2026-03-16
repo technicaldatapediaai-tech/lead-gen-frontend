@@ -52,7 +52,7 @@ export default function BatchEmailMessaging({
     onCancel
 }: BatchEmailMessagingProps) {
     const [templates, setTemplates] = useState<Template[]>([
-        { id: '1', name: 'Email Template', content: 'Subject: Your Subject Line\n\nHi {{first_name}},\n\nI noticed you work at {{company}}...' }
+        { id: '1', name: 'Strategy Outreach', content: "Subject: Streamlining your GTM workflows\n\nHi {{first_name}},\n\nI'm a marketing strategist with 10+ years helping marketing teams automating their GTM workflows. We have a team of GTM engineers who work with marketing teams to automate processes.\n\nRecently we helped startups in fintech, Insurance and retail sector to automate their processes.\n\nWould love to connect and explore how we can collaborate!" }
     ]);
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false });
     const [selectedIndex, setSelectedIndex] = useState(0);
