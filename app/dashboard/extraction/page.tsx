@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Globe, FileSearch, Loader2 } from "lucide-react";
+import { Globe, FileSearch, Loader2, Upload, UserPlus } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import AddLeads from "./social-engagement/AddLeads";
 import { api } from "@/lib/api";
@@ -209,36 +209,19 @@ export default function LeadExtractionPage() {
 
           <div className="mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <MethodCard
-              icon={<ThumbIcon />}
-              title="Social Engagement"
-              desc="Extract leads interacting with specific influencers or posts. Target likes, comments, and followers."
-              buttonText="Start Extraction"
-              // href="/dashboard/extraction/social-engagement" 
+              icon={<Upload size={22} className="text-emerald-500" />}
+              title="CSV Import"
+              desc="Bulk upload leads from a spreadsheet. Supports custom field mapping and automated enrichment."
+              buttonText="Start Import"
+              href="/dashboard/extraction/lead-sourcing"
+            />
+
+            <MethodCard
+              icon={<UserPlus size={22} className="text-blue-500" />}
+              title="Manual Entry"
+              desc="Add prospects one by one. Perfect for quick additions or high-touch individual leads."
+              buttonText="Add Prospect"
               onClick={() => setShowAddLeads(true)}
-            />
-
-            <MethodCard
-              icon={<UsersIcon />}
-              title="Groups Scraper"
-              desc="Scrape member lists from industry-specific professional groups and communities automatically."
-              buttonText="Start Extraction"
-              href="/dashboard/extraction/group-engagement"
-            />
-
-            <MethodCard
-              icon={<Globe size={22} />}
-              title="Web Engagement"
-              desc="Find leads using boolean search, specific job titles, location data, and industry filters."
-              buttonText="Start Extraction"
-              href="/dashboard/extraction/lead-sourcing"
-            />
-
-            <MethodCard
-              icon={<FileSearch size={22} />}
-              title="Basic Search & CSV"
-              desc="Enrich your existing data. Upload a list of domains or names for deep analysis."
-              buttonText="Start Extraction"
-              href="/dashboard/extraction/lead-sourcing"
             />
           </div>
         </div>

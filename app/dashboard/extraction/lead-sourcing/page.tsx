@@ -18,13 +18,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import StandardSearch from "@/components/extraction/StandardSearch";
-import SalesNavigator from "@/components/extraction/SalesNavigator";
 import CSVImport from "@/components/extraction/CSVImport";
 import ManualLeadEntry from "@/components/extraction/ManualLeadEntry";
 
 export default function LeadSourcingPage() {
-  const [activeTab, setActiveTab] = useState("standard");
+  const [activeTab, setActiveTab] = useState("csv");
 
   return (
     <div className="h-full w-full overflow-y-auto bg-background text-foreground px-6 py-6 transition-colors duration-300">
@@ -106,20 +104,6 @@ export default function LeadSourcingPage() {
           <Tabs defaultValue="standard" value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="bg-muted/50 p-1 rounded-xl h-auto flex-wrap justify-start gap-1">
               <TabsTrigger 
-                value="standard" 
-                className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm py-2 px-4 gap-2"
-              >
-                <Search className="h-4 w-4" />
-                Standard Search
-              </TabsTrigger>
-              <TabsTrigger 
-                value="sales-nav" 
-                className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm py-2 px-4 gap-2"
-              >
-                <Compass className="h-4 w-4" />
-                Sales Navigator
-              </TabsTrigger>
-              <TabsTrigger 
                 value="csv" 
                 className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm py-2 px-4 gap-2"
               >
@@ -136,12 +120,6 @@ export default function LeadSourcingPage() {
             </TabsList>
 
             <div className="mt-6">
-              <TabsContent value="standard">
-                <StandardSearch />
-              </TabsContent>
-              <TabsContent value="sales-nav">
-                <SalesNavigator />
-              </TabsContent>
               <TabsContent value="csv">
                 <CSVImport />
               </TabsContent>
