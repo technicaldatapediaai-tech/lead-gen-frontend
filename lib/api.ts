@@ -79,32 +79,34 @@ export async function apiRequest<T>(
     options: RequestInit = {}
 ): Promise<ApiResponse<T>> {
     const normalizedEndpoint = normalizeEndpoint(endpoint);
-    const token = getAccessToken();
-
-    // Prepare headers
-    const headers = new Headers(options.headers || {});
-
-    // Set default Content-Type if not provided and body is not FormData
-    if (!headers.has('Content-Type') && !(options.body instanceof FormData)) {
-        headers.set('Content-Type', 'application/json');
-    }
-
-    if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
-    }
+    
+    // Helper to get headers with current token
+    const getHeaders = () => {
+        const headers = new Headers(options.headers || {});
+        // Setting content-type only for non-FormData bodies
+        if (!headers.has('Content-Type') && !(options.body instanceof FormData)) {
+            headers.set('Content-Type', 'application/json');
+        }
+        const token = getAccessToken();
+        if (token) {
+            headers.set('Authorization', `Bearer ${token}`);
+        }
+        return headers;
+    };
 
     try {
         const response = await fetch(`${API_BASE_URL}${normalizedEndpoint}`, {
             ...options,
-            headers,
+            headers: getHeaders(),
         });
 
-        // If unauthorized, try to refresh token
+        // 401 Unauthorized - Attempt token refresh
         if (response.status === 401 && !endpoint.includes('/auth/refresh') && !endpoint.includes('/auth/login')) {
+            console.log(`[API] 401 on ${endpoint}, attempting token refresh...`);
             const refreshToken = localStorage.getItem('refresh_token');
 
             if (!refreshToken) {
-                // No refresh token, redirect to login
+                console.warn("[API] No refresh token found, clearing session.");
                 if (typeof window !== 'undefined') {
                     localStorage.clear();
                     window.location.href = '/login';
@@ -114,7 +116,7 @@ export async function apiRequest<T>(
 
             if (!isRefreshing) {
                 isRefreshing = true;
-
+                console.log("[API] Starting refresh process...");
                 try {
                     const refreshRes = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
                         method: 'POST',
@@ -124,58 +126,64 @@ export async function apiRequest<T>(
 
                     if (refreshRes.ok) {
                         const data = await refreshRes.json();
+                        console.log("[API] Token refreshed успешно.");
                         localStorage.setItem('access_token', data.access_token);
-                        localStorage.setItem('token_expires_at', String(Date.now() + data.expires_in * 1000));
-
+                        if (data.expires_in) {
+                            localStorage.setItem('token_expires_at', String(Date.now() + data.expires_in * 1000));
+                        }
+                        
                         isRefreshing = false;
                         onTokenRefreshed(data.access_token);
                     } else {
+                        console.error("[API] Refresh failed status:", refreshRes.status);
                         isRefreshing = false;
+                        // Important: Resolve all waiting subscribers with null to let them fail gracefully
+                        onTokenRefreshed(""); 
+                        
                         if (typeof window !== 'undefined') {
                             localStorage.clear();
                             window.location.href = '/login';
                         }
-                        return { error: { detail: 'Session expired', status: 401 } };
+                        return { error: { detail: 'Authentication failed. Please log in again.', status: 401 } };
                     }
                 } catch (e) {
+                    console.error("[API] Network error during refresh:", e);
                     isRefreshing = false;
-                    return { error: { detail: 'Network error during refresh', status: 0 } };
+                    onTokenRefreshed("");
+                    return { error: { detail: 'Network error. Please try again.', status: 0 } };
                 }
             }
 
-            // Wait for refresh to complete and retry
+            // Queue up the retry
+            console.log(`[API] Queuing retry for ${endpoint}...`);
             return new Promise((resolve) => {
                 addRefreshSubscriber((newToken) => {
-                    headers.set('Authorization', `Bearer ${newToken}`);
-                    resolve(apiRequest<T>(endpoint, { ...options, headers }));
+                    if (!newToken) {
+                        resolve({ error: { detail: 'Session expired', status: 401 } });
+                        return;
+                    }
+                    console.log(`[API] Retrying ${endpoint} with new token.`);
+                    resolve(apiRequest<T>(endpoint, options));
                 });
             });
         }
 
+        // Generic error handling
         if (!response.ok) {
             let errorDetail = `HTTP Error ${response.status}`;
             try {
                 const errorData = await response.json();
-                if (errorData.detail) {
-                    if (Array.isArray(errorData.detail)) {
-                        errorDetail = errorData.detail.map((err: any) => `${err.loc.join('.')}: ${err.msg}`).join(', ');
-                    } else {
-                        errorDetail = errorData.detail;
-                    }
+                errorDetail = errorData.detail || errorDetail;
+                if (Array.isArray(errorDetail)) {
+                    errorDetail = (errorDetail as any[]).map((err: any) => `${err.loc.join('.')}: ${err.msg}`).join(', ');
                 }
             } catch (jsonError) {
                 // Not JSON
             }
             
-            return {
-                error: {
-                    detail: errorDetail,
-                    status: response.status,
-                },
-            };
+            return { error: { detail: errorDetail, status: response.status } };
         }
 
-        // Handle 204 No Content
         if (response.status === 204) {
             return { data: undefined as T };
         }
@@ -183,10 +191,10 @@ export async function apiRequest<T>(
         const data = await response.json();
         return { data };
     } catch (error) {
-        console.error("API Request Error:", error);
+        console.error(`[API] Request Error on ${endpoint}:`, error);
         return {
             error: {
-                detail: error instanceof Error ? error.message : 'Network error',
+                detail: error instanceof Error ? error.message : 'Network failure',
                 status: 0,
             },
         };
@@ -227,31 +235,19 @@ export const api = {
         try {
             const response = await fetch(`${API_BASE_URL}${normalizedEndpoint}`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: new URLSearchParams(formData),
             });
 
             if (!response.ok) {
-                const errorData = await response.json().catch(() => ({ detail: 'Request failed' }));
-                return {
-                    error: {
-                        detail: errorData.detail || `HTTP Error ${response.status}`,
-                        status: response.status,
-                    },
-                };
+                const errorData = await response.json().catch(() => ({ detail: 'Login failed' }));
+                return { error: { detail: errorData.detail || `HTTP Error ${response.status}`, status: response.status } };
             }
 
             const data = await response.json();
             return { data };
         } catch (error) {
-            return {
-                error: {
-                    detail: error instanceof Error ? error.message : 'Network error',
-                    status: 0,
-                },
-            };
+            return { error: { detail: error instanceof Error ? error.message : 'Network error', status: 0 } };
         }
     },
 };
