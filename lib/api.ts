@@ -82,24 +82,22 @@ export async function apiRequest<T>(
 ): Promise<ApiResponse<T>> {
     const normalizedEndpoint = normalizeEndpoint(endpoint);
     
-    // Helper to get headers with current token
-    const getHeaders = () => {
-        const headers = new Headers(options.headers || {});
-        // Setting content-type only for non-FormData bodies
-        if (!headers.has('Content-Type') && !(options.body instanceof FormData)) {
-            headers.set('Content-Type', 'application/json');
-        }
-        const token = getAccessToken();
-        if (token) {
-            headers.set('Authorization', `Bearer ${token}`);
-        }
-        return headers;
-    };
+    // We explicitly avoid nesting this in an inline function 
+    // to prevent SWC/Turbopack minifier bugs with await fetch()
+    const requestHeaders = new Headers(options.headers || {});
+    if (!requestHeaders.has('Content-Type') && !(options.body instanceof FormData)) {
+        requestHeaders.set('Content-Type', 'application/json');
+    }
+    
+    const token = getAccessToken();
+    if (token) {
+        requestHeaders.set('Authorization', `Bearer ${token}`);
+    }
 
     try {
         const response = await fetch(`${API_BASE_URL}${normalizedEndpoint}`, {
             ...options,
-            headers: getHeaders(),
+            headers: requestHeaders,
         });
 
         // 401 Unauthorized - Attempt token refresh
