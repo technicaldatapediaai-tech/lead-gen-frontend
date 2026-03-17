@@ -12,6 +12,9 @@ import StandardSearch from "@/components/extraction/StandardSearch";
 import SalesNavigator from "@/components/extraction/SalesNavigator";
 import LinkedInGroups from "@/components/extraction/LinkedInGroups";
 import PostEngagement from "@/components/extraction/PostEngagement";
+import TwitterSearch from "@/components/extraction/TwitterSearch";
+import InstagramSearch from "@/components/extraction/InstagramSearch";
+import FacebookSearch from "@/components/extraction/FacebookSearch";
 
 function CampaignCreationContent() {
     const router = useRouter();
@@ -29,7 +32,7 @@ function CampaignCreationContent() {
     const [sendMethod, setSendMethod] = useState<'extension' | 'api'>('extension');
     const [isLaunching, setIsLaunching] = useState(false);
     const [leadMethod, setLeadMethod] = useState<'urls' | 'csv' | 'manual' | 'social'>('urls');
-    const [socialSubMethod, setSocialSubMethod] = useState<'standard' | 'salesnav' | 'groups' | 'post'>('standard');
+    const [socialSubMethod, setSocialSubMethod] = useState<'standard' | 'salesnav' | 'groups' | 'post' | 'twitter' | 'instagram' | 'facebook'>('standard');
 
     const handleLaunch = async () => {
         if (!campaignName.trim()) {
@@ -289,8 +292,11 @@ function CampaignCreationContent() {
                                         <div className="flex gap-2 p-1 bg-muted rounded-xl">
                                             <button onClick={() => setSocialSubMethod('standard')} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition ${socialSubMethod === 'standard' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}>Search</button>
                                             <button onClick={() => setSocialSubMethod('salesnav')} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition ${socialSubMethod === 'salesnav' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}>SalesNav</button>
-                                            <button onClick={() => setSocialSubMethod('groups')} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition ${socialSubMethod === 'groups' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}>Groups</button>
-                                            <button onClick={() => setSocialSubMethod('post')} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition ${socialSubMethod === 'post' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}>Posts</button>
+                                            <button onClick={() => setSocialSubMethod('groups')} className={`flex-1 py-1.5 text-[10px] font-semibold rounded-lg transition ${socialSubMethod === 'groups' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}>Groups</button>
+                                            <button onClick={() => setSocialSubMethod('post')} className={`flex-1 py-1.5 text-[10px] font-semibold rounded-lg transition ${socialSubMethod === 'post' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}>Posts</button>
+                                            <button onClick={() => setSocialSubMethod('twitter')} className={`flex-1 py-1.5 text-[10px] font-semibold rounded-lg transition ${socialSubMethod === 'twitter' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}>Twitter</button>
+                                            <button onClick={() => setSocialSubMethod('instagram')} className={`flex-1 py-1.5 text-[10px] font-semibold rounded-lg transition ${socialSubMethod === 'instagram' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}>Insta</button>
+                                            <button onClick={() => setSocialSubMethod('facebook')} className={`flex-1 py-1.5 text-[10px] font-semibold rounded-lg transition ${socialSubMethod === 'facebook' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}>FB</button>
                                         </div>
                                         
                                         <div className="mt-4">
@@ -298,6 +304,9 @@ function CampaignCreationContent() {
                                             {socialSubMethod === 'salesnav' && <SalesNavigator />}
                                             {socialSubMethod === 'groups' && <LinkedInGroups />}
                                             {socialSubMethod === 'post' && <PostEngagement />}
+                                            {socialSubMethod === 'twitter' && <TwitterSearch />}
+                                            {socialSubMethod === 'instagram' && <InstagramSearch />}
+                                            {socialSubMethod === 'facebook' && <FacebookSearch />}
                                         </div>
                                     </div>
                                 )}

@@ -14,7 +14,9 @@ import {
     Compass,
     Users,
     ThumbsUp,
-    Twitter
+    Twitter,
+    Instagram,
+    Facebook
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
@@ -26,6 +28,8 @@ import SalesNavigator from "@/components/extraction/SalesNavigator";
 import LinkedInGroups from "@/components/extraction/LinkedInGroups";
 import PostEngagement from "@/components/extraction/PostEngagement";
 import TwitterSearch from "@/components/extraction/TwitterSearch";
+import InstagramSearch from "@/components/extraction/InstagramSearch";
+import FacebookSearch from "@/components/extraction/FacebookSearch";
 
 interface OrgItem {
     id: string;
@@ -38,7 +42,7 @@ interface OrgItem {
 
 export default function AddLeads({ onClose, onSuccess }: { onClose: () => void; onSuccess?: () => void }) {
     const [step, setStep] = useState(1);
-    const [selected, setSelected] = useState<"csv-import" | "manual-entry" | "standard-search" | "sales-navigator" | "linkedin-groups" | "post-engagement" | "twitter-search">("standard-search");
+    const [selected, setSelected] = useState<"csv-import" | "manual-entry" | "standard-search" | "sales-navigator" | "linkedin-groups" | "post-engagement" | "twitter-search" | "instagram-search" | "facebook-search">("standard-search");
     // Step 2 - REQUIRE USER INPUT
     const [listName, setListName] = useState("");
 
@@ -105,6 +109,8 @@ export default function AddLeads({ onClose, onSuccess }: { onClose: () => void; 
             case "linkedin-groups": return "LinkedIn Groups";
             case "post-engagement": return "Post Engagement";
             case "twitter-search": return "Twitter Search";
+            case "instagram-search": return "Instagram Search";
+            case "facebook-search": return "Facebook Search";
             default: return "Lead Addition";
         }
     };
@@ -277,6 +283,20 @@ export default function AddLeads({ onClose, onSuccess }: { onClose: () => void; 
                                     onClick={() => setSelected("twitter-search")}
                                 />
                                 <OptionCard
+                                    icon={<Instagram size={28} />}
+                                    title="Instagram Search"
+                                    description="Source leads from Instagram profiles and hashtags"
+                                    active={selected === "instagram-search"}
+                                    onClick={() => setSelected("instagram-search")}
+                                />
+                                <OptionCard
+                                    icon={<Facebook size={28} />}
+                                    title="Facebook Groups"
+                                    description="Discover leads from Facebook groups and pages"
+                                    active={selected === "facebook-search"}
+                                    onClick={() => setSelected("facebook-search")}
+                                />
+                                <OptionCard
                                     icon={<UploadCloud size={28} />}
                                     title="CSV Import"
                                     description="Bulk upload leads from a spreadsheet file"
@@ -314,8 +334,12 @@ export default function AddLeads({ onClose, onSuccess }: { onClose: () => void; 
                                 <LinkedInGroups />
                             ) : selected === "post-engagement" ? (
                                 <PostEngagement />
-                            ) : (
+                            ) : selected === "twitter-search" ? (
                                 <TwitterSearch />
+                            ) : selected === "instagram-search" ? (
+                                <InstagramSearch />
+                            ) : (
+                                <FacebookSearch />
                             )}
                         </div>
                     )}
