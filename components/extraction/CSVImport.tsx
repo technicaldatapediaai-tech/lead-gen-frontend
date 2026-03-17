@@ -57,7 +57,7 @@ export default function CSVImport({ onSuccess }: { onSuccess?: () => void }) {
             const { data, error } = await api.postMultipart<any>("/api/leads/import/", formData);
             
             if (data) {
-                toast.success(`Successfully imported ${data.created || 0} leads!`);
+                toast.success(`Successfully imported ${data.imported || 0} leads!`);
                 setFile(null);
                 if (onSuccess) onSuccess();
             } else {
