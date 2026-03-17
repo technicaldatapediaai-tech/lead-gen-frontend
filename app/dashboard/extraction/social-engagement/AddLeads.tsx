@@ -106,11 +106,11 @@ export default function AddLeads({ onClose, onSuccess }: { onClose: () => void; 
             case "manual-entry": return "Manual Entry";
             case "standard-search": return "Standard Search";
             case "sales-navigator": return "Sales Navigator";
-            case "linkedin-groups": return "LinkedIn Groups";
-            case "post-engagement": return "Post Engagement";
-            case "twitter-search": return "Twitter Search";
-            case "instagram-search": return "Instagram Search";
-            case "facebook-search": return "Facebook Search";
+            case "linkedin-groups": return "LinkedIn Groups Scraper";
+            case "post-engagement": return "Post Engagement Scraper";
+            case "twitter-search": return "Twitter Scraper";
+            case "instagram-search": return "Instagram Scraper";
+            case "facebook-search": return "Facebook Scraper";
             default: return "Lead Addition";
         }
     };
@@ -249,8 +249,8 @@ export default function AddLeads({ onClose, onSuccess }: { onClose: () => void; 
                             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
                                 <OptionCard
                                     icon={<Search size={28} />}
-                                    title="LinkedIn Search"
-                                    description="Source leads from standard LinkedIn search results"
+                                    title="LinkedIn Scraper"
+                                    description="Extract leads from LinkedIn search results or specific URLs"
                                     active={selected === "standard-search"}
                                     onClick={() => setSelected("standard-search")}
                                 />
@@ -264,35 +264,35 @@ export default function AddLeads({ onClose, onSuccess }: { onClose: () => void; 
                                 <OptionCard
                                     icon={<Users size={28} />}
                                     title="LinkedIn Groups"
-                                    description="Extract members from industry-specific groups"
+                                    description="Scrape members from specific industry group links"
                                     active={selected === "linkedin-groups"}
                                     onClick={() => setSelected("linkedin-groups")}
                                 />
                                 <OptionCard
                                     icon={<ThumbsUp size={28} />}
-                                    title="Post Engagement"
-                                    description="Extract users who engaged with specific posts"
+                                    title="Engagement Scraper"
+                                    description="Extract leads who engaged with specific post links"
                                     active={selected === "post-engagement"}
                                     onClick={() => setSelected("post-engagement")}
                                 />
                                 <OptionCard
                                     icon={<Twitter size={28} />}
-                                    title="Twitter / X Search"
-                                    description="Source leads from Twitter users and bios"
+                                    title="Twitter Scraper"
+                                    description="Source leads from Twitter profile, post, or search links"
                                     active={selected === "twitter-search"}
                                     onClick={() => setSelected("twitter-search")}
                                 />
                                 <OptionCard
                                     icon={<Instagram size={28} />}
-                                    title="Instagram Search"
-                                    description="Source leads from Instagram profiles and hashtags"
+                                    title="Instagram Scraper"
+                                    description="Source leads from Instagram profile or post links"
                                     active={selected === "instagram-search"}
                                     onClick={() => setSelected("instagram-search")}
                                 />
                                 <OptionCard
                                     icon={<Facebook size={28} />}
-                                    title="Facebook Groups"
-                                    description="Discover leads from Facebook groups and pages"
+                                    title="Facebook Scraper"
+                                    description="Discover leads from Facebook group or page links"
                                     active={selected === "facebook-search"}
                                     onClick={() => setSelected("facebook-search")}
                                 />

@@ -262,7 +262,7 @@ function CampaignCreationContent() {
                                     active={leadMethod === 'social'} 
                                     onClick={() => setLeadMethod('social')} 
                                     icon={<Search className="h-4 w-4" />} 
-                                    label="Social" 
+                                    label="Social Scraper" 
                                 />
                             </div>
 
@@ -290,10 +290,10 @@ function CampaignCreationContent() {
                                 {leadMethod === 'social' && (
                                     <div className="space-y-4">
                                         <div className="flex gap-2 p-1 bg-muted rounded-xl">
-                                            <button onClick={() => setSocialSubMethod('standard')} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition ${socialSubMethod === 'standard' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}>Search</button>
-                                            <button onClick={() => setSocialSubMethod('salesnav')} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition ${socialSubMethod === 'salesnav' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}>SalesNav</button>
+                                            <button onClick={() => setSocialSubMethod('standard')} className={`flex-1 py-1.5 text-[10px] font-semibold rounded-lg transition ${socialSubMethod === 'standard' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}>LinkedIn</button>
+                                            <button onClick={() => setSocialSubMethod('salesnav')} className={`flex-1 py-1.5 text-[10px] font-semibold rounded-lg transition ${socialSubMethod === 'salesnav' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}>SalesNav</button>
                                             <button onClick={() => setSocialSubMethod('groups')} className={`flex-1 py-1.5 text-[10px] font-semibold rounded-lg transition ${socialSubMethod === 'groups' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}>Groups</button>
-                                            <button onClick={() => setSocialSubMethod('post')} className={`flex-1 py-1.5 text-[10px] font-semibold rounded-lg transition ${socialSubMethod === 'post' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}>Posts</button>
+                                            <button onClick={() => setSocialSubMethod('post')} className={`flex-1 py-1.5 text-[10px] font-semibold rounded-lg transition ${socialSubMethod === 'post' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}>Enagement</button>
                                             <button onClick={() => setSocialSubMethod('twitter')} className={`flex-1 py-1.5 text-[10px] font-semibold rounded-lg transition ${socialSubMethod === 'twitter' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}>Twitter</button>
                                             <button onClick={() => setSocialSubMethod('instagram')} className={`flex-1 py-1.5 text-[10px] font-semibold rounded-lg transition ${socialSubMethod === 'instagram' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}>Insta</button>
                                             <button onClick={() => setSocialSubMethod('facebook')} className={`flex-1 py-1.5 text-[10px] font-semibold rounded-lg transition ${socialSubMethod === 'facebook' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}>FB</button>
