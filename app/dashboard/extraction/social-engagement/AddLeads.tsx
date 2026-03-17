@@ -9,13 +9,23 @@ import {
     Check,
     Loader2,
     Building2,
-    ChevronDown
+    ChevronDown,
+    Search,
+    Compass,
+    Users,
+    ThumbsUp,
+    Twitter
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { setTokens } from "@/lib/auth";
 import CSVImport from "@/components/extraction/CSVImport";
 import ManualLeadEntry from "@/components/extraction/ManualLeadEntry";
+import StandardSearch from "@/components/extraction/StandardSearch";
+import SalesNavigator from "@/components/extraction/SalesNavigator";
+import LinkedInGroups from "@/components/extraction/LinkedInGroups";
+import PostEngagement from "@/components/extraction/PostEngagement";
+import TwitterSearch from "@/components/extraction/TwitterSearch";
 
 interface OrgItem {
     id: string;
@@ -28,7 +38,7 @@ interface OrgItem {
 
 export default function AddLeads({ onClose, onSuccess }: { onClose: () => void; onSuccess?: () => void }) {
     const [step, setStep] = useState(1);
-    const [selected, setSelected] = useState<"csv-import" | "manual-entry">("csv-import");
+    const [selected, setSelected] = useState<"csv-import" | "manual-entry" | "standard-search" | "sales-navigator" | "linkedin-groups" | "post-engagement" | "twitter-search">("standard-search");
     // Step 2 - REQUIRE USER INPUT
     const [listName, setListName] = useState("");
 
@@ -90,6 +100,11 @@ export default function AddLeads({ onClose, onSuccess }: { onClose: () => void; 
         switch (selected) {
             case "csv-import": return "CSV Import";
             case "manual-entry": return "Manual Entry";
+            case "standard-search": return "Standard Search";
+            case "sales-navigator": return "Sales Navigator";
+            case "linkedin-groups": return "LinkedIn Groups";
+            case "post-engagement": return "Post Engagement";
+            case "twitter-search": return "Twitter Search";
             default: return "Lead Addition";
         }
     };
@@ -225,16 +240,51 @@ export default function AddLeads({ onClose, onSuccess }: { onClose: () => void; 
                             </h2>
 
                             {/* Grid */}
-                            <div className="grid gap-4 md:grid-cols-2">
+                            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
                                 <OptionCard
-                                    icon={<UploadCloud size={32} />}
+                                    icon={<Search size={28} />}
+                                    title="LinkedIn Search"
+                                    description="Source leads from standard LinkedIn search results"
+                                    active={selected === "standard-search"}
+                                    onClick={() => setSelected("standard-search")}
+                                />
+                                <OptionCard
+                                    icon={<Compass size={28} />}
+                                    title="Sales Navigator"
+                                    description="Extract leads from Sales Navigator lists and searches"
+                                    active={selected === "sales-navigator"}
+                                    onClick={() => setSelected("sales-navigator")}
+                                />
+                                <OptionCard
+                                    icon={<Users size={28} />}
+                                    title="LinkedIn Groups"
+                                    description="Extract members from industry-specific groups"
+                                    active={selected === "linkedin-groups"}
+                                    onClick={() => setSelected("linkedin-groups")}
+                                />
+                                <OptionCard
+                                    icon={<ThumbsUp size={28} />}
+                                    title="Post Engagement"
+                                    description="Extract users who engaged with specific posts"
+                                    active={selected === "post-engagement"}
+                                    onClick={() => setSelected("post-engagement")}
+                                />
+                                <OptionCard
+                                    icon={<Twitter size={28} />}
+                                    title="Twitter / X Search"
+                                    description="Source leads from Twitter users and bios"
+                                    active={selected === "twitter-search"}
+                                    onClick={() => setSelected("twitter-search")}
+                                />
+                                <OptionCard
+                                    icon={<UploadCloud size={28} />}
                                     title="CSV Import"
                                     description="Bulk upload leads from a spreadsheet file"
                                     active={selected === "csv-import"}
                                     onClick={() => setSelected("csv-import")}
                                 />
                                 <OptionCard
-                                    icon={<UserPlus size={32} />}
+                                    icon={<UserPlus size={28} />}
                                     title="Manual Entry"
                                     description="Add prospects one by one manually"
                                     active={selected === "manual-entry"}
@@ -251,11 +301,21 @@ export default function AddLeads({ onClose, onSuccess }: { onClose: () => void; 
                                     if (onSuccess) onSuccess();
                                     onClose();
                                 }} />
-                            ) : (
+                            ) : selected === "manual-entry" ? (
                                 <ManualLeadEntry onSuccess={() => {
                                     if (onSuccess) onSuccess();
                                     onClose();
                                 }} />
+                            ) : selected === "standard-search" ? (
+                                <StandardSearch />
+                            ) : selected === "sales-navigator" ? (
+                                <SalesNavigator />
+                            ) : selected === "linkedin-groups" ? (
+                                <LinkedInGroups />
+                            ) : selected === "post-engagement" ? (
+                                <PostEngagement />
+                            ) : (
+                                <TwitterSearch />
                             )}
                         </div>
                     )}

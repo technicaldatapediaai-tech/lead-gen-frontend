@@ -3,9 +3,15 @@
 import React, { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { X, Rocket, UserPlus, Type, Send, Loader2, Sparkles, MessageSquare, CheckCircle2 } from "lucide-react";
+import { X, Rocket, UserPlus, Type, Send, Loader2, Sparkles, MessageSquare, CheckCircle2, Upload, Search, Compass, Users, ThumbsUp, ClipboardList } from "lucide-react";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
+import CSVImport from "@/components/extraction/CSVImport";
+import ManualLeadEntry from "@/components/extraction/ManualLeadEntry";
+import StandardSearch from "@/components/extraction/StandardSearch";
+import SalesNavigator from "@/components/extraction/SalesNavigator";
+import LinkedInGroups from "@/components/extraction/LinkedInGroups";
+import PostEngagement from "@/components/extraction/PostEngagement";
 
 function CampaignCreationContent() {
     const router = useRouter();
@@ -22,6 +28,8 @@ function CampaignCreationContent() {
     const [prospects, setProspects] = useState("");
     const [sendMethod, setSendMethod] = useState<'extension' | 'api'>('extension');
     const [isLaunching, setIsLaunching] = useState(false);
+    const [leadMethod, setLeadMethod] = useState<'urls' | 'csv' | 'manual' | 'social'>('urls');
+    const [socialSubMethod, setSocialSubMethod] = useState<'standard' | 'salesnav' | 'groups' | 'post'>('standard');
 
     const handleLaunch = async () => {
         if (!campaignName.trim()) {
@@ -215,31 +223,109 @@ function CampaignCreationContent() {
                         </div>
                     </div>
 
-                    {/* Right Side: Prospects */}
+                    {/* Right Side: Lead Sourcing */}
                     <div className="animate-in fade-in slide-in-from-right-4 duration-500">
-                        <div className="h-full rounded-2xl border border-border bg-card p-6 shadow-sm flex flex-col">
-                            <div className="mb-4 flex items-center gap-3">
-                                <div className="grid h-8 w-8 place-items-center rounded-lg bg-emerald-500 text-white">
-                                    <UserPlus className="h-4 w-4" />
+                        <div className="h-full rounded-2xl border border-border bg-card p-6 shadow-sm flex flex-col min-h-[600px]">
+                            <div className="mb-6 flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="grid h-8 w-8 place-items-center rounded-lg bg-emerald-500 text-white">
+                                        <UserPlus className="h-4 w-4" />
+                                    </div>
+                                    <h3 className="font-bold text-foreground">Add Leads</h3>
                                 </div>
-                                <h3 className="font-bold text-foreground">Paste LinkedIn URLs</h3>
                             </div>
-                            <p className="mb-4 text-xs text-muted-foreground">Add the profiles you want to contact. One URL per line.</p>
-                            <textarea
-                                value={prospects}
-                                onChange={(e) => setProspects(e.target.value)}
-                                className="flex-1 w-full rounded-xl border border-input bg-background p-4 text-foreground font-mono text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all resize-none min-h-[300px]"
-                                placeholder="https://www.linkedin.com/in/john-doe&#10;https://www.linkedin.com/in/jane-smith"
-                            />
-                            <p className="mt-4 text-[10px] text-center text-muted-foreground uppercase tracking-widest font-bold">
+
+                            {/* Method Tabs */}
+                            <div className="flex flex-wrap gap-2 mb-6">
+                                <MethodTab 
+                                    active={leadMethod === 'urls'} 
+                                    onClick={() => setLeadMethod('urls')} 
+                                    icon={<ClipboardList className="h-4 w-4" />} 
+                                    label="Paste URLs" 
+                                />
+                                <MethodTab 
+                                    active={leadMethod === 'csv'} 
+                                    onClick={() => setLeadMethod('csv')} 
+                                    icon={<Upload className="h-4 w-4" />} 
+                                    label="CSV" 
+                                />
+                                <MethodTab 
+                                    active={leadMethod === 'manual'} 
+                                    onClick={() => setLeadMethod('manual')} 
+                                    icon={<UserPlus className="h-4 w-4" />} 
+                                    label="Manual" 
+                                />
+                                <MethodTab 
+                                    active={leadMethod === 'social'} 
+                                    onClick={() => setLeadMethod('social')} 
+                                    icon={<Search className="h-4 w-4" />} 
+                                    label="Social" 
+                                />
+                            </div>
+
+                            <div className="flex-1 flex flex-col">
+                                {leadMethod === 'urls' && (
+                                    <>
+                                        <p className="mb-4 text-xs text-muted-foreground">Add the profiles you want to contact. One URL per line.</p>
+                                        <textarea
+                                            value={prospects}
+                                            onChange={(e) => setProspects(e.target.value)}
+                                            className="flex-1 w-full rounded-xl border border-input bg-background p-4 text-foreground font-mono text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all resize-none"
+                                            placeholder="https://www.linkedin.com/in/john-doe&#10;https://www.linkedin.com/in/jane-smith"
+                                        />
+                                    </>
+                                )}
+
+                                {leadMethod === 'csv' && (
+                                    <CSVImport />
+                                )}
+
+                                {leadMethod === 'manual' && (
+                                    <ManualLeadEntry />
+                                )}
+
+                                {leadMethod === 'social' && (
+                                    <div className="space-y-4">
+                                        <div className="flex gap-2 p-1 bg-muted rounded-xl">
+                                            <button onClick={() => setSocialSubMethod('standard')} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition ${socialSubMethod === 'standard' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}>Search</button>
+                                            <button onClick={() => setSocialSubMethod('salesnav')} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition ${socialSubMethod === 'salesnav' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}>SalesNav</button>
+                                            <button onClick={() => setSocialSubMethod('groups')} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition ${socialSubMethod === 'groups' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}>Groups</button>
+                                            <button onClick={() => setSocialSubMethod('post')} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition ${socialSubMethod === 'post' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}>Posts</button>
+                                        </div>
+                                        
+                                        <div className="mt-4">
+                                            {socialSubMethod === 'standard' && <StandardSearch />}
+                                            {socialSubMethod === 'salesnav' && <SalesNavigator />}
+                                            {socialSubMethod === 'groups' && <LinkedInGroups />}
+                                            {socialSubMethod === 'post' && <PostEngagement />}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            <p className="mt-8 text-[10px] text-center text-muted-foreground uppercase tracking-widest font-bold">
                                 Chrome Extension required for automation
                             </p>
                         </div>
                     </div>
-
                 </div>
             </main>
         </div>
+    );
+}
+
+function MethodTab({ active, onClick, icon, label }: any) {
+    return (
+        <button
+            onClick={onClick}
+            className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-all border ${active 
+                ? "bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-500/20" 
+                : "bg-background border-border text-muted-foreground hover:border-blue-500/50"
+            }`}
+        >
+            {icon}
+            {label}
+        </button>
     );
 }
 
