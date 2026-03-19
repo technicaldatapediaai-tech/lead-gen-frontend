@@ -226,7 +226,7 @@ export default function BulkEmailPage() {
     const validLeads = leads.filter(l => validateEmail(l.email));
     
     if (validLeads.length === 0) {
-      toast.error("No valid leads email found to send. Please correct the data.");
+      toast.error("No valid leads found to send. Please correct the data.");
       return;
     }
 
@@ -241,32 +241,51 @@ export default function BulkEmailPage() {
         leads: validLeads
       });
 
-      if (response.data) {
-        for (let i = 0; i <= 100; i += 5) {
-            setProgress(prev => ({ ...prev, current: Math.floor((i / 100) * validLeads.length) }));
-            await new Promise(r => setTimeout(r, 40));
-        }
+      if (response.data?.batch_id) {
+        const batchId = response.data.batch_id;
         
-        setProgress(prev => ({ 
-            ...prev, 
-            current: validLeads.length, 
-            success: response.data.success || 0,
-            failed: response.data.failed || 0
-        }));
-        
-        if (response.data.errors && response.data.errors.length > 0) {
-            setFailedLeads(response.data.errors);
-            toast.warning(`${response.data.errors.length} leads failed to queue. Check the report.`);
-        } else {
-            toast.success("All emails are successfully queued for sending!");
-        }
+        // Start meaningful polling
+        let isDone = false;
+        let pollingInterval = setInterval(async () => {
+          try {
+            const statusRes = await api.get<any>(`/api/email/batch-status/${batchId}`);
+            if (statusRes.data) {
+              const { stats, is_completed, errors } = statusRes.data;
+              
+              setProgress({
+                total: stats.total,
+                current: stats.sent + stats.failed,
+                success: stats.sent,
+                failed: stats.failed
+              });
+              
+              if (errors.length > 0) {
+                setFailedLeads(errors);
+              }
+
+              if (is_completed) {
+                isDone = true;
+                clearInterval(pollingInterval);
+                setIsSending(false);
+                if (stats.failed > 0) {
+                   toast.warning(`${stats.failed} emails failed to deliver. Check the report.`);
+                } else {
+                   toast.success("Batch successfully delivered and verified!");
+                }
+              }
+            }
+          } catch (pollingError) {
+            console.error("Polling error:", pollingError);
+          }
+        }, 2000); // Poll every 2 seconds
+
       } else {
-        toast.error(response.error?.detail || "Failed to initiate bulk send");
+        setIsSending(false);
+        toast.error(response.error?.detail || "Initial queueing failed");
       }
     } catch (error) {
-      toast.error("An unexpected server error occurred");
-    } finally {
       setIsSending(false);
+      toast.error("An unexpected server error occurred while starting the batch.");
     }
   };
 
@@ -320,10 +339,12 @@ export default function BulkEmailPage() {
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-sm font-bold text-blue-600 flex items-center gap-2">
               {isSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
-              {isSending ? "Status: Queuing emails..." : "Status: Completed 🎉"}
+              {isSending ? (
+                  progress.current < progress.total ? "Status: Sending emails..." : "Status: Verifying delivery..."
+              ) : "Status: Completed 🎉"}
             </h3>
             <span className="text-xs font-mono font-bold text-blue-500">
-              {progress.current} / {progress.total}
+              {progress.current} / {progress.total} Delivered
             </span>
           </div>
           
