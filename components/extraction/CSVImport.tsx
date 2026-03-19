@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/table";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function CSVImport({ onSuccess, campaignName }: { onSuccess?: () => void, campaignName?: string }) {
+export default function CSVImport({ onSuccess, campaignName, campaignId }: { onSuccess?: () => void, campaignName?: string, campaignId?: string }) {
     const [isLoading, setIsLoading] = useState(false);
     const [file, setFile] = useState<File | null>(null);
     const [dragActive, setDragActive] = useState(false);
@@ -99,9 +99,15 @@ export default function CSVImport({ onSuccess, campaignName }: { onSuccess?: () 
         formData.append('file', file);
 
         try {
-            const url = campaignName 
-                ? `/api/leads/import/?campaign_name=${encodeURIComponent(campaignName)}` 
-                : "/api/leads/import/";
+            let url = "/api/leads/import/";
+            const params = new URLSearchParams();
+            if (campaignId) params.append('campaign_id', campaignId);
+            if (campaignName) params.append('campaign_name', campaignName);
+            
+            if (params.toString()) {
+                url += `?${params.toString()}`;
+            }
+
             const { data, error } = await api.postMultipart<any>(url, formData);
 
             

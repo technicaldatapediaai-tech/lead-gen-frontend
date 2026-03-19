@@ -94,6 +94,12 @@ export default function CampaignDetailsPage() {
     // Pagination & Filter (Simple for now)
     const [page] = useState(1);
     const [searchTerm, setSearchTerm] = useState("");
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const [showImportDialog, setShowImportDialog] = useState(false);
+
+    const refreshData = () => {
+        setRefreshTrigger(prev => prev + 1);
+    };
 
     useEffect(() => {
         async function fetchCampaign() {
@@ -113,7 +119,7 @@ export default function CampaignDetailsPage() {
             }
         }
         fetchCampaign();
-    }, [campaignId, router]);
+    }, [campaignId, router, refreshTrigger]);
 
     useEffect(() => {
         async function fetchLeads() {
@@ -139,7 +145,7 @@ export default function CampaignDetailsPage() {
         // Debounce if search term changes, immediate otherwise
         const timer = setTimeout(fetchLeads, searchTerm ? 500 : 0);
         return () => clearTimeout(timer);
-    }, [campaignId, page, searchTerm]);
+    }, [campaignId, page, searchTerm, refreshTrigger]);
 
     const handleSelectAll = (checked: boolean) => {
         if (checked) {
@@ -177,6 +183,19 @@ export default function CampaignDetailsPage() {
 
     return (
         <div className="flex h-full flex-col overflow-hidden bg-background text-foreground animate-in fade-in duration-300">
+            {/* Import Dialog */}
+            <Dialog open={showImportDialog} onOpenChange={setShowImportDialog}>
+                <DialogContent className="sm:max-w-2xl p-0 overflow-hidden">
+                    <DialogTitle className="sr-only">Import Leads</DialogTitle>
+                    <CSVImport 
+                        campaignId={campaignId} 
+                        onSuccess={() => {
+                            setShowImportDialog(false);
+                            refreshData();
+                        }} 
+                    />
+                </DialogContent>
+            </Dialog>
             {/* Header */}
             <div className="border-b border-border bg-card px-8 py-6">
                 <div className="flex items-center gap-4 mb-4">
@@ -216,6 +235,14 @@ export default function CampaignDetailsPage() {
                         <StatBox label="Reply Rate" value={`${campaign.contacted_count ? ((campaign.replied_count / campaign.contacted_count) * 100).toFixed(1) : 0}%`} icon={<CheckCircle2 className="h-4 w-4" />} />
                     </div>
                     <div className="flex gap-3">
+                        <Button
+                            variant="outline"
+                            onClick={() => setShowImportDialog(true)}
+                            className="h-12 px-6 border-border hover:bg-muted font-bold gap-2 rounded-xl"
+                        >
+                            <Download className="h-5 w-5" />
+                            Import Leads
+                        </Button>
                         <Button
                             onClick={() => setShowBatchLinkedIn(true)}
                             className="h-12 px-6 bg-[#0077b5] hover:bg-[#006396] text-white font-bold gap-2 rounded-xl shadow-lg shadow-blue-500/20"
@@ -444,6 +471,8 @@ export default function CampaignDetailsPage() {
         </div>
     );
 }
+
+import CSVImport from "@/components/extraction/CSVImport";
 
 function StatBox({ label, value, icon }: { label: string, value: React.ReactNode, icon: React.ReactNode }) {
     return (

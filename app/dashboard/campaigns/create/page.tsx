@@ -302,7 +302,13 @@ function CampaignCreationContent() {
                                 )}
 
                                 {leadMethod === 'csv' && (
-                                    <CSVImport />
+                                    <CSVImport 
+                                        campaignName={campaignName}
+                                        onSuccess={() => {
+                                            router.push("/dashboard/campaigns");
+                                            toast.success("CSV Import complete. Campaign created!");
+                                        }}
+                                    />
                                 )}
 
                                 {leadMethod === 'manual' && (
