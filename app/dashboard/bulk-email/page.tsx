@@ -29,6 +29,7 @@ interface Lead {
   email: string;
   first_name?: string;
   company?: string;
+  linkedin_url?: string;
   [key: string]: any;
 }
 
@@ -53,8 +54,10 @@ export default function BulkEmailPage() {
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const validateEmail = (email: string) => {
-    return email && typeof email === 'string' && email.includes('@') && email.includes('.');
+  const validateEmail = (email: any) => {
+    if (!email || typeof email !== 'string') return false;
+    const trimmed = email.trim();
+    return trimmed.includes('@') && trimmed.includes('.');
   };
 
   const downloadFailureReport = () => {
@@ -90,53 +93,82 @@ export default function BulkEmailPage() {
     setCsvFile(file);
 
     Papa.parse(file, {
-      header: true,
+      header: false, // Parse all rows as data first to detect headers manually
       skipEmptyLines: "greedy",
       dynamicTyping: true,
       complete: (results) => {
-        console.log("PapaParse Results:", results);
-        
-        const data = (results.data || []) as any[];
+        const data = (results.data || []) as any[][];
         if (data.length === 0) {
-          toast.error("CSV file is empty or no data rows found");
+          toast.error("CSV file is empty");
           return;
         }
 
-        const headers = results.meta?.fields || Object.keys(data[0] || {});
-        if (headers.length === 0) {
-            toast.error("Could not detect any columns in the CSV file");
-            return;
+        let startIdx = 0;
+        let headers: string[] = [];
+
+        // Improved Header Detection
+        // If the first row looks like it contains an email, it's likely data, not a header row.
+        const firstRow = data[0] || [];
+        const hasEmailInFirstRow = firstRow.some(cell => validateEmail(String(cell || "")));
+        
+        // Check for common header terms
+        const headerKeywords = ['email', 'mail', 'name', 'first', 'last', 'company', 'org', 'linkedin', 'url'];
+        const hasKeywordsInFirstRow = firstRow.some(cell => 
+            typeof cell === 'string' && headerKeywords.some(k => cell.toLowerCase().includes(k))
+        );
+
+        if (hasKeywordsInFirstRow && !hasEmailInFirstRow) {
+          // It's a header row
+          headers = firstRow.map(h => String(h || "").trim());
+          startIdx = 1;
+        } else {
+          // No header row, or first row is already data
+          headers = firstRow.map((_, i) => `Column ${i + 1}`);
+          startIdx = 0;
         }
 
+        const rowsToProcess = data.slice(startIdx);
+        // Map to objects using headers as keys
+        const normalizedData = rowsToProcess.map(row => {
+            const obj: any = {};
+            headers.forEach((h, i) => {
+                obj[h] = row[i];
+            });
+            return obj;
+        });
+
         setAvailableHeaders(headers);
-        setRawParsedData(data);
+        setRawParsedData(normalizedData);
 
         // Auto-mapping logic
         const mappings: Record<string, string> = {};
-        const invalid = new Set<number>();
-
-        headers.forEach(h => {
+        headers.forEach((h, i) => {
           const lower = h.toLowerCase();
           if (lower.includes('email') || lower.includes('mail')) mappings['email'] = h;
           if (lower.includes('first') || lower.includes('name')) mappings['first_name'] = h;
           if (lower.includes('comp') || lower.includes('org')) mappings['company'] = h;
+          if (lower.includes('link') || lower.includes('url')) mappings['linkedin_url'] = h;
+          
+          // Fallback check: if column looks like email but header is generic
+          if (!mappings['email'] && firstRow[i] && validateEmail(String(firstRow[i]))) {
+              mappings['email'] = h;
+          }
         });
 
-        // Initial validation
-        data.forEach((row, idx) => {
+        const invalid = new Set<number>();
+        normalizedData.forEach((row, idx) => {
           const emailKey = mappings['email'];
-          if (!emailKey || !validateEmail(row[emailKey])) {
+          if (!emailKey || !validateEmail(String(row[emailKey] || ""))) {
             invalid.add(idx);
           }
         });
 
         setMappedHeaders(mappings);
         setInvalidRows(invalid);
-        toast.info(`Successfully parsed ${data.length} rows. Please verify column mapping.`);
+        toast.info(`Successfully loaded ${normalizedData.length} records. Please verify mappings.`);
       },
       error: (error) => {
         toast.error("Failed to parse CSV file: " + error);
-        console.error("PapaParse Error:", error);
       }
     });
   };
@@ -146,26 +178,26 @@ export default function BulkEmailPage() {
     
     const emailKey = mappedHeaders['email'];
     if (!emailKey) {
-      toast.error("Please map the 'Email' column before applying");
+      toast.error("Please map the 'Email' column before starting import");
       return;
     }
 
-    const finalLeads = rawParsedData
-      .filter((_, idx) => !invalidRows.has(idx))
-      .map(row => ({
-        email: String(row[mappedHeaders['email']] || "").trim(),
-        first_name: String(row[mappedHeaders['first_name']] || "").trim(),
-        company: String(row[mappedHeaders['company']] || "").trim(),
-        ...row 
-      }));
-
-    if (finalLeads.length === 0) {
-        toast.error("All rows are invalid or missing email. Please check your mapping.");
-        return;
-    }
+    // Capture all rows, even those with invalid emails (flag them)
+    const finalLeads = rawParsedData.map(row => ({
+      email: String(row[mappedHeaders['email']] || "").trim(),
+      first_name: String(row[mappedHeaders['first_name']] || "").trim(),
+      company: String(row[mappedHeaders['company']] || "").trim(),
+      linkedin_url: String(row[mappedHeaders['linkedin_url']] || "").trim(),
+      ...row 
+    }));
 
     setLeads(finalLeads);
-    toast.success(`Success! ${finalLeads.length} leads imported and ready.`);
+    const validCount = finalLeads.filter(l => validateEmail(l.email)).length;
+    
+    if (validCount < finalLeads.length) {
+        toast.warning(`${finalLeads.length - validCount} records have invalid emails and will be skipped during sending.`);
+    }
+    toast.success(`Success! ${finalLeads.length} records imported.`);
   };
 
   const handleManualImport = () => {
@@ -177,44 +209,47 @@ export default function BulkEmailPage() {
         first_name: parts[1] || "",
         company: parts[2] || ""
       };
-    }).filter(l => validateEmail(l.email));
+    });
 
     if (newLeads.length === 0) {
-        toast.error("No valid emails found in your manual entry.");
+        toast.error("No data found in your manual entry.");
         return;
     }
 
     setLeads(newLeads);
     setPreviewIndex(0);
-    toast.success(`${newLeads.length} leads added from manual list.`);
+    const validCount = newLeads.filter(l => validateEmail(l.email)).length;
+    toast.success(`${newLeads.length} records added (${validCount} valid).`);
   };
 
   const handleSendBatch = async () => {
-    if (leads.length === 0) {
-      toast.error("Please add at least one valid lead first");
+    const validLeads = leads.filter(l => validateEmail(l.email));
+    
+    if (validLeads.length === 0) {
+      toast.error("No valid leads email found to send. Please correct the data.");
       return;
     }
 
     setIsSending(true);
     setShowProgressUI(true);
-    setProgress({ current: 0, total: leads.length, success: 0, failed: 0 });
+    setProgress({ current: 0, total: validLeads.length, success: 0, failed: 0 });
     setFailedLeads([]);
 
     try {
       const response = await api.post<any>("/api/email/batch-send", {
         template: { subject, body },
-        leads: leads
+        leads: validLeads
       });
 
       if (response.data) {
         for (let i = 0; i <= 100; i += 5) {
-            setProgress(prev => ({ ...prev, current: Math.floor((i / 100) * leads.length) }));
+            setProgress(prev => ({ ...prev, current: Math.floor((i / 100) * validLeads.length) }));
             await new Promise(r => setTimeout(r, 40));
         }
         
         setProgress(prev => ({ 
             ...prev, 
-            current: leads.length, 
+            current: validLeads.length, 
             success: response.data.success || 0,
             failed: response.data.failed || 0
         }));
@@ -406,16 +441,37 @@ export default function BulkEmailPage() {
                     </div>
                   ) : (
                     <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-300">
+                      {/* Row Count Summary */}
+                      <div className="flex items-center justify-between px-1">
+                          <span className="text-[10px] font-black uppercase tracking-widest text-foreground bg-blue-500/10 px-2 py-1 rounded-md">
+                            {rawParsedData.length} Records Loaded
+                          </span>
+                          {invalidRows.size > 0 && (
+                            <span className="text-[10px] font-black uppercase tracking-widest text-red-500 bg-red-500/10 px-2 py-1 rounded-md flex items-center gap-1">
+                              <AlertCircle className="h-3 w-3" /> {invalidRows.size} Needs Correction
+                            </span>
+                          )}
+                      </div>
+
                       {/* Mapping UI */}
                       <div className="bg-muted/30 p-4 rounded-xl space-y-3">
                         <h4 className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground mb-2">Column Mapping</h4>
                         <div className="grid grid-cols-1 gap-2">
-                          {['email', 'first_name', 'company'].map(field => (
+                          {['email', 'first_name', 'company', 'linkedin_url'].map(field => (
                             <div key={field} className="flex items-center gap-3">
-                              <span className="w-20 text-[10px] font-bold text-muted-foreground uppercase">{field.replace('_', ' ')}</span>
+                              <span className="w-24 text-[10px] font-bold text-muted-foreground uppercase">{field.replace(/_/g, ' ')}</span>
                               <select 
                                 value={mappedHeaders[field] || ""}
-                                onChange={(e) => setMappedHeaders(prev => ({ ...prev, [field]: e.target.value }))}
+                                onChange={(e) => {
+                                    const newHeaders = { ...mappedHeaders, [field]: e.target.value };
+                                    setMappedHeaders(newHeaders);
+                                    // Update invalid rows immediately on mapping change
+                                    const invalid = new Set<number>();
+                                    rawParsedData.forEach((row, idx) => {
+                                        if (!validateEmail(String(row[newHeaders['email']] || ""))) invalid.add(idx);
+                                    });
+                                    setInvalidRows(invalid);
+                                }}
                                 className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-xs font-semibold outline-none focus:ring-2 focus:ring-blue-500/20"
                               >
                                 <option value="">(Ignore)</option>
@@ -434,24 +490,27 @@ export default function BulkEmailPage() {
                           <thead className="sticky top-0 bg-muted z-10 border-b border-border">
                             <tr>
                               <th className="p-2 font-bold uppercase text-muted-foreground">#</th>
-                              <th className="p-2 font-bold uppercase text-muted-foreground">OK?</th>
+                              <th className="p-2 font-bold uppercase text-muted-foreground">Status</th>
                               {Object.values(mappedHeaders).filter(h => !!h).map(h => (
                                 <th key={h} className="p-2 font-bold uppercase text-muted-foreground">{h}</th>
                               ))}
                             </tr>
                           </thead>
                           <tbody>
-                            {rawParsedData.slice(0, 100).map((row, idx) => (
-                              <tr key={idx} className={`border-b border-border/30 hover:bg-muted/20 transition-colors ${invalidRows.has(idx) ? "bg-red-500/5 opacity-80" : ""}`}>
+                            {rawParsedData.map((row, idx) => (
+                              <tr key={idx} className={`border-b border-border/30 hover:bg-muted/20 transition-colors ${invalidRows.has(idx) ? "bg-red-500/5" : ""}`}>
                                 <td className="p-2 text-muted-foreground font-mono">{idx + 1}</td>
                                 <td className="p-2">
                                   {invalidRows.has(idx) ? 
-                                    <X className="h-3 w-3 text-red-500" /> : 
+                                    <div className="flex items-center gap-1 text-red-500" title="Invalid or missing email">
+                                      <AlertCircle className="h-3 w-3" />
+                                      <span className="text-[10px] font-black uppercase tracking-tight">Error</span>
+                                    </div> : 
                                     <CheckCircle2 className="h-3 w-3 text-emerald-500" />
                                   }
                                 </td>
                                 {Object.values(mappedHeaders).filter(h => !!h).map(h => (
-                                  <td key={h} className={`p-2 truncate max-w-[120px] ${h === mappedHeaders['email'] && !validateEmail(row[h]) ? "text-red-500 line-through" : ""}`}>
+                                  <td key={h} className={`p-2 truncate max-w-[120px] ${h === mappedHeaders['email'] && !validateEmail(row[h]) ? "text-red-500 font-bold" : ""}`}>
                                     {row[h] || "—"}
                                   </td>
                                 ))}
@@ -464,9 +523,9 @@ export default function BulkEmailPage() {
                       <div className="flex gap-2 pt-2">
                         <button 
                           onClick={applyImport}
-                          className="flex-1 rounded-xl bg-blue-600 py-3 text-sm font-bold text-white hover:bg-blue-500 transition-all shadow-lg shadow-blue-500/10"
+                          className="flex-1 rounded-xl bg-blue-600 py-4 text-sm font-black uppercase tracking-widest text-white hover:bg-blue-500 transition-all shadow-lg shadow-blue-500/20 active:scale-95"
                         >
-                          Finish & Load {rawParsedData.length - invalidRows.size} Leads
+                          Start Import ({rawParsedData.length} Records)
                         </button>
                         <button 
                           onClick={resetImport}
@@ -523,6 +582,7 @@ export default function BulkEmailPage() {
                 <VariableChip label="First Name" onClick={() => insertVariable('first_name')} />
                 <VariableChip label="Company" onClick={() => insertVariable('company')} />
                 <VariableChip label="Email" onClick={() => insertVariable('email')} />
+                <VariableChip label="LinkedIn" onClick={() => insertVariable('linkedin_url')} />
               </div>
             </div>
             
