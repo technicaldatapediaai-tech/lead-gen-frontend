@@ -3,7 +3,9 @@
  * Handles all HTTP requests with authentication
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://lead-gen-backend-dcxf.onrender.com';
+// Fallback for extreme local debugging cases if needed, but production-first for builds
+const LOCAL_BACKEND = 'http://localhost:8000';
 
 interface ApiError {
     detail: string;
