@@ -31,14 +31,29 @@ export default function EmailSettingsPage() {
     useEffect(() => {
         fetchEmailAccounts();
 
-        // Handle success redirect
+        // Handle success/error redirects from OAuth callback
         const params = new URLSearchParams(window.location.search);
-        if (params.get("connected") === "google") {
+        const error = params.get("error");
+        const connected = params.get("connected");
+
+        if (connected === "google") {
             toast.success("Google account connected successfully!");
-            // Clean up URL
-            window.history.replaceState({}, document.title, window.location.pathname);
+        } else if (error === "missing_gmail_permissions") {
+            toast.error("Permission Denied: Please RE-CONNECT and check the 'Gmail Send' checkbox to enable bulk mailing.", {
+                duration: 6000
+            });
+        } else if (error) {
+            toast.error(`Connection failed: ${error.replace(/_/g, ' ')}`);
         }
-    }, []);
+
+        if (connected || error) {
+            // Clean up URL
+            const url = new URL(window.location.href);
+            url.searchParams.delete("connected");
+            url.searchParams.delete("error");
+            window.history.replaceState({}, document.title, url.pathname);
+        }
+    }, [router]);
 
     const fetchEmailAccounts = async () => {
         setIsLoading(true);
