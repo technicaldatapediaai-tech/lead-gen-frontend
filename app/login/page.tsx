@@ -168,6 +168,19 @@ export default function LoginPage() {
                             </label>
                         </div>
 
+                        <div className="pt-2">
+                             <p className="text-center text-[11px] text-muted-foreground/60">
+                                Need to verify your account?{" "}
+                                <button
+                                    type="button"
+                                    onClick={() => router.push("/verify-email" + (email ? `?email=${encodeURIComponent(email)}` : ""))}
+                                    className="font-semibold text-blue-400 hover:text-blue-300"
+                                >
+                                    Verify Now
+                                </button>
+                            </p>
+                        </div>
+
                         <button
                             type="submit"
                             disabled={isSubmitting}
