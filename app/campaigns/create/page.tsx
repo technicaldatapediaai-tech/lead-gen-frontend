@@ -27,12 +27,18 @@ function CampaignCreationContent() {
     
     // Follow-up state
     const [enableFollowUps, setEnableFollowUps] = useState(false);
-    const [followUps, setFollowUps] = useState<{message: string, delayDays: number}[]>([
-        { message: "", delayDays: 3 }
+    const [followUps, setFollowUps] = useState<{message: string, delayDays: number, channel: 'email' | 'linkedin', subject?: string}[]>([
+        { message: "", delayDays: 3, channel: 'linkedin', subject: "" }
     ]);
+    const [globalChannel, setGlobalChannel] = useState<'email' | 'linkedin' | 'both'>('linkedin');
 
     const addFollowUp = () => {
-        setFollowUps([...followUps, { message: "", delayDays: 3 }]);
+        setFollowUps([...followUps, { 
+            message: "", 
+            delayDays: 3, 
+            channel: globalChannel === 'both' ? 'email' : globalChannel as any,
+            subject: ""
+        }]);
     };
 
     const removeFollowUp = (index: number) => {
@@ -339,49 +345,116 @@ function CampaignCreationContent() {
                                             <Zap className="h-5 w-5" />
                                         </div>
                                         <div>
-                                            <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Touchpoints</p>
-                                            <p className="text-xl font-bold">{enableFollowUps ? followUps.length + 1 : 1}</p>
+                                            <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Channels</p>
+                                            <p className="text-xl font-bold">
+                                                {globalChannel === 'both' ? 'LinkedIn + Email' : (globalChannel === 'email' ? 'Email Only' : 'LinkedIn Only')}
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
+
+                                {enableFollowUps && (
+                                    <div className="mb-8 p-6 rounded-2xl border border-blue-500/20 bg-blue-500/5">
+                                        <h3 className="text-sm font-bold mb-4 flex items-center gap-2">
+                                            <Rocket className="h-4 w-4 text-blue-500" />
+                                            Select Follow-up Strategy
+                                        </h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            {[
+                                                { id: 'linkedin', label: 'LinkedIn Only', icon: <Linkedin className="h-4 w-4" /> },
+                                                { id: 'email', label: 'Email Only', icon: <List className="h-4 w-4" /> },
+                                                { id: 'both', label: 'Multi-Channel', icon: <Zap className="h-4 w-4" /> }
+                                            ].map((opt) => (
+                                                <button
+                                                    key={opt.id}
+                                                    onClick={() => {
+                                                        setGlobalChannel(opt.id as any);
+                                                        // Update existing follow-ups if not 'both'
+                                                        if (opt.id !== 'both') {
+                                                            setFollowUps(followUps.map(fu => ({ ...fu, channel: opt.id as any })));
+                                                        }
+                                                    }}
+                                                    className={`flex items-center justify-center gap-3 p-4 rounded-xl border font-bold transition-all ${globalChannel === opt.id 
+                                                        ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-500/20 scale-[1.02]' 
+                                                        : 'bg-card text-muted-foreground border-border hover:bg-accent'}`}
+                                                >
+                                                    {opt.icon}
+                                                    <span>{opt.label}</span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
 
                                 {enableFollowUps ? (
                                     <div className="space-y-6 mb-10">
                                         {followUps.map((fu, idx) => (
                                             <div key={idx} className="relative rounded-2xl border border-border bg-card p-6 shadow-sm">
-                                                <div className="mb-4 flex items-center justify-between">
+                                                <div className="mb-4 flex items-center justify-between border-b border-border/50 pb-4">
                                                     <div className="flex items-center gap-3">
-                                                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">
+                                                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white shadow-sm">
                                                             {idx + 1}
                                                         </span>
                                                         <h3 className="font-bold text-foreground">Follow-up Message</h3>
                                                     </div>
-                                                    <div className="flex items-center gap-2">
-                                                        <label className="text-xs font-bold">Wait</label>
-                                                        <input 
-                                                            type="number" 
-                                                            value={fu.delayDays} 
-                                                            onChange={(e) => updateFollowUp(idx, 'delayDays', parseInt(e.target.value))}
-                                                            className="w-16 rounded-lg border border-input bg-background p-2 text-center text-sm font-bold text-foreground focus:ring-1 focus:ring-blue-500"
-                                                        />
-                                                        <span className="text-xs font-bold text-muted-foreground mr-4">days after previous</span>
-                                                        
-                                                        {followUps.length > 1 && (
-                                                            <button 
-                                                                onClick={() => removeFollowUp(idx)}
-                                                                className="text-muted-foreground hover:text-red-500 transition"
-                                                            >
-                                                                <X className="h-4 w-4" />
-                                                            </button>
+                                                    
+                                                    <div className="flex items-center gap-4">
+                                                        {globalChannel === 'both' && (
+                                                            <div className="flex items-center bg-muted p-1 rounded-lg">
+                                                                <button 
+                                                                    onClick={() => updateFollowUp(idx, 'channel', 'linkedin')}
+                                                                    className={`px-3 py-1 text-[10px] font-bold rounded-md transition ${fu.channel === 'linkedin' ? 'bg-white text-blue-600 shadow-sm' : 'text-muted-foreground'}`}
+                                                                >
+                                                                    LinkedIn
+                                                                </button>
+                                                                <button 
+                                                                    onClick={() => updateFollowUp(idx, 'channel', 'email')}
+                                                                    className={`px-3 py-1 text-[10px] font-bold rounded-md transition ${fu.channel === 'email' ? 'bg-white text-blue-600 shadow-sm' : 'text-muted-foreground'}`}
+                                                                >
+                                                                    Email
+                                                                </button>
+                                                            </div>
                                                         )}
+                                                        
+                                                        <div className="flex items-center gap-2">
+                                                            <label className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">Wait</label>
+                                                            <input 
+                                                                type="number" 
+                                                                value={fu.delayDays} 
+                                                                onChange={(e) => updateFollowUp(idx, 'delayDays', parseInt(e.target.value))}
+                                                                className="w-12 h-8 rounded-lg border border-input bg-background p-1 text-center text-xs font-bold text-foreground focus:ring-1 focus:ring-blue-500"
+                                                            />
+                                                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Days</span>
+                                                        </div>
+                                                        
+                                                        <button 
+                                                            onClick={() => removeFollowUp(idx)}
+                                                            className="h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground hover:bg-red-50 hover:text-red-500 transition border border-border"
+                                                        >
+                                                            <X className="h-3 w-3" />
+                                                        </button>
                                                     </div>
                                                 </div>
+
+                                                {fu.channel === 'email' && (
+                                                    <div className="mb-4">
+                                                        <label className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider mb-1 block">Email Subject</label>
+                                                        <input 
+                                                            type="text"
+                                                            value={fu.subject}
+                                                            onChange={(e) => updateFollowUp(idx, 'subject', e.target.value)}
+                                                            placeholder="e.g. Quick question about my previous message"
+                                                            className="w-full h-10 rounded-xl border border-input bg-background px-4 text-sm text-foreground focus:ring-1 focus:ring-blue-500 transition-all font-medium"
+                                                        />
+                                                    </div>
+                                                )}
+
                                                 <textarea
                                                     value={fu.message}
                                                     onChange={(e) => updateFollowUp(idx, 'message', e.target.value)}
                                                     rows={4}
-                                                    placeholder="e.g. Hi {{first_name}}, following up on my previous message..."
-                                                    className="w-full rounded-xl border border-input bg-background p-4 text-sm text-foreground focus:ring-1 focus:ring-blue-500 transition-all resize-none"
+                                                    placeholder={fu.channel === 'email' ? "Write your follow-up email..." : "Write your LinkedIn follow-up note..."}
+                                                    className="w-full rounded-xl border border-input bg-background p-4 text-sm text-foreground focus:ring-1 focus:ring-blue-500 transition-all resize-none font-medium leading-relaxed"
                                                 />
                                             </div>
                                         ))}
