@@ -49,7 +49,7 @@ export default function ForgotPasswordPage() {
             }
             
             setView("otp");
-            setCountdown(30); // Start cooldown
+            setCountdown(60); // Start 60s cooldown
         } catch (error: any) {
             toast.error(error?.detail || "Failed to send reset code. Please try again.");
         } finally {
@@ -69,7 +69,7 @@ export default function ForgotPasswordPage() {
             }
             
             toast.success("A new verification code has been generated.");
-            setCountdown(30);
+            setCountdown(60);
         } catch (error: any) {
             toast.error("Failed to resend code.");
         } finally {
@@ -252,7 +252,7 @@ export default function ForgotPasswordPage() {
 
                                 <div className="text-center space-y-4 pt-4 mt-2">
                                     <p className="text-xs text-muted-foreground p-2 rounded-lg bg-secondary/30">
-                                        Didn't receive the code?{" "}
+                                        OTP not received?{" "}
                                         {countdown > 0 ? (
                                             <span className="font-semibold text-blue-400">Resend in {countdown}s</span>
                                         ) : (
@@ -262,7 +262,7 @@ export default function ForgotPasswordPage() {
                                                 disabled={isResending}
                                                 className="font-semibold text-blue-400 hover:text-blue-300 hover:underline disabled:opacity-50"
                                             >
-                                                {isResending ? "Sending..." : "Resend Code"}
+                                                {isResending ? "Click resend" : "Resend Code"}
                                             </button>
                                         )}
                                     </p>

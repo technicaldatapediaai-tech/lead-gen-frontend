@@ -83,7 +83,9 @@ export default function SignupPage() {
         if (data) {
             // Use the status message from the backend
             if ((data as any).email_sent === false) {
-                toast.warning((data as any).message || "Registration successful, but email delivery failed.");
+                toast.error("Account created, but we couldn't deliver your verification code! Please click 'Resend Code' below.", {
+                    duration: 10000,
+                });
             } else {
                 toast.success((data as any).message || "Registration successful! Please check your email for the OTP.");
             }
@@ -124,8 +126,8 @@ export default function SignupPage() {
             } else {
                 toast.success("A new verification code has been sent to your email!");
             }
-            // Start 30s countdown
-            setCountdown(30);
+            // Start 60s countdown
+            setCountdown(60);
         }
         setIsResending(false);
     };
@@ -268,7 +270,7 @@ export default function SignupPage() {
 
                             <div className="text-center space-y-4">
                                 <p className="text-sm text-muted-foreground p-2 rounded-lg bg-secondary/30">
-                                    Didn't receive the code?{" "}
+                                    OTP not received?{" "}
                                     {countdown > 0 ? (
                                         <span className="font-semibold text-blue-400">Resend in {countdown}s</span>
                                     ) : (
@@ -278,7 +280,7 @@ export default function SignupPage() {
                                             disabled={isResending}
                                             className="font-semibold text-blue-400 hover:text-blue-300 hover:underline disabled:opacity-50"
                                         >
-                                            {isResending ? "Sending..." : "Resend Code"}
+                                            {isResending ? "Click resend" : "Resend Code"}
                                         </button>
                                     )}
                                 </p>

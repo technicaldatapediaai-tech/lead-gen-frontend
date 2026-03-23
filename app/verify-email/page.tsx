@@ -60,7 +60,7 @@ function VerifyEmailForm() {
             } else {
                 toast.success("A new verification code has been sent!");
             }
-            setCountdown(30);
+            setCountdown(60);
         } catch (error: any) {
             toast.error(error?.detail || "Failed to resend code.");
         } finally {
@@ -115,7 +115,7 @@ function VerifyEmailForm() {
 
                 <div className="flex flex-col items-center gap-4 pt-4 text-center">
                     <p className="text-xs text-muted-foreground">
-                        Didn't receive the code?{" "}
+                        OTP not received?{" "}
                         {countdown > 0 ? (
                             <span className="font-semibold text-blue-400">Resend in {countdown}s</span>
                         ) : (
@@ -125,7 +125,7 @@ function VerifyEmailForm() {
                                 disabled={isResending}
                                 className="font-semibold text-blue-400 hover:text-blue-300 hover:underline transition-colors"
                             >
-                                {isResending ? "Sending..." : "Resend Code"}
+                                {isResending ? "Click resend" : "Resend Code"}
                             </button>
                         )}
                     </p>
