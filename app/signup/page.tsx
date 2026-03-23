@@ -25,19 +25,9 @@ export default function SignupPage() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [agreedToTerms, setAgreedToTerms] = useState(false);
     
-    // OTP fields
-    const [isVerifying, setIsVerifying] = useState(false);
-    const [otp, setOtp] = useState("");
-    const [isResending, setIsResending] = useState(false);
-    const [countdown, setCountdown] = useState(0);
+    // Countdown state removed as OTP is disabled
 
-    // Initial countdown check/timer
-    useEffect(() => {
-        if (countdown > 0) {
-            const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-            return () => clearTimeout(timer);
-        }
-    }, [countdown]);
+    // Countdown effect removed
 
     // Redirect if already authenticated
     useEffect(() => {
@@ -85,80 +75,14 @@ export default function SignupPage() {
         }
 
         if (data) {
-            // Use the status message from the backend
-            if ((data as any).email_sent === false) {
-                toast.error("Account created, but we couldn't deliver your verification code! Please click 'Resend Code' below.", {
-                    duration: 10000,
-                });
-            } else {
-                toast.success((data as any).message || "Registration successful! Please check your email for the OTP.");
-            }
-            
-            setIsVerifying(true);
-            
-            // For troubleshooting: if the backend returns the token (fallback or dev), log it
-            if ((data as any)._dev_verification_token) {
-                console.log("OTP Debug Information:", (data as any)._dev_verification_token);
-                
-                // If it's a known failure or dev mode, we can help the user
-                if (process.env.NODE_ENV === 'development' || (data as any).email_sent === false) {
-                    console.info("Registration OTP captured from fallback response.");
-                }
-            }
+            toast.success("Registration successful! You can now log in.");
+            router.push("/login");
         }
 
         setIsSubmitting(false);
     };
 
-    const handleResendOTP = async () => {
-        if (countdown > 0 || isResending) return;
-
-        setIsResending(true);
-        const { data, error } = await api.post("/api/auth/resend-verification", { email });
-        
-        if (error) {
-            toast.error(error.detail || "Failed to resend code");
-        } else if (data) {
-            // Check for backup token
-            if ((data as any)._dev_verification_token) {
-                console.log("OTP Backup Information (Resend):", (data as any)._dev_verification_token);
-                if ((data as any).message?.includes("Could not send email")) {
-                    toast.warning("Email delivery failed, but we updated your fallback code. Please check the console.");
-                } else {
-                    toast.success("A new verification code has been generated.");
-                }
-            } else {
-                toast.success("A new verification code has been sent to your email!");
-            }
-            // Start 60s countdown
-            setCountdown(60);
-        }
-        setIsResending(false);
-    };
-
-    const handleVerifyOTP = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (otp.length < 6) {
-            toast.error("Please enter a valid 6-digit code");
-            return;
-        }
-
-        setIsSubmitting(true);
-
-        const { error } = await api.post("/api/auth/verify-email", {
-            token: otp,
-        });
-
-        if (error) {
-            toast.error(error.detail || "Verification failed. Please check the code.");
-            setIsSubmitting(false);
-            return;
-        }
-
-        toast.success("Email verified successfully! You can now log in.");
-        router.push("/login");
-        setIsSubmitting(false);
-    };
+    // handleResendOTP and handleVerifyOTP removed
 
     return (
         <main className="min-h-screen w-full bg-background text-foreground transition-colors duration-300">
@@ -232,72 +156,7 @@ export default function SignupPage() {
                         </div>
                     </div>
 
-                    {isVerifying ? (
-                        <form onSubmit={handleVerifyOTP} className="mt-8 space-y-6">
-                            <div className="text-center">
-                                <p className="text-sm text-muted-foreground mb-6">
-                                    We've sent a 6-digit verification code to <span className="font-semibold text-foreground">{email}</span>. 
-                                    Please enter it below to confirm your account.
-                                </p>
-                                
-                                <div className="flex justify-center">
-                                    <input
-                                        id="otp-input"
-                                        name="otp"
-                                        className="h-16 w-full max-w-[280px] rounded-2xl border-2 border-input bg-background px-4 text-center text-3xl font-bold tracking-[8px] text-foreground outline-none focus:border-blue-500 transition-all placeholder:text-muted-foreground/30"
-                                        placeholder="000000"
-                                        type="text"
-                                        maxLength={6}
-                                        required
-                                        value={otp}
-                                        onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, ""))}
-                                        disabled={isSubmitting}
-                                        autoFocus
-                                    />
-                                </div>
-                            </div>
-
-                            <button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className="flex h-12 w-full items-center justify-center rounded-xl bg-blue-600 text-sm font-semibold text-white hover:bg-blue-500 transition-all shadow-lg shadow-blue-500/20 active:scale-95 disabled:opacity-50"
-                            >
-                                {isSubmitting ? (
-                                    <div className="flex items-center gap-2">
-                                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                                        Verifying...
-                                    </div>
-                                ) : (
-                                    "Verify Account"
-                                )}
-                            </button>
-
-                            <div className="text-center space-y-4">
-                                <p className="text-sm text-muted-foreground p-2 rounded-lg bg-secondary/30">
-                                    OTP not received?{" "}
-                                    {countdown > 0 ? (
-                                        <span className="font-semibold text-blue-400">Resend in {countdown}s</span>
-                                    ) : (
-                                        <button 
-                                            type="button"
-                                            onClick={handleResendOTP}
-                                            disabled={isResending}
-                                            className="font-semibold text-blue-400 hover:text-blue-300 hover:underline disabled:opacity-50"
-                                        >
-                                            {isResending ? "Click resend" : "Resend Code"}
-                                        </button>
-                                    )}
-                                </p>
-                                <button
-                                    type="button"
-                                    onClick={() => setIsVerifying(false)}
-                                    className="text-xs text-muted-foreground hover:text-foreground hover:underline transition-colors"
-                                >
-                                    ← Back to signup
-                                </button>
-                            </div>
-                        </form>
-                    ) : (
+                    {true ? (
                         <>
                             <h1 className="text-3xl font-semibold tracking-tight text-foreground">
                                 Create your account
@@ -481,7 +340,7 @@ export default function SignupPage() {
                                 </p>
                             </form>
                         </>
-                    )}
+                    ) : null}
                 </section>
             </div>
         </main>

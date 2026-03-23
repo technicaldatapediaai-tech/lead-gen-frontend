@@ -15,11 +15,8 @@ function VerifyEmailForm() {
     const [countdown, setCountdown] = useState(0);
 
     useEffect(() => {
-        const timer = setInterval(() => {
-            setCountdown((prev) => (prev > 0 ? prev - 1 : 0));
-        }, 1000);
-        return () => clearInterval(timer);
-    }, []);
+        router.push("/login");
+    }, [router]);
 
     const handleVerifySubmit = async (e: React.FormEvent) => {
         e.preventDefault();
