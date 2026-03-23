@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Linkedin, Send, Loader2, X, CheckCircle2, AlertCircle, ChevronLeft, ChevronRight, Plus, ArrowRight, Trash2, Edit2 } from "lucide-react";
+import { Linkedin, Send, Loader2, X, CheckCircle2, AlertCircle, ChevronLeft, ChevronRight, Plus, ArrowRight, Trash2, Edit2, Sparkles, Clock, Zap, List, Rocket } from "lucide-react";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 import useEmblaCarousel from 'embla-carousel-react';
@@ -22,6 +22,7 @@ interface Lead {
 }
 
 interface BatchLinkedInMessagingProps {
+    campaignId?: string;
     leads: Lead[];
     onComplete: (results: BatchResults) => void;
     onCancel: () => void;
@@ -52,6 +53,7 @@ interface LinkedInStatus {
 }
 
 export default function BatchLinkedInMessaging({
+    campaignId,
     leads,
     onComplete,
     onCancel
@@ -74,6 +76,13 @@ export default function BatchLinkedInMessaging({
     const [progress, setProgress] = useState<SendingProgress[]>([]);
     const [connectionStatus, setConnectionStatus] = useState<LinkedInStatus | null>(null);
     const [isCheckingConnection, setIsCheckingConnection] = useState(true);
+
+    // Follow-ups State
+    const [enableFollowUps, setEnableFollowUps] = useState(false);
+    const [globalChannel, setGlobalChannel] = useState<'linkedin' | 'email' | 'both'>('linkedin');
+    const [followUps, setFollowUps] = useState<Array<{delayDays: number, message: string, channel?: 'linkedin' | 'email', subject?: string}>>([
+        { delayDays: 2, message: "Hi {{first_name}}, following up on my previous message...", channel: 'linkedin' }
+    ]);
 
     useEffect(() => {
         async function checkStatus() {
@@ -132,6 +141,14 @@ export default function BatchLinkedInMessaging({
         setTemplates(prev => prev.filter(t => t.id !== id));
     };
 
+    const addFollowUp = () => setFollowUps([...followUps, { delayDays: 2, message: "", channel: globalChannel === 'both' ? 'linkedin' : (globalChannel as any) }]);
+    const removeFollowUp = (index: number) => setFollowUps(followUps.filter((_, i) => i !== index));
+    const updateFollowUp = (index: number, field: string, value: any) => {
+        const updated = [...followUps];
+        updated[index] = { ...updated[index], [field]: value };
+        setFollowUps(updated);
+    };
+
     useEffect(() => {
         // Fast processing to avoid blocking user UI 
         if (!isSending || sendMethod === 'api') return;
@@ -163,6 +180,27 @@ export default function BatchLinkedInMessaging({
         }
 
         setIsSending(true);
+
+        // Try to save Follow-ups to campaign settings first if applicable
+        if (campaignId) {
+            try {
+                // Fetch current campaign to merge settings (so we don't overwrite everything)
+                const { data: currentCamp } = await api.get<any>(`/api/campaigns/${campaignId}/`);
+                if (currentCamp) {
+                    const currentSettings = currentCamp.settings || {};
+                    const updatedSettings = {
+                        ...currentSettings,
+                        follow_ups: enableFollowUps ? followUps : []
+                    };
+                    await api.patch(`/api/campaigns/${campaignId}/`, {
+                        settings: updatedSettings
+                    });
+                }
+            } catch (err) {
+                console.error("Failed to update campaign follow-up settings", err);
+                toast.error("Could not save follow-up settings.");
+            }
+        }
 
         const initialProgress = leads.map(lead => ({
             leadId: lead.id,
@@ -419,6 +457,105 @@ export default function BatchLinkedInMessaging({
                                 </div>
                             </div>
                         </div>
+
+                        {/* Automated Follow-ups Setup */}
+                        <div className="space-y-4 pt-4 border-t border-border">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-blue-500 text-white shadow-lg shadow-blue-500/20">
+                                        <Sparkles className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-foreground">Automated Follow-ups</h4>
+                                        <p className="text-xs text-muted-foreground">Automatically reply to non-responsive leads.</p>
+                                    </div>
+                                </div>
+                                <button 
+                                    onClick={() => setEnableFollowUps(!enableFollowUps)}
+                                    className={`px-3 py-1.5 text-sm rounded-lg font-bold transition ${enableFollowUps ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/30' : 'bg-muted text-muted-foreground border border-border'}`}
+                                >
+                                    {enableFollowUps ? 'Enabled' : 'Disabled'}
+                                </button>
+                            </div>
+
+                            {enableFollowUps && (
+                                <div className="space-y-6 mt-4 animate-in fade-in slide-in-from-top-4 duration-300">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                        {[
+                                            { id: 'linkedin', label: 'LinkedIn', icon: <Linkedin className="h-4 w-4" /> },
+                                            { id: 'email', label: 'Email', icon: <List className="h-4 w-4" /> },
+                                            { id: 'both', label: 'Multi-Channel', icon: <Zap className="h-4 w-4" /> }
+                                        ].map((opt) => (
+                                            <button
+                                                key={opt.id}
+                                                onClick={() => {
+                                                    setGlobalChannel(opt.id as any);
+                                                    if (opt.id !== 'both') {
+                                                        setFollowUps(followUps.map(fu => ({ ...fu, channel: opt.id as any })));
+                                                    }
+                                                }}
+                                                className={`flex items-center justify-center gap-2 p-3 text-sm rounded-xl border font-bold transition-all ${globalChannel === opt.id 
+                                                    ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-500/20' 
+                                                    : 'bg-card text-muted-foreground border-border hover:bg-accent'}`}
+                                            >
+                                                {opt.icon}
+                                                <span>{opt.label}</span>
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        {followUps.map((fu, idx) => (
+                                            <div key={idx} className="relative rounded-xl border border-border bg-card p-4 shadow-sm">
+                                                <div className="mb-3 flex items-center justify-between border-b border-border/50 pb-3">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">
+                                                            {idx + 1}
+                                                        </span>
+                                                        <h5 className="font-bold text-sm text-foreground">Follow-up</h5>
+                                                    </div>
+                                                    
+                                                    <div className="flex items-center gap-3">
+                                                        {globalChannel === 'both' && (
+                                                            <div className="flex items-center bg-muted p-1 rounded-md">
+                                                                <button onClick={() => updateFollowUp(idx, 'channel', 'linkedin')} className={`px-2 py-0.5 text-[10px] font-bold rounded transition ${fu.channel === 'linkedin' ? 'bg-white text-blue-600 shadow-sm' : 'text-muted-foreground'}`}>IN</button>
+                                                                <button onClick={() => updateFollowUp(idx, 'channel', 'email')} className={`px-2 py-0.5 text-[10px] font-bold rounded transition ${fu.channel === 'email' ? 'bg-white text-blue-600 shadow-sm' : 'text-muted-foreground'}`}>Email</button>
+                                                            </div>
+                                                        )}
+                                                        <div className="flex items-center gap-1.5">
+                                                            <label className="text-[10px] font-bold uppercase text-muted-foreground">Wait</label>
+                                                            <input type="number" value={fu.delayDays} onChange={(e) => updateFollowUp(idx, 'delayDays', parseInt(e.target.value))} className="w-10 h-7 rounded-md border border-input bg-background p-1 text-center text-xs font-bold text-foreground focus:ring-1 focus:ring-blue-500" />
+                                                            <span className="text-[10px] font-bold text-muted-foreground uppercase">Days</span>
+                                                        </div>
+                                                        <button onClick={() => removeFollowUp(idx)} className="h-7 w-7 rounded-md flex items-center justify-center text-muted-foreground hover:bg-red-50 hover:text-red-500 transition">
+                                                            <X className="h-3 w-3" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                {fu.channel === 'email' && (
+                                                    <div className="mb-3">
+                                                        <input type="text" value={fu.subject || ''} onChange={(e) => updateFollowUp(idx, 'subject', e.target.value)} placeholder="Email Subject" className="w-full h-9 rounded-lg border border-input bg-background px-3 text-sm text-foreground focus:ring-1 focus:ring-blue-500" />
+                                                    </div>
+                                                )}
+
+                                                <textarea
+                                                    value={fu.message}
+                                                    onChange={(e) => updateFollowUp(idx, 'message', e.target.value)}
+                                                    placeholder="Hey {{first_name}}, following up on..."
+                                                    className="w-full h-20 rounded-lg border border-input bg-background p-3 text-sm text-foreground focus:border-blue-500 focus:ring-1 focus:ring-blue-500 resize-none"
+                                                />
+                                            </div>
+                                        ))}
+
+                                        <button onClick={addFollowUp} className="w-full py-3 rounded-xl border border-dashed border-blue-500/30 text-blue-500 font-bold hover:bg-blue-500/5 transition flex items-center justify-center gap-2 text-sm">
+                                            <Plus className="h-4 w-4" /> Add Follow-up
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
                     </div>
                 ) : (
                     // PAGE 2: SWIPE CAROUSEL

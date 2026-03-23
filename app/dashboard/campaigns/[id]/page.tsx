@@ -474,6 +474,7 @@ export default function CampaignDetailsPage() {
                 <DialogContent className="sm:max-w-2xl p-0 overflow-hidden h-[80vh] flex flex-col">
                     <DialogTitle className="sr-only">Batch LinkedIn Messaging</DialogTitle>
                     <BatchLinkedInMessaging
+                        campaignId={campaign?.id}
                         leads={selectedLeads.length > 0 ? selectedLeadsObjects : leads}
                         onCancel={() => setShowBatchLinkedIn(false)}
                         onComplete={() => {
