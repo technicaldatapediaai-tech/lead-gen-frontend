@@ -24,6 +24,26 @@ function CampaignCreationContent() {
     );
     const [prospects, setProspects] = useState("");
     const [isLaunching, setIsLaunching] = useState(false);
+    
+    // Follow-up state
+    const [enableFollowUps, setEnableFollowUps] = useState(false);
+    const [followUps, setFollowUps] = useState<{message: string, delayDays: number}[]>([
+        { message: "", delayDays: 3 }
+    ]);
+
+    const addFollowUp = () => {
+        setFollowUps([...followUps, { message: "", delayDays: 3 }]);
+    };
+
+    const removeFollowUp = (index: number) => {
+        setFollowUps(followUps.filter((_, i) => i !== index));
+    };
+
+    const updateFollowUp = (index: number, field: string, value: any) => {
+        const newFollowUps = [...followUps];
+        (newFollowUps[index] as any)[field] = value;
+        setFollowUps(newFollowUps);
+    };
 
     const handleLaunch = async () => {
         if (!campaignName.trim()) {
@@ -47,7 +67,8 @@ function CampaignCreationContent() {
                 status: 'active',
                 settings: {
                     template: templateParam,
-                    message: messageContent
+                    message: messageContent,
+                    follow_ups: enableFollowUps ? followUps : []
                 }
             });
 
@@ -150,10 +171,18 @@ function CampaignCreationContent() {
                         />
                         <StepButton
                             number={3}
-                            label="Add Prospects"
+                            label="Automated Follow-ups"
                             active={step === 3}
                             completed={step > 3}
                             onClick={() => setStep(3)}
+                            icon={<Sparkles className="h-4 w-4" />}
+                        />
+                        <StepButton
+                            number={4}
+                            label="Add Prospects"
+                            active={step === 4}
+                            completed={step > 4}
+                            onClick={() => setStep(4)}
                             icon={<UserPlus className="h-4 w-4" />}
                         />
                     </div>
@@ -257,6 +286,107 @@ function CampaignCreationContent() {
                                         onClick={() => setStep(3)}
                                         className="flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 font-bold text-white transition hover:bg-blue-500"
                                     >
+                                        Next: Follow-ups
+                                        <ChevronRight className="h-4 w-4" />
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Step 3: Follow-ups */}
+                        {step === 3 && (
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
+                                <div className="mb-8 flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="grid h-10 w-10 place-items-center rounded-xl bg-blue-500 text-white shadow-lg shadow-blue-500/20">
+                                            <Sparkles className="h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <h1 className="text-2xl font-bold text-foreground">Automated Follow-ups</h1>
+                                            <p className="text-sm">Increase your reply rate by up to 3x with automated follow-ups.</p>
+                                        </div>
+                                    </div>
+                                    <button 
+                                        onClick={() => setEnableFollowUps(!enableFollowUps)}
+                                        className={`px-4 py-2 rounded-lg font-bold transition ${enableFollowUps ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/30' : 'bg-muted text-muted-foreground border border-border'}`}
+                                    >
+                                        {enableFollowUps ? 'Enabled' : 'Disabled'}
+                                    </button>
+                                </div>
+
+                                {enableFollowUps ? (
+                                    <div className="space-y-6 mb-10">
+                                        {followUps.map((fu, idx) => (
+                                            <div key={idx} className="relative rounded-2xl border border-border bg-card p-6 shadow-sm">
+                                                <div className="mb-4 flex items-center justify-between">
+                                                    <div className="flex items-center gap-3">
+                                                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">
+                                                            {idx + 1}
+                                                        </span>
+                                                        <h3 className="font-bold text-foreground">Follow-up Message</h3>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <label className="text-xs font-bold">Wait</label>
+                                                        <input 
+                                                            type="number" 
+                                                            value={fu.delayDays} 
+                                                            onChange={(e) => updateFollowUp(idx, 'delayDays', parseInt(e.target.value))}
+                                                            className="w-16 rounded-lg border border-input bg-background p-2 text-center text-sm font-bold text-foreground focus:ring-1 focus:ring-blue-500"
+                                                        />
+                                                        <span className="text-xs font-bold text-muted-foreground mr-4">days after previous</span>
+                                                        
+                                                        {followUps.length > 1 && (
+                                                            <button 
+                                                                onClick={() => removeFollowUp(idx)}
+                                                                className="text-muted-foreground hover:text-red-500 transition"
+                                                            >
+                                                                <X className="h-4 w-4" />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <textarea
+                                                    value={fu.message}
+                                                    onChange={(e) => updateFollowUp(idx, 'message', e.target.value)}
+                                                    rows={4}
+                                                    placeholder="e.g. Hi {{first_name}}, following up on my previous message..."
+                                                    className="w-full rounded-xl border border-input bg-background p-4 text-sm text-foreground focus:ring-1 focus:ring-blue-500 transition-all resize-none"
+                                                />
+                                            </div>
+                                        ))}
+
+                                        <button 
+                                            onClick={addFollowUp}
+                                            className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border p-4 text-sm font-bold text-muted-foreground hover:bg-accent hover:text-foreground transition"
+                                        >
+                                            <UserPlus className="h-4 w-4" />
+                                            Add another follow-up
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="mb-10 rounded-2xl border border-dashed border-border bg-accent/30 p-12 text-center">
+                                        <p className="text-sm mb-4">You haven't enabled follow-ups for this campaign.</p>
+                                        <button 
+                                            onClick={() => setEnableFollowUps(true)}
+                                            className="rounded-xl bg-blue-600 px-6 py-2 text-sm font-bold text-white hover:bg-blue-500 transition"
+                                        >
+                                            Enable Now
+                                        </button>
+                                    </div>
+                                )}
+
+                                <div className="flex justify-between">
+                                    <button
+                                        onClick={() => setStep(2)}
+                                        className="flex items-center gap-2 rounded-xl border border-border px-6 py-3 font-bold text-muted-foreground transition hover:bg-accent"
+                                    >
+                                        <ChevronLeft className="h-4 w-4" />
+                                        Previous
+                                    </button>
+                                    <button
+                                        onClick={() => setStep(4)}
+                                        className="flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 font-bold text-white transition hover:bg-blue-500"
+                                    >
                                         Next: Prospects
                                         <ChevronRight className="h-4 w-4" />
                                     </button>
@@ -264,8 +394,8 @@ function CampaignCreationContent() {
                             </div>
                         )}
 
-                        {/* Step 3: Prospects */}
-                        {step === 3 && (
+                        {/* Step 4: Prospects */}
+                        {step === 4 && (
                             <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
                                 <div className="mb-8 flex items-center gap-3">
                                     <div className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-500 text-white shadow-lg shadow-emerald-500/20">
@@ -288,7 +418,7 @@ function CampaignCreationContent() {
 
                                 <div className="flex justify-between">
                                     <button
-                                        onClick={() => setStep(2)}
+                                        onClick={() => setStep(3)}
                                         className="flex items-center gap-2 rounded-xl border border-border px-6 py-3 font-bold text-muted-foreground transition hover:bg-accent"
                                     >
                                         <ChevronLeft className="h-4 w-4" />
