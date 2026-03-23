@@ -67,14 +67,18 @@ export default function SignupPage() {
 
         setIsSubmitting(true);
 
+        const trimmedEmail = email.trim();
+        const trimmedFullName = fullName.trim();
+
         // Register without org - org will be created in setup
         const { data, error } = await api.post<RegisterResponse>("/api/auth/register", {
-            email,
+            email: trimmedEmail,
             password,
-            full_name: fullName || undefined,
+            full_name: trimmedFullName || undefined,
         });
 
         if (error) {
+            console.error("Registration Error (422/Other):", error);
             toast.error(error.detail || "Registration failed. Please try again.");
             setIsSubmitting(false);
             return;

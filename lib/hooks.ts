@@ -30,9 +30,11 @@ interface ActivityItem {
     action: string;
     entity_type: string;
     entity_id: string;
-    details: Record<string, unknown>;
+    description?: string;
+    details?: Record<string, unknown>;
     created_at: string;
-    user_id: string;
+    user_id?: string;
+    actor_id?: string;
 }
 
 interface ChartData {
