@@ -3,7 +3,7 @@
 import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { X, Save, Rocket, UserPlus, Search, Check, ChevronLeft, ChevronRight, List, Linkedin, Type, Send, Loader2, Sparkles, MessageSquare } from "lucide-react";
+import { X, Save, Rocket, UserPlus, Search, Check, ChevronLeft, ChevronRight, List, Linkedin, Type, Send, Loader2, Sparkles, MessageSquare, Zap, Clock } from "lucide-react";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 
@@ -312,6 +312,36 @@ function CampaignCreationContent() {
                                     >
                                         {enableFollowUps ? 'Enabled' : 'Disabled'}
                                     </button>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                    <div className="rounded-2xl border border-border bg-card p-4 flex items-center gap-4 shadow-sm">
+                                        <div className="p-3 rounded-xl bg-blue-500/10 text-blue-500">
+                                            <Sparkles className="h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Follow-ups</p>
+                                            <p className="text-xl font-bold">{enableFollowUps ? followUps.length : 0}</p>
+                                        </div>
+                                    </div>
+                                    <div className="rounded-2xl border border-border bg-card p-4 flex items-center gap-4 shadow-sm">
+                                        <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-500">
+                                            <Clock className="h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Total Cycle</p>
+                                            <p className="text-xl font-bold">
+                                                {enableFollowUps ? followUps.reduce((acc, curr) => acc + curr.delayDays, 0) : 0} Days
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="rounded-2xl border border-border bg-card p-4 flex items-center gap-4 shadow-sm">
+                                        <div className="p-3 rounded-xl bg-purple-500/10 text-purple-500">
+                                            <Zap className="h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Touchpoints</p>
+                                            <p className="text-xl font-bold">{enableFollowUps ? followUps.length + 1 : 1}</p>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 {enableFollowUps ? (
