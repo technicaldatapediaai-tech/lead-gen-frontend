@@ -68,8 +68,12 @@ export default function SignupPage() {
         });
 
         if (error) {
-            console.error("Registration Error (422/Other):", error);
-            toast.error(error.detail || "Registration failed. Please try again.");
+            console.error("Full Registration Error Object:", error);
+            const errorMsg = typeof error.detail === 'string' 
+                ? error.detail 
+                : (typeof error.detail === 'object' ? JSON.stringify(error.detail) : "Registration failed.");
+            
+            toast.error(errorMsg);
             setIsSubmitting(false);
             return;
         }

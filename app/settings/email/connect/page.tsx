@@ -29,7 +29,9 @@ export default function ConnectEmailPage() {
         const { name, value, type } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: type === 'number' ? parseInt(value) : value
+            [name]: type === 'number' 
+                ? (value === '' ? '' : parseInt(value)) 
+                : value
         }));
     };
 

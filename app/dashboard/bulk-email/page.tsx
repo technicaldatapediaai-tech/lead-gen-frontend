@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React from "react";
 import Link from "next/link";
 import { 
   Mail, 
@@ -19,11 +19,37 @@ import {
   Info,
   RefreshCcw,
   Download,
-  Columns
+  Columns,
+  Sparkles as SparklesIcon,
+  Plus,
+  Trash2,
+  Calendar,
+  Layers,
 } from "lucide-react";
 import Papa from "papaparse";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 interface Lead {
   email: string;
@@ -34,25 +60,48 @@ interface Lead {
 }
 
 export default function BulkEmailPage() {
-  const [subject, setSubject] = useState("Quick update regarding {{company}}");
-  const [body, setBody] = useState("Hi {{first_name}},\n\nI noticed what you're doing at {{company}} and wanted to reach out...\n\nBest regards,\nLeadGenius Team");
-  const [leads, setLeads] = useState<Lead[]>([]);
-  const [manualInput, setManualInput] = useState("");
-  const [importMode, setImportMode] = useState<'csv' | 'manual'>('manual');
-  const [isSending, setIsSending] = useState(false);
-  const [progress, setProgress] = useState({ current: 0, total: 0, success: 0, failed: 0 });
-  const [previewIndex, setPreviewIndex] = useState(0);
-  const [showProgressUI, setShowProgressUI] = useState(false);
+  const [subject, setSubject] = React.useState("Quick update regarding {{company}}");
+  const [body, setBody] = React.useState("Hi {{first_name}},\n\nI noticed what you're doing at {{company}} and wanted to reach out...\n\nBest regards,\nLeadGenius Team");
+  const [leads, setLeads] = React.useState<Lead[]>([]);
+  const [manualInput, setManualInput] = React.useState("");
+  const [importMode, setImportMode] = React.useState<'csv' | 'manual'>('manual');
+  const [isSending, setIsSending] = React.useState(false);
+  const [progress, setProgress] = React.useState({ current: 0, total: 0, success: 0, failed: 0 });
+  const [previewIndex, setPreviewIndex] = React.useState(0);
+  const [showProgressUI, setShowProgressUI] = React.useState(false);
   
   // New Preview States
-  const [csvFile, setCsvFile] = useState<File | null>(null);
-  const [rawParsedData, setRawParsedData] = useState<any[]>([]);
-  const [mappedHeaders, setMappedHeaders] = useState<Record<string, string>>({});
-  const [availableHeaders, setAvailableHeaders] = useState<string[]>([]);
-  const [invalidRows, setInvalidRows] = useState<Set<number>>(new Set());
-  const [failedLeads, setFailedLeads] = useState<any[]>([]);
+  const [csvFile, setCsvFile] = React.useState<File | null>(null);
+  const [rawParsedData, setRawParsedData] = React.useState<any[]>([]);
+  const [mappedHeaders, setMappedHeaders] = React.useState<Record<string, string>>({});
+  const [availableHeaders, setAvailableHeaders] = React.useState<string[]>([]);
+  const [invalidRows, setInvalidRows] = React.useState<Set<number>>(new Set());
+  const [failedLeads, setFailedLeads] = React.useState<any[]>([]);
   
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  // Follow-up States
+  const [isFollowUpModalOpen, setIsFollowUpModalOpen] = React.useState(false);
+  const [campaignName, setCampaignName] = React.useState(`Bulk Blast - ${new Date().toLocaleDateString()}`);
+  const [enableFollowUps, setEnableFollowUps] = React.useState(false);
+  const [followUps, setFollowUps] = React.useState<{message: string, delay_days: number, channel: 'email' | 'linkedin', subject?: string}[]>([
+    { message: "", delay_days: 3, channel: 'email', subject: "Following up" }
+  ]);
+  
+  const [emailAccounts, setEmailAccounts] = React.useState<any[]>([]);
+  const [selectedAccountId, setSelectedAccountId] = React.useState<string>("auto");
+
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  
+  React.useEffect(() => {
+    async function fetchAccounts() {
+      try {
+        const { data } = await api.get<any[]>("/api/email/accounts");
+        if (data) setEmailAccounts(data);
+      } catch (err) {
+        console.error("Failed to fetch accounts:", err);
+      }
+    }
+    fetchAccounts();
+  }, []);
 
   const validateEmail = (email: any) => {
     if (!email || typeof email !== 'string') return false;
@@ -230,6 +279,13 @@ export default function BulkEmailPage() {
       return;
     }
 
+    // Instead of sending immediately, open the follow-up config modal
+    setIsFollowUpModalOpen(true);
+  };
+
+  const executeBlast = async () => {
+    const validLeads = leads.filter(l => validateEmail(l.email));
+    setIsFollowUpModalOpen(false);
     setIsSending(true);
     setShowProgressUI(true);
     setProgress({ current: 0, total: validLeads.length, success: 0, failed: 0 });
@@ -238,54 +294,76 @@ export default function BulkEmailPage() {
     try {
       const response = await api.post<any>("/api/email/batch-send", {
         template: { subject, body },
-        leads: validLeads
+        leads: validLeads,
+        campaign_name: campaignName,
+        account_id: selectedAccountId === 'auto' ? null : selectedAccountId,
+        follow_ups: enableFollowUps ? followUps : []
       });
+
+      console.log("Batch start response:", response);
 
       if (response.data?.batch_id) {
         const batchId = response.data.batch_id;
+        const actualQueued = response.data.queued || 0;
         
-        // Start meaningful polling
-        let isDone = false;
+        // Update total to what was actually accepted by the backend
+        setProgress(p => ({ ...p, total: actualQueued }));
+        
+        toast.success(`Broadcasting initiated for "${campaignName}"`);
+        if (response.data.failed_initial > 0) {
+          toast.warning(`${response.data.failed_initial} leads could not be queued. Check console for details.`);
+          console.warn("Initial queueing errors:", response.data.errors);
+        }
+        
+        // Start polling
         let pollingInterval = setInterval(async () => {
           try {
             const statusRes = await api.get<any>(`/api/email/batch-status/${batchId}`);
+            console.log("Poll status:", statusRes);
+
             if (statusRes.data) {
               const { stats, is_completed, errors } = statusRes.data;
               
+              const currentTotal = stats.total || actualQueued;
               setProgress({
-                total: stats.total,
-                current: stats.sent + stats.failed,
+                total: currentTotal,
+                current: stats.sent + stats.failed + stats.queued + stats.sending, // All that are not pending
                 success: stats.sent,
                 failed: stats.failed
               });
               
-              if (errors.length > 0) {
+              if (errors && errors.length > 0) {
                 setFailedLeads(errors);
               }
 
               if (is_completed) {
-                isDone = true;
                 clearInterval(pollingInterval);
                 setIsSending(false);
                 if (stats.failed > 0) {
-                   toast.warning(`${stats.failed} emails failed to deliver. Check the report.`);
+                   toast.warning(`${stats.failed} emails failed to deliver.`);
                 } else {
-                   toast.success("Batch successfully delivered and verified!");
+                   toast.success("Batch successfully delivered!");
                 }
               }
+            } else if (statusRes.error) {
+              console.error("Polling API error:", statusRes.error);
+              // Don't clear interval on transient errors, but log them
             }
           } catch (pollingError) {
-            console.error("Polling error:", pollingError);
+            console.error("Polling exception:", pollingError);
           }
-        }, 2000); // Poll every 2 seconds
+        }, 3000); 
 
       } else {
         setIsSending(false);
-        toast.error(response.error?.detail || "Initial queueing failed");
+        setShowProgressUI(false); // Hide the UI if we couldn't even start
+        toast.error(response.error?.detail || "Initial queueing failed. No emails were sent.");
       }
     } catch (error) {
       setIsSending(false);
-      toast.error("An unexpected server error occurred while starting the batch.");
+      setShowProgressUI(false);
+      console.error("Execute Blast Error:", error);
+      toast.error("An unexpected error occurred while starting the batch.");
     }
   };
 
@@ -301,8 +379,207 @@ export default function BulkEmailPage() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  const addFollowUp = () => {
+    setFollowUps([...followUps, { 
+      message: "", 
+      delay_days: 3, 
+      channel: 'email',
+      subject: "Following up"
+    }]);
+  };
+
+  const removeFollowUp = (index: number) => {
+    setFollowUps(followUps.filter((_, i) => i !== index));
+  };
+
+  const updateFollowUp = (index: number, field: string, value: any) => {
+    const newFollowUps = [...followUps];
+    (newFollowUps[index] as any)[field] = value;
+    setFollowUps(newFollowUps);
+  };
+
   return (
     <div className="flex h-full w-full flex-col overflow-y-auto bg-background p-8">
+      {/* Follow-up Config Modal */}
+      <Dialog open={isFollowUpModalOpen} onOpenChange={setIsFollowUpModalOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl p-0 gap-0 border-none shadow-2xl">
+          <div className="sticky top-0 z-10 bg-card p-6 border-b border-border flex items-center justify-between">
+            <div>
+              <DialogTitle className="text-2xl font-black text-foreground">Finalize Campaign</DialogTitle>
+              <DialogDescription className="text-sm font-medium mt-1">Configure follow-ups and review settings before blasting.</DialogDescription>
+            </div>
+            <div className="h-12 w-12 rounded-2xl bg-blue-600/10 text-blue-600 flex items-center justify-center">
+              <SparklesIcon className="h-6 w-6" />
+            </div>
+          </div>
+
+          <div className="p-8 space-y-8">
+            {/* Campaign Name */}
+            <div className="space-y-3">
+              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Campaign Name</Label>
+              <Input 
+                value={campaignName}
+                onChange={(e) => setCampaignName(e.target.value)}
+                placeholder="Name your blast (e.g., Q1 Tech Outreach)"
+                className="h-12 rounded-2xl bg-muted/30 border-none px-5 text-lg font-bold placeholder:text-muted-foreground/40"
+              />
+            </div>
+
+            {/* Sender Account Selection */}
+            <div className="space-y-3">
+              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
+                <Mail className="h-3 w-3" /> Sending Profile
+              </Label>
+              <Select value={selectedAccountId} onValueChange={setSelectedAccountId}>
+                <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-none px-5 font-bold">
+                  <SelectValue placeholder="Select email account" />
+                </SelectTrigger>
+                <SelectContent className="rounded-2xl border-none shadow-2xl p-2">
+                  <SelectItem value="auto" className="rounded-xl font-bold py-3">
+                    <div className="flex flex-col">
+                      <span>Auto-Rotate between accounts</span>
+                      <span className="text-[10px] font-medium text-muted-foreground">Best for deliverability</span>
+                    </div>
+                  </SelectItem>
+                  {emailAccounts.map(acc => (
+                    <SelectItem key={acc.id} value={acc.id} className="rounded-xl font-bold py-3">
+                      <div className="flex flex-col">
+                        <span>{acc.sender_name || acc.email}</span>
+                        <span className="text-[10px] font-medium text-muted-foreground">{acc.email}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Toggle Follow-ups */}
+            <div className="flex items-center justify-between rounded-2xl border border-border bg-blue-500/5 p-6 border-blue-500/20 shadow-sm">
+              <div className="flex items-center gap-4">
+                <div className="h-10 w-10 rounded-xl bg-blue-500 text-white flex items-center justify-center shadow-lg shadow-blue-500/20">
+                  <RefreshCcw className="h-5 w-5" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-foreground">Enable Automated Follow-ups</h4>
+                  <p className="text-[10px] text-muted-foreground font-medium">Auto-send messages if they don't reply within X days.</p>
+                </div>
+              </div>
+              <Switch checked={enableFollowUps} onCheckedChange={setEnableFollowUps} />
+            </div>
+
+            {/* Follow-up Builder */}
+            {enableFollowUps && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-top-4 duration-300">
+                <div className="flex items-center justify-between px-1">
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Follow-up Sequence</h4>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={addFollowUp}
+                    className="h-8 rounded-lg gap-1 font-bold text-xs"
+                  >
+                    <Plus className="h-3 w-3" /> Add Step
+                  </Button>
+                </div>
+
+                <div className="space-y-4">
+                  {followUps.map((step, idx) => (
+                    <div key={idx} className="p-6 rounded-2xl border border-border bg-card shadow-sm space-y-4 relative group">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="h-6 w-6 rounded-lg bg-blue-600 text-white text-[10px] font-black flex items-center justify-center">
+                            {idx + 1}
+                          </div>
+                          <span className="text-[10px] font-black uppercase tracking-widest text-foreground">Step {idx + 1}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-bold text-muted-foreground">Wait</span>
+                            <Input 
+                              type="number"
+                              value={step.delay_days || ""}
+                              onChange={(e) => {
+                                const val = parseInt(e.target.value);
+                                updateFollowUp(idx, 'delay_days', isNaN(val) ? 0 : val);
+                              }}
+                              className="w-14 h-8 rounded-lg text-center font-bold p-0"
+                            />
+                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Days</span>
+                          </div>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => removeFollowUp(idx)}
+                            className="h-8 w-8 text-red-500 hover:bg-red-50 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                           <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">Channel</Label>
+                           <Select 
+                             value={step.channel} 
+                             onValueChange={(val: any) => updateFollowUp(idx, 'channel', val)}
+                           >
+                              <SelectTrigger className="h-10 rounded-xl bg-muted/30">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="email">Email</SelectItem>
+                                <SelectItem value="linkedin">LinkedIn</SelectItem>
+                              </SelectContent>
+                           </Select>
+                        </div>
+                        {step.channel === 'email' && (
+                          <div className="space-y-2">
+                            <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">Subject</Label>
+                            <Input 
+                              value={step.subject}
+                              onChange={(e) => updateFollowUp(idx, 'subject', e.target.value)}
+                              placeholder="Follow up subject"
+                              className="h-10 rounded-xl bg-muted/30"
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">Message Content</Label>
+                        <Textarea 
+                          value={step.message}
+                          onChange={(e) => updateFollowUp(idx, 'message', e.target.value)}
+                          placeholder="Hey {{first_name}}, following up on my previous message..."
+                          rows={3}
+                          className="rounded-xl bg-muted/30 border-none resize-none text-sm leading-relaxed"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter className="sticky bottom-0 bg-card p-6 border-t border-border mt-auto sm:justify-between items-center gap-4">
+            <div className="text-xs text-muted-foreground flex items-center gap-2">
+              <Layers className="h-4 w-4" />
+              <span>Blasting to <strong className="text-foreground">{leads.length} leads</strong> with <strong className="text-foreground">{enableFollowUps ? followUps.length : 0} follow-ups</strong>.</span>
+            </div>
+            <div className="flex gap-3">
+              <Button variant="ghost" className="rounded-xl font-bold" onClick={() => setIsFollowUpModalOpen(false)}>Back to Compose</Button>
+              <Button 
+                onClick={executeBlast}
+                className="rounded-xl px-8 font-black uppercase tracking-widest bg-blue-600 hover:bg-blue-500 shadow-xl shadow-blue-500/20"
+              >
+                Launch & Blast
+              </Button>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       {/* Header */}
       <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-4">
@@ -351,7 +628,7 @@ export default function BulkEmailPage() {
           <div className="h-2 w-full rounded-full bg-blue-200/30 overflow-hidden shadow-inner">
             <div 
               className="h-full bg-blue-600 transition-all duration-300 ease-out"
-              style={{ width: `${(progress.current / progress.total) * 100}%` }}
+              style={{ width: `${progress.total > 0 ? Math.min(100, (progress.current / progress.total) * 100) : 0}%` }}
             />
           </div>
 
