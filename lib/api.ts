@@ -3,9 +3,8 @@
  * Handles all HTTP requests with authentication
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://lead-gen-backend-dcxf.onrender.com';
-// Fallback for extreme local debugging cases if needed, but production-first for builds
-const LOCAL_BACKEND = 'http://localhost:8000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+// Removed remote production fallback for safety in local dev
 
 interface ApiError {
     detail: string;
@@ -97,10 +96,15 @@ export async function apiRequest<T>(
     }
 
     try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+
         const response = await fetch(`${API_BASE_URL}${normalizedEndpoint}`, {
             ...options,
             headers: requestHeaders,
+            signal: controller.signal
         });
+        clearTimeout(timeoutId);
 
         // 401 Unauthorized - Attempt token refresh
         if (response.status === 401 && !endpoint.includes('/auth/refresh') && !endpoint.includes('/auth/login')) {

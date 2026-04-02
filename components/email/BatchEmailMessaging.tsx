@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Mail, Loader2, X, CheckCircle2, ChevronLeft, ChevronRight, Edit2, Trash2, Send, AlertCircle, Clock } from "lucide-react";
+import { Mail, Loader2, X, CheckCircle2, ChevronLeft, ChevronRight, Edit2, Trash2, Send, AlertCircle, Clock, Bold, Italic, Link as LinkIcon, Sparkles, Underline, Strikethrough, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, AlignJustify, Baseline, Highlighter, ChevronDown } from "lucide-react";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 import useEmblaCarousel from 'embla-carousel-react';
@@ -140,6 +140,14 @@ export default function BatchEmailMessaging({
         setTemplates(prev => prev.filter(t => t.id !== id));
     };
 
+    const execCommand = (command: string, value: string = "") => {
+        document.execCommand(command, false, value);
+        const editor = document.querySelector(`[data-template-id="${selectedTemplate.id}"]`) as HTMLDivElement;
+        if (editor) {
+            handleUpdateTemplate(selectedTemplate.id, editor.innerHTML);
+        }
+    };
+
     const handleSend = async () => {
         if (!messageTemplate.trim()) {
             toast.error("Please enter a message template");
@@ -261,9 +269,7 @@ export default function BatchEmailMessaging({
     };
 
     const insertVariable = (variable: string) => {
-        const t = templates[selectedIndex];
-        if (!t) return;
-        handleUpdateTemplate(t.id, t.content + variable);
+        execCommand('insertHTML', `{{${variable}}}`);
     };
 
     // Personalize template for preview using first lead's data
@@ -478,27 +484,92 @@ export default function BatchEmailMessaging({
                                                         </div>
                                                     </div>
 
-                                                    {/* Textarea */}
-                                                    <div className="relative">
-                                                        <textarea
-                                                            disabled={isSending}
-                                                            value={template.content}
-                                                            onChange={(e) => handleUpdateTemplate(template.id, e.target.value)}
-                                                            className="w-full h-[50vh] px-4 py-3 rounded-xl border border-input bg-background/50 text-foreground placeholder:text-muted-foreground focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none font-sans text-sm"
-                                                            placeholder="Subject: Your Subject Here&#10;&#10;Your message body..."
+                                                    {/* Toolbar and Textarea */}
+                                                    <div className="flex flex-col gap-0 border border-input rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-emerald-500/20 focus-within:border-emerald-500 transition-all bg-background/50">                                                        {/* Word-Style Toolbar */}
+                                                        <div className="flex flex-wrap items-center bg-slate-50 border-b border-border p-1 divide-x divide-slate-200">
+                                                            {/* Font Group */}
+                                                            <div className="flex flex-col px-3 py-1 gap-1 min-w-[280px]">
+                                                                <div className="flex items-center gap-1.5 mb-1">
+                                                                    <div className="flex h-7 items-center justify-between gap-1 rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-[10px] font-bold text-slate-700 shadow-sm w-[110px]">
+                                                                        <span className="truncate">Inter</span>
+                                                                        <ChevronDown size={10} className="text-slate-400 shrink-0" />
+                                                                    </div>
+                                                                    <div className="flex h-7 items-center justify-between gap-1 rounded-lg border border-slate-300 bg-white px-2 py-1 text-[10px] font-bold text-slate-700 shadow-sm w-[45px]">
+                                                                        <span>12</span>
+                                                                        <ChevronDown size={10} className="text-slate-400 shrink-0" />
+                                                                    </div>
+                                                                    <div className="flex gap-1 pl-1">
+                                                                        <ToolbarButton small icon={<Baseline size={13} />} />
+                                                                        <ToolbarButton small icon={<Highlighter size={13} className="text-yellow-600" />} />
+                                                                    </div>
+                                                                </div>
+                                                                <div className="flex items-center gap-1">
+                                                                    <ToolbarButton icon={<Bold size={14} />} onClick={() => execCommand('bold')} />
+                                                                    <ToolbarButton icon={<Italic size={14} />} onClick={() => execCommand('italic')} />
+                                                                    <ToolbarButton icon={<Underline size={14} />} onClick={() => execCommand('underline')} />
+                                                                    <ToolbarButton icon={<Strikethrough size={14} />} onClick={() => execCommand('strikeThrough')} />
+                                                                    <div className="w-px h-4 bg-slate-200 mx-1.5" />
+                                                                    <ToolbarButton icon={<LinkIcon size={14} />} onClick={() => {
+                                                                        const url = prompt("Enter URL:", "https://");
+                                                                        if (url) execCommand('createLink', url);
+                                                                    }} />
+                                                                </div>
+                                                                <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1.5 text-center">Font</div>
+                                                            </div>
+
+                                                            {/* Paragraph Group */}
+                                                            <div className="flex flex-col px-4 py-1 gap-1 min-w-[200px]">
+                                                                <div className="flex items-center gap-1 mb-1">
+                                                                    <ToolbarButton icon={<List size={14} />} onClick={() => execCommand('insertUnorderedList')} />
+                                                                    <ToolbarButton icon={<ListOrdered size={14} />} onClick={() => execCommand('insertOrderedList')} />
+                                                                    <div className="w-px h-4 bg-slate-200 mx-1.5" />
+                                                                    <div className="flex gap-1">
+                                                                        <VariableChip label="First Name" onClick={() => insertVariable('first_name')} />
+                                                                        <VariableChip label="Company" onClick={() => insertVariable('company')} />
+                                                                    </div>
+                                                                </div>
+                                                                <div className="flex items-center gap-1">
+                                                                    <ToolbarButton icon={<AlignLeft size={14} />} onClick={() => execCommand('justifyLeft')} active />
+                                                                    <ToolbarButton icon={<AlignCenter size={14} />} onClick={() => execCommand('justifyCenter')} />
+                                                                    <ToolbarButton icon={<AlignRight size={14} />} onClick={() => execCommand('justifyRight')} />
+                                                                    <ToolbarButton icon={<AlignJustify size={14} />} onClick={() => execCommand('justifyFull')} />
+                                                                </div>
+                                                                <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1.5 text-center">Paragraph</div>
+                                                            </div>
+
+                                                            <div className="flex-1 flex items-end justify-end px-3 pb-1">
+                                                                <button
+                                                                    onClick={() => {
+                                                                        toast.info("AI Personalization coming soon!");
+                                                                    }}
+                                                                    className="p-1.5 rounded-lg hover:bg-emerald-500/10 text-emerald-500 transition-all flex items-center justify-center gap-1.5"
+                                                                    title="AI Rewrite"
+                                                                >
+                                                                    <Sparkles size={14} />
+                                                                    <span className="text-[10px] font-bold uppercase tracking-wider">Magic</span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+
+                                                         <div
+                                                            data-template-id={template.id}
+                                                            contentEditable={!isSending}
+                                                            onInput={(e) => handleUpdateTemplate(template.id, e.currentTarget.innerHTML)}
+                                                            className="w-full h-[35vh] px-4 py-4 bg-transparent text-foreground placeholder:text-muted-foreground focus:outline-none overflow-y-auto font-sans text-sm leading-relaxed prose prose-sm max-w-none"
+                                                            dangerouslySetInnerHTML={{ __html: template.content }}
                                                         />
                                                     </div>
 
-                                                    {/* Variables */}
+                                                    {/* Variables (Secondary) */}
                                                     <div className="cursor-default">
-                                                        <p className="text-xs text-muted-foreground mb-2">Click to insert:</p>
                                                         <div className="flex flex-wrap gap-2">
-                                                            {["[first name]", "[name]", "[company]", "[title]", "[last name]", "[email]"].map(v => (
+                                                            {["[name]", "[last name]", "[email]"].map(v => (
                                                                 <button
                                                                     key={v}
                                                                     onClick={(e) => { e.stopPropagation(); insertVariable(v); }}
                                                                     disabled={isSending}
-                                                                    className="px-2.5 py-1.5 text-xs rounded-md bg-muted text-foreground hover:bg-emerald-500 hover:text-white transition-colors border border-border cursor-pointer disabled:opacity-50"
+                                                                    className="px-2.5 py-1.5 text-xs rounded-md bg-muted text-foreground hover:bg-emerald-500 hover:text-white transition-colors border border-border cursor-pointer disabled:opacity-50 font-medium"
                                                                 >
                                                                     {v}
                                                                 </button>
@@ -507,22 +578,19 @@ export default function BatchEmailMessaging({
                                                     </div>
 
                                                     {/* Live Preview for first leads */}
-                                                    {/\{\{|\[/.test(template.content) && template.content.trim() && leadsWithEmail.length > 0 && (
-                                                        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.03] overflow-hidden">
-                                                            <div className="px-3 py-2 text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 border-b border-emerald-500/10">
-                                                                📨 Live Preview (first {Math.min(3, leadsWithEmail.length)} leads)
+                                                    {template.content.trim() && leadsWithEmail.length > 0 && (
+                                                        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.03] overflow-hidden shadow-inner">
+                                                            <div className="px-3 py-2 text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 border-b border-emerald-500/10 flex items-center justify-between">
+                                                                <span>📨 Email Preview</span>
+                                                                <span className="text-[9px] text-muted-foreground font-normal normal-case">Recipient: {leadsWithEmail[0].name}</span>
                                                             </div>
-                                                            <div className="divide-y divide-border max-h-40 overflow-y-auto">
-                                                                {leadsWithEmail.slice(0, 3).map((lead) => (
-                                                                    <div key={lead.id} className="px-3 py-2.5">
-                                                                        <div className="text-[10px] font-bold text-muted-foreground mb-1">
-                                                                            → {lead.name || "Unknown"}
-                                                                        </div>
-                                                                        <div className="text-xs text-foreground whitespace-pre-wrap leading-relaxed line-clamp-3">
-                                                                            {personalizePreview(template.content, lead)}
-                                                                        </div>
-                                                                    </div>
-                                                                ))}
+                                                            <div className="p-4 overflow-y-auto bg-white/5">
+                                                                <div 
+                                                                    className="text-xs text-foreground whitespace-pre-wrap leading-relaxed prose prose-sm prose-emerald dark:prose-invert max-w-none"
+                                                                    dangerouslySetInnerHTML={{ 
+                                                                        __html: personalizePreview(template.content, leadsWithEmail[0]).replace(/\n/g, '<br/>') 
+                                                                    }}
+                                                                />
                                                             </div>
                                                         </div>
                                                     )}
@@ -591,5 +659,28 @@ export default function BatchEmailMessaging({
                 </div>
             )}
         </div>
+    );
+}
+function VariableChip({ label, onClick }: { label: string; onClick: () => void }) {
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            className="rounded-lg bg-white border border-slate-200 px-2 py-0.5 text-[10px] font-black uppercase text-slate-500 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all shadow-sm active:scale-95 whitespace-nowrap box-border"
+        >
+            +{label}
+        </button>
+    );
+}
+
+function ToolbarButton({ onClick, icon, active, small }: any) {
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            className={`flex items-center justify-center rounded-lg transition-all hover:bg-white hover:text-blue-600 hover:shadow-sm active:scale-90 ${small ? "h-7 w-7" : "h-8 w-9"} ${active ? "bg-white text-blue-600 shadow-sm border border-slate-200" : "text-slate-500"}`}
+        >
+            {icon}
+        </button>
     );
 }

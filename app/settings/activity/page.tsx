@@ -80,21 +80,26 @@ export default function AccountActivityPage() {
     const handleSaveSettings = async () => {
         setIsSaving(true);
         try {
-            const res = await api.patch("/api/users/me/settings", {
+            const preferencesPayload = {
                 timezone,
                 email_preferences: {
+                    timezone, // Include in pref object for backend service priority
                     working_days: emailDays,
                     start_time: emailStartTime,
                     end_time: emailEndTime,
                     daily_custom_mode: emailCustom
                 },
                 linkedin_preferences: {
+                    timezone, // Include in pref object for backend service priority
                     working_days: linkedinDays,
                     start_time: linkedinStartTime,
                     end_time: linkedinEndTime,
                     daily_custom_mode: linkedinCustom
                 }
-            });
+            };
+            
+            console.log("Syncing preferences:", preferencesPayload);
+            const res = await api.patch("/api/users/me/settings", preferencesPayload);
 
             if (res.error) {
                 toast.error("Failed to save settings");

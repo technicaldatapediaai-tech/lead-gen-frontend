@@ -18,6 +18,7 @@ const navItems = [
   { label: "Scoring", href: "/dashboard/scoring", icon: SparkIcon },
   { label: "Enrichment", href: "/dashboard/enrichment", icon: WandIcon },
   { label: "Campaigns", href: "/dashboard/campaigns", icon: PlayIcon },
+  { label: "Outreach Queue", href: "/dashboard/scheduled-messages", icon: ClockItemIcon },
   { label: "Follow-ups", href: "/dashboard/followups", icon: ReplyIcon },
   { label: "Outreach Hub", href: "/dashboard/outreach", icon: RocketIcon },
   { label: "Bulk Email", href: "/dashboard/bulk-email", icon: EmailIcon },
@@ -93,6 +94,23 @@ export default function Sidebar() {
       fetchOrganizations();
     }
   }, [user]);
+
+  // Sync token with chrome extension
+  useEffect(() => {
+    if (user) {
+      const token = localStorage.getItem("access_token");
+      if (token) {
+        window.postMessage({
+          type: "LEAD_GENIUS_TOKEN_SYNC",
+          payload: {
+            token: token,
+            email: user.email,
+            orgId: currentOrg?.id
+          }
+        }, "*");
+      }
+    }
+  }, [user, currentOrg]);
 
   // Calculate profile completion - must match ProfileCompletionModal
   const getProfileCompletion = () => {
@@ -668,6 +686,17 @@ function ReplyIcon({ className }: { className?: string }) {
     <IconWrap className={className}>
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
         <path d="M9 17l-5-5 5-5m-5 5h12c3.3 0 6 2.7 6 6v1" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    </IconWrap>
+  );
+}
+
+function ClockItemIcon({ className }: { className?: string }) {
+  return (
+    <IconWrap className={className}>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="12 6 12 12 16 14" />
       </svg>
     </IconWrap>
   );

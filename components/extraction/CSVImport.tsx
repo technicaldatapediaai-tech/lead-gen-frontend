@@ -65,25 +65,71 @@ export default function CSVImport({ onSuccess, campaignName, campaignId }: { onS
 
     const parseCSV = (file: File) => {
         Papa.parse(file, {
-            header: true,
+            header: false, // Parse as raw rows first to detect structure
             skipEmptyLines: true,
-            preview: 5,
+            preview: 10,
             complete: (results) => {
-                if (results.data && results.data.length > 0) {
-                    const foundHeaders = Object.keys(results.data[0] as object);
-                    setHeaders(foundHeaders);
-                    setPreviewData(results.data);
-                    
-                    // Auto-map columns
-                    const mapping: Record<string, string> = {};
-                    foundHeaders.forEach(header => {
-                        const h = header.toLowerCase();
-                        if (h.includes('name') || h.includes('full name')) mapping['Name'] = header;
-                        if (h.includes('linkedin') || h.includes('url') || h.includes('profile')) mapping['LinkedIn'] = header;
-                        if (h.includes('email') || h.includes('mail')) mapping['Email'] = header;
-                    });
-                    setColumnMappings(mapping);
+                if (!results.data || results.data.length === 0) {
+                    toast.error("The CSV file is empty.");
+                    return;
                 }
+
+                const firstRow = results.data[0] as string[];
+                const socialDomains = ["linkedin.com", "instagram.com", "twitter.com", "facebook.com", "x.com"];
+                
+                // Detect if first row is headers: none of the cells should look like URLs or emails
+                // and some cells should look like common header keywords
+                const headerKeywords = ['name', 'url', 'link', 'email', 'profile', 'company', 'title'];
+                const firstRowIsHeaders = !firstRow.some(cell => 
+                    socialDomains.some(d => cell?.toLowerCase().includes(d)) || 
+                    cell?.includes('@') || 
+                    cell?.startsWith('http')
+                ) && firstRow.some(cell => 
+                    headerKeywords.some(k => cell?.toLowerCase().includes(k))
+                );
+
+                let finalHeaders: string[] = [];
+                let finalData: any[] = [];
+                const mapping: Record<string, string> = {};
+
+                if (firstRowIsHeaders) {
+                    // Standard CSV with headers
+                    finalHeaders = firstRow;
+                    results.data.slice(1).forEach(row => {
+                        const obj: any = {};
+                        finalHeaders.forEach((h, i) => obj[h] = (row as any)[i]);
+                        finalData.push(obj);
+                    });
+                } else {
+                    // Headerless raw list: create virtual headers
+                    finalHeaders = firstRow.map((_, i) => `Column ${i + 1}`);
+                    results.data.forEach(row => {
+                        const obj: any = {};
+                        finalHeaders.forEach((h, i) => obj[h] = (row as any)[i]);
+                        finalData.push(obj);
+                    });
+                }
+
+                setHeaders(finalHeaders);
+                setPreviewData(finalData);
+
+                // Auto-map based on content or header name
+                finalHeaders.forEach(header => {
+                    const h = header.toLowerCase();
+                    const firstVal = (finalData[0] && finalData[0][header])?.toLowerCase() || "";
+                    
+                    if (h.includes('name') || h.includes('full name') || (h.includes('column') && firstVal.length > 3 && !firstVal.includes('.') && firstVal.split(' ').length > 1)) {
+                        if (!mapping['Name']) mapping['Name'] = header;
+                    }
+                    if (h.includes('linkedin') || h.includes('url') || h.includes('profile') || firstVal.includes('linkedin.com') || firstVal.startsWith('http')) {
+                        if (!mapping['LinkedIn']) mapping['LinkedIn'] = header;
+                    }
+                    if (h.includes('email') || h.includes('mail') || firstVal.includes('@')) {
+                        if (!mapping['Email']) mapping['Email'] = header;
+                    }
+                });
+                
+                setColumnMappings(mapping);
             },
             error: (error) => {
                 toast.error("Error parsing CSV: " + error.message);

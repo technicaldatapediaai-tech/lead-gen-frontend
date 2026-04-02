@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { Linkedin, Send, Loader2, X, CheckCircle2, AlertCircle, ChevronLeft, ChevronRight, Plus, ArrowRight, Trash2, Edit2, Sparkles, Clock, Zap, List, Rocket } from "lucide-react";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
@@ -58,6 +59,7 @@ export default function BatchLinkedInMessaging({
     onComplete,
     onCancel
 }: BatchLinkedInMessagingProps) {
+    const router = useRouter();
     const [page, setPage] = useState<1 | 2>(1);
 
     // Page 1 State
@@ -218,7 +220,7 @@ export default function BatchLinkedInMessaging({
         try {
             const leadIds = leads.filter(lead => lead.linkedin_url).map(lead => lead.id);
 
-            const res = await api.post<BatchResults>("/api/linkedin/send-batch", {
+            const res = await api.post<any>("/api/linkedin/send-batch", {
                 lead_ids: leadIds,
                 message_template: messageTemplate.trim(),
                 message_type: messageType || "inmail",
@@ -226,7 +228,16 @@ export default function BatchLinkedInMessaging({
             });
 
             if (!res.error && res.data) {
-                const updatedProgress = res.data.results.map((result) => {
+                // REDIRECTION LOGIC: Case 2: Scheduled for future -> Redirect
+                if (res.data.status === "scheduled") {
+                   setIsSending(false);
+                   toast.success(res.data.message || "LinkedIn messages scheduled for later.");
+                   // Redirect to tracking page
+                   router.push("/dashboard/scheduled-messages");
+                   return;
+                }
+
+                const updatedProgress = res.data.results.map((result: any) => {
                     let finalStatus: "pending" | "sending" | "success" | "failed" = "failed";
                     let errorMsg = result.error;
 
