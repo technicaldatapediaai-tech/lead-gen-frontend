@@ -5,12 +5,7 @@ import styles from './LeadsByType.module.css';
 import { MoreVertical } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
-const data = [
-    { name: 'Fresh Lead', value: 40, color: '#2563eb' },
-    { name: 'Own Renewal', value: 25, color: '#10b981' },
-    { name: 'Lost Renewal', value: 20, color: '#f59e0b' },
-    { name: 'Broker Network', value: 15, color: '#94a3b8' },
-];
+const data: any[] = [];
 
 const LeadsByType = () => {
     const [mounted, setMounted] = useState(false);
@@ -53,7 +48,7 @@ const LeadsByType = () => {
                         </ResponsiveContainer>
                     )}
                     <div className={styles.centerText}>
-                        <div className={styles.totalValue}>328</div>
+                        <div className={styles.totalValue}>0</div>
                         <div className={styles.totalLabel}>TOTAL</div>
                     </div>
                 </div>

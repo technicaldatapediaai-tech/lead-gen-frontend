@@ -25,9 +25,26 @@ export function SaasModal({ isOpen, onClose }: SaasModalProps) {
   const [email, setEmail] = useState("");
   const { isAuthenticated } = useAuth();
 
-  const handleJoinNow = (e: React.FormEvent) => {
+  const handleJoinNow = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Save to waitlist database
+    try {
+      const response = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        console.error('Failed to save to waitlist');
+      }
+    } catch (error) {
+      console.error('Error joining waitlist:', error);
+    }
+
     if (isAuthenticated) {
       router.push("/community");
       onClose();

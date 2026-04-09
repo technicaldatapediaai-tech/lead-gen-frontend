@@ -167,7 +167,7 @@ export default function LandingNavbar() {
                       Logistics
                     </div>
                   </Link>
-                  
+
                   <Link
                     href="/enterprise/insurance"
                     className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-linear-to-br hover:from-cyan-50 hover:to-blue-50 dark:hover:from-cyan-900/40 dark:hover:to-blue-900/40 transition-all duration-300 group/item border border-transparent hover:border-cyan-100 dark:hover:border-cyan-800"
@@ -179,6 +179,8 @@ export default function LandingNavbar() {
                       Insurance
                     </div>
                   </Link>
+
+                  
                 </div>
               </div>
             </div>

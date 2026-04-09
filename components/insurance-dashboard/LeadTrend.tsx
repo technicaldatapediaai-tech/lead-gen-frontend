@@ -5,20 +5,7 @@ import styles from './LeadTrend.module.css';
 import { MoreVertical } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 
-const data = [
-    { name: 'Jan', leads: 40 },
-    { name: 'Feb', leads: 30 },
-    { name: 'Mar', leads: 20 },
-    { name: 'Apr', leads: 27 },
-    { name: 'May', leads: 18 },
-    { name: 'Jun', leads: 23 },
-    { name: 'Jul', leads: 34 },
-    { name: 'Aug', leads: 44 },
-    { name: 'Sep', leads: 35 },
-    { name: 'Oct', leads: 20 },
-    { name: 'Nov', leads: -10 }, // creates the dip shown
-    { name: 'Dec', leads: 48 },
-];
+const data: any[] = [];
 
 const LeadTrend = () => {
     const [mounted, setMounted] = useState(false);

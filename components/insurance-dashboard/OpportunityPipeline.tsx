@@ -2,12 +2,7 @@ import React from 'react';
 import styles from './OpportunityPipeline.module.css';
 import { MoreVertical } from 'lucide-react';
 
-const funnelData = [
-    { stage: 'Initial Review', percentage: 100, color: '#2563eb', width: '100%' },
-    { stage: 'Info Gathering', percentage: 85, color: '#60a5fa', width: '85%' },
-    { stage: 'Quote Request', percentage: 60, color: '#93c5fd', width: '60%' },
-    { stage: 'Concluded', percentage: 40, color: '#10b981', width: '40%' }
-];
+const funnelData: any[] = [];
 
 const OpportunityPipeline = () => {
     return (

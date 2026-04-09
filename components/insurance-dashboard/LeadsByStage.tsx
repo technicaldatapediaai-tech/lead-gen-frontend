@@ -2,14 +2,7 @@ import React from 'react';
 import styles from './LeadsByStage.module.css';
 import { MoreVertical } from 'lucide-react';
 
-const data = [
-    { stage: 'Draft', percentage: 15, color: '#e2e8f0' },
-    { stage: 'New', percentage: 45, color: '#60a5fa' },
-    { stage: 'Assigned', percentage: 30, color: '#2563eb' },
-    { stage: 'In Process', percentage: 65, color: '#8b5cf6' },
-    { stage: 'Converted', percentage: 82, color: '#10b981' },
-    { stage: 'Dropped', percentage: 10, color: '#ef4444' }
-];
+const data: any[] = [];
 
 const LeadsByStage = () => {
     return (
