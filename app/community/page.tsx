@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Navbar from '@/components/community/Navbar';
 import Sidebar from '@/components/community/Sidebar';
 import ProductGrid from '@/components/community/ProductGrid';
@@ -23,7 +23,7 @@ const FontAwesomeLink = () => (
   />
 );
 
-export default function CommunityPage() {
+function CommunityContent() {
   const searchParams = useSearchParams();
   const signupParam = searchParams.get('signup');
   const emailParam = searchParams.get('email');
@@ -131,5 +131,20 @@ export default function CommunityPage() {
         <Cart />
       </div>
     </CartProvider>
+  );
+}
+
+export default function CommunityPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center h-screen bg-slate-50">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+          <p className="text-slate-600 font-medium animate-pulse">Loading Community...</p>
+        </div>
+      </div>
+    }>
+      <CommunityContent />
+    </Suspense>
   );
 }

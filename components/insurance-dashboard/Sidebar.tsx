@@ -12,10 +12,16 @@ import {
     CalendarDays,
     HelpCircle,
     Shield,
+    X,
     Settings
 } from 'lucide-react';
 
-const Sidebar = () => {
+interface SidebarProps {
+    isOpen?: boolean;
+    onClose?: () => void;
+}
+
+const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     const pathname = usePathname();
 
     const menuItems = [
@@ -30,16 +36,35 @@ const Sidebar = () => {
     const bottomItems: { name: string; icon: React.ReactNode; path: string }[] = [];
 
     return (
-        <aside className={styles.sidebar}>
-            <div className={styles.logoContainer}>
-                <div className={styles.logoIcon}>
-                    <Shield size={24} />
+        <>
+            {/* Mobile Overlay */}
+            {isOpen && (
+                <div 
+                    className="fixed inset-0 bg-slate-900/50 z-40 md:hidden backdrop-blur-sm transition-opacity duration-300"
+                    onClick={onClose}
+                />
+            )}
+
+            <aside className={`${styles.sidebar} ${isOpen ? styles.open : ''}`}>
+                <div className={styles.logoContainer}>
+                    <div className="flex items-center gap-3 flex-1">
+                        <div className={styles.logoIcon}>
+                            <Shield size={24} />
+                        </div>
+                        <div className={styles.logoTextDiv}>
+                            <span className={styles.logoText}>INSURANCE TECH</span>
+                            <span className={styles.logoSubText}>ELITE PORTAL</span>
+                        </div>
+                    </div>
+                    
+                    {/* Close button for mobile */}
+                    <button 
+                        onClick={onClose}
+                        className="p-2 text-slate-500 hover:text-slate-900 rounded-lg hover:bg-slate-100 md:hidden"
+                    >
+                        <X size={20} />
+                    </button>
                 </div>
-                <div className={styles.logoTextDiv}>
-                    <span className={styles.logoText}>INSURANCE TECH</span>
-                    <span className={styles.logoSubText}>ELITE PORTAL</span>
-                </div>
-            </div>
 
             <nav className={styles.menu}>
                 <div className={styles.menuHeader}>MENU</div>
@@ -50,6 +75,11 @@ const Sidebar = () => {
                             <li key={item.name}>
                                 <Link
                                     href={item.path}
+                                    onClick={() => {
+                                        if (window.innerWidth < 768 && onClose) {
+                                            onClose();
+                                        }
+                                    }}
                                     className={`${styles.menuItem} ${isActive ? styles.active : ''}`}
                                 >
                                     <span className={styles.icon}>{item.icon}</span>
@@ -75,7 +105,8 @@ const Sidebar = () => {
                     </button>
                 </div>
             </div>
-        </aside>
+            </aside>
+        </>
     );
 };
 
