@@ -1,0 +1,369 @@
+.pageContainer {
+    padding: 2rem 2.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    margin-bottom: 2rem;
+    font-weight: 500;
+}
+
+.breadcrumbMuted {
+    color: var(--text-secondary);
+}
+
+.breadcrumbCurrent {
+    color: var(--text-primary);
+}
+
+/* Stepper */
+.stepperContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 800px;
+    margin: 0 auto 3rem;
+    position: relative;
+}
+
+.stepperLine {
+    position: absolute;
+    top: 15px;
+    /* Half of circle height */
+    left: 40px;
+    right: 40px;
+    height: 2px;
+    background-color: var(--border-color);
+    z-index: 1;
+}
+
+.stepItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    position: relative;
+    z-index: 2;
+    background-color: var(--bg-main);
+    /* to cover the line behind the circle */
+}
+
+.stepCircle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.stepCompleted {
+    background-color: #22c55e;
+    color: white;
+    border: 2px solid #22c55e;
+}
+
+.stepActive {
+    background-color: #0052ff;
+    color: white;
+    border: 2px solid #0052ff;
+}
+
+.stepInactive {
+    background-color: white;
+    color: var(--text-secondary);
+    border: 2px solid var(--border-color);
+}
+
+.stepLabel {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.stepLabelActive {
+    color: #0052ff;
+}
+
+.stepLabelInactive {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Card */
+.card {
+    background-color: var(--bg-card);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.cardHeader {
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.cardTitle {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.cardSubtitle {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.progressSection {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+}
+
+.progressLabel {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+}
+
+.progressBar {
+    width: 120px;
+    height: 6px;
+    background-color: var(--border-color);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progressFill {
+    width: 60%;
+    /* Step 3 of 5 */
+    height: 100%;
+    background-color: #0052ff;
+    border-radius: 3px;
+}
+
+/* Table */
+.mappingTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.mappingTable th {
+    padding: 1rem 2rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-align: left;
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    letter-spacing: 0.5px;
+}
+
+.mappingTable td {
+    padding: 1.25rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+.csvColumn {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.previewData {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    font-style: italic;
+}
+
+.selectWrapper {
+    position: relative;
+    width: 100%;
+    max-width: 280px;
+}
+
+.fieldSelect {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    padding-right: 2.5rem;
+    border: 1px solid #cbd5e1;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    background-color: white;
+    appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.7rem center;
+}
+
+.fieldSelectError {
+    border-color: #f59e0b;
+    background-color: #fffbeb;
+}
+
+.fieldSelect:focus {
+    outline: none;
+    border-color: #0052ff;
+}
+
+.statusCell {
+    text-align: right;
+    width: 100px;
+}
+
+.statusIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.statusSuccess {
+    color: #22c55e;
+}
+
+.statusRequired {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #d97706;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+/* Footer Actions */
+.cardFooter {
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fafafa;
+    border-top: 1px solid var(--border-color);
+}
+
+.footerLeft {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.backBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--border-color);
+    background-color: white;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.backBtn:hover {
+    background-color: var(--bg-main);
+}
+
+.cancelBtn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.cancelBtn:hover {
+    color: var(--text-primary);
+}
+
+.footerRight {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.statsText {
+    text-align: right;
+}
+
+.statsLabel {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+}
+
+.statsValue {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.continueBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: #0052ff;
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.continueBtn:hover {
+    background-color: #0040cc;
+}
+
+/* Pro Tip Box */
+.proTipBox {
+    background-color: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: var(--radius-md);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.proTipIcon {
+    color: #0052ff;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.proTipText {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.proTipLabel {
+    font-weight: 700;
+    color: #0052ff;
+}

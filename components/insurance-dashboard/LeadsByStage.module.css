@@ -1,0 +1,72 @@
+.widget {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.iconButton {
+    color: var(--text-secondary);
+    border-radius: var(--radius-full);
+    padding: 0.25rem;
+    transition: background-color 0.2s;
+}
+
+.iconButton:hover {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    flex: 1;
+    justify-content: space-between;
+}
+
+.barContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.barLabelGroup {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.barLabel {
+    color: var(--text-secondary);
+}
+
+.barValue {
+    color: var(--text-primary);
+}
+
+.barTrack {
+    height: 8px;
+    background-color: var(--bg-main);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.barFill {
+    height: 100%;
+    border-radius: var(--radius-full);
+    transition: width 1s ease-out;
+}

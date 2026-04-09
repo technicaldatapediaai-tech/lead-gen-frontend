@@ -12,18 +12,28 @@ import {
   Factory,
   Truck,
   Shield,
+  Users,
 } from "lucide-react";
+import { SaasModal } from "./SaasModal";
+import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function LandingNavbar() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+
   return (
-    <nav className="fixed top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
+    <>
+      <nav className="fixed top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
         {/* Logo */}
         <div className="flex items-center gap-2">
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600">
             <Zap className="h-4 w-4 text-white" fill="currentColor" />
           </div>
-          <span className="text-lg font-bold tracking-tight">LeadGenius</span>
+          <span className="text-lg font-bold tracking-tight">Leadnius</span>
         </div>
 
         {/* Links */}
@@ -157,33 +167,45 @@ export default function LandingNavbar() {
                       Logistics
                     </div>
                   </Link>
-
-                  {/* <Link
+                  
+                  <Link
                     href="/enterprise/insurance"
-                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-linear-to-br hover:from-orange-50 hover:to-red-50 dark:hover:from-orange-900/40 dark:hover:to-red-900/40 transition-all duration-300 group/item border border-transparent hover:border-orange-100 dark:hover:border-orange-800"
+                    className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-linear-to-br hover:from-cyan-50 hover:to-blue-50 dark:hover:from-cyan-900/40 dark:hover:to-blue-900/40 transition-all duration-300 group/item border border-transparent hover:border-cyan-100 dark:hover:border-cyan-800"
                   >
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-orange-600 transition-colors group-hover/item:bg-orange-600 group-hover/item:text-white dark:bg-orange-900/50 dark:text-orange-400">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-cyan-100 text-cyan-600 transition-colors group-hover/item:bg-cyan-600 group-hover/item:text-white dark:bg-cyan-900/50 dark:text-cyan-400">
                       <Shield className="h-4.5 w-4.5" />
                     </div>
                     <div className="text-sm font-bold text-foreground">
                       Insurance
                     </div>
-                  </Link> */}
+                  </Link>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Partners Dropdown */}
+          {/* Leadnius Community Dropdown */}
           <div className="group relative h-full flex items-center">
             <button className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors outline-none">
-              Partners
+              Leadnius Community
               <ChevronDown className="h-3 w-3 transition-transform duration-200 group-hover:rotate-180" />
             </button>
 
             <div className="invisible opacity-0 translate-y-2 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 absolute top-full right-0 pt-4 transition-all duration-300 ease-out z-[60]">
               <div className="w-[300px] overflow-hidden rounded-2xl border border-border bg-white p-3 shadow-2xl shadow-purple-500/20 dark:bg-slate-950 ring-1 ring-black/5">
                 <div className="flex flex-col gap-1">
+                  <button
+                    onClick={() => isAuthenticated ? router.push("/community") : setIsModalOpen(true)}
+                    className="flex w-full items-center gap-3 p-3 rounded-xl hover:bg-gradient-to-br hover:from-purple-50 hover:to-indigo-50 dark:hover:from-purple-900/40 dark:hover:to-indigo-900/40 transition-all duration-300 group/item border border-transparent hover:border-purple-100 dark:hover:border-blue-800"
+                  >
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-100 text-purple-600 transition-colors group-hover/item:bg-purple-600 group-hover/item:text-white dark:bg-purple-900/50 dark:text-purple-400">
+                      <Users className="h-5 w-5" />
+                    </div>
+                    <div className="text-sm font-bold text-foreground">
+                      Community
+                    </div>
+                  </button>
+
                   <Link
                     href="/affiliate-program"
                     className="flex items-center gap-3 p-3 rounded-xl hover:bg-gradient-to-br hover:from-blue-50 hover:to-indigo-50 dark:hover:from-blue-900/40 dark:hover:to-indigo-900/40 transition-all duration-300 group/item border border-transparent hover:border-blue-100 dark:hover:border-blue-800"
@@ -217,6 +239,8 @@ export default function LandingNavbar() {
           </Link>
         </div>
       </div>
-    </nav>
+      </nav>
+      <SaasModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+    </>
   );
 }

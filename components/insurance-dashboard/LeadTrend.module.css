@@ -1,0 +1,61 @@
+.widget {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.headerRight {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.legend {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.legendDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--primary);
+}
+
+.legendText {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+}
+
+.iconButton {
+    color: var(--text-secondary);
+    border-radius: var(--radius-full);
+    padding: 0.25rem;
+    transition: background-color 0.2s;
+}
+
+.iconButton:hover {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+}
+
+.content {
+    flex: 1;
+    width: 100%;
+}

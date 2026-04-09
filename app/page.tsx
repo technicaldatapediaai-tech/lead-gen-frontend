@@ -23,8 +23,8 @@ export default function LandingPage() {
             {/* --- Hero Section --- */}
             <section className="relative pt-24 pb-16 overflow-hidden">
                 {/* Background Gradients */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-600/10 rounded-full blur-[100px] -z-10 dark:bg-blue-600/20" />
-                <div className="absolute bottom-0 right-0 w-[600px] h-[400px] bg-purple-600/10 rounded-full blur-[100px] -z-10" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-600/5 rounded-full -z-10 dark:bg-blue-600/10" />
+                <div className="absolute bottom-0 right-0 w-[600px] h-[400px] bg-purple-600/5 rounded-full -z-10" />
 
                 <div className="mx-auto max-w-6xl px-6 text-center">
 

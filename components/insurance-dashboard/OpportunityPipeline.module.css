@@ -1,0 +1,68 @@
+.widget {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.iconButton {
+    color: var(--text-secondary);
+    border-radius: var(--radius-full);
+    padding: 0.25rem;
+    transition: background-color 0.2s;
+}
+
+.iconButton:hover {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+}
+
+.funnelContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 300px;
+}
+
+.funnelStep {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.funnelStep:hover {
+    filter: brightness(1.1);
+    transform: scale(1.02);
+}
+
+.stepText {
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-align: center;
+}

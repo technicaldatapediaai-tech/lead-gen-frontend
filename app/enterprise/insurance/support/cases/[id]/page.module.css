@@ -1,0 +1,611 @@
+.pageWrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #334155;
+    background-color: #f8fafc;
+    min-height: 100vh;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 2rem;
+}
+
+.breadcrumb a {
+    text-decoration: none;
+    color: #64748b;
+    transition: color 0.2s;
+}
+
+.breadcrumb a:hover {
+    color: #0052ff;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 3rem;
+}
+
+.titleLine {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.caseTitle {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+}
+
+.priorityBadge {
+    background-color: #fff7ed;
+    color: #f97316;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    letter-spacing: 0.5px;
+}
+
+.caseMeta {
+    font-size: 1rem;
+    color: #64748b;
+    margin: 0;
+}
+
+.headerActions {
+    display: flex;
+    gap: 1rem;
+}
+
+.editBtn,
+.resolveBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.editBtn {
+    background: white;
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+}
+
+.editBtn:hover {
+    background: #f1f5f9;
+}
+
+.resolveBtn {
+    background: #0052ff;
+    color: white;
+    border: none;
+}
+
+.resolveBtn:hover {
+    background: #0041cc;
+}
+
+/* Progress Tracker */
+.progressContainer {
+    position: relative;
+    padding: 0 4rem;
+    margin-bottom: 4rem;
+}
+
+.progressLine {
+    position: absolute;
+    top: 15px;
+    left: 4rem;
+    right: 4rem;
+    height: 4px;
+    background: #e2e8f0;
+    border-radius: 2px;
+    z-index: 1;
+}
+
+.progressActive {
+    height: 100%;
+    background: #0052ff;
+    border-radius: 2px;
+}
+
+.progressSteps {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    z-index: 2;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    width: 80px;
+}
+
+.stepCircle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    transition: all 0.3s;
+}
+
+.stepLabel {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #94a3b8;
+}
+
+.completed .stepCircle {
+    background: #0052ff;
+    border-color: #0052ff;
+    color: white;
+}
+
+.completed .stepLabel {
+    color: #0f172a;
+}
+
+.active .stepCircle {
+    background: #0052ff;
+    border-color: #0052ff;
+    color: white;
+    box-shadow: 0 0 0 4px rgba(0, 82, 255, 0.1);
+}
+
+.active .stepLabel {
+    color: #0052ff;
+}
+
+.spinIcon {
+    animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Layout */
+.mainContent {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 2rem;
+}
+
+.detailsColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Cards */
+.infoCard,
+.attachmentsCard,
+.activityCard {
+    background: white;
+    border-radius: 1rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.cardHeader {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cardHeader h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+
+.idNumber {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+/* Info Grid */
+.infoGrid {
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.infoItem label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #94a3b8;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.5px;
+}
+
+.infoItem div {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.statusValue {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.priorityDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #f97316;
+}
+
+.statusBadge {
+    display: inline-block;
+    background: #eff6ff;
+    color: #2563eb;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.85rem !important;
+}
+
+.descriptionSection {
+    padding: 0 2rem 2rem;
+}
+
+.descriptionSection label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #94a3b8;
+    margin-bottom: 1rem;
+    letter-spacing: 0.5px;
+}
+
+.descriptionBox {
+    background: #f8fafc;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin: 0;
+    line-height: 1.6;
+    font-size: 0.95rem;
+    color: #475569;
+}
+
+/* Attachments */
+.headerLeft {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.clipIcon {
+    color: #0052ff;
+}
+
+.uploadBtn {
+    background: transparent;
+    border: none;
+    color: #0052ff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.attachmentGrid {
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.fileBox {
+    border: 1px solid #f1f5f9;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: border-color 0.2s;
+}
+
+.fileBox:hover {
+    border-color: #0052ff;
+}
+
+.fileIconArea {
+    width: 44px;
+    height: 44px;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fileInfo {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.fileName {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.fileSize {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.downloadIcon {
+    color: #94a3b8;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.downloadIcon:hover {
+    color: #0052ff;
+}
+
+/* Activity Column */
+.activityCard {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+}
+
+.activityCard h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 2rem;
+}
+
+.activityList {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.activityItem {
+    display: flex;
+    gap: 1rem;
+}
+
+.iconCircle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+}
+
+.activityContent p {
+    margin: 0 0 0.25rem;
+    font-size: 0.9rem;
+}
+
+.textBlue {
+    color: #0052ff;
+    font-weight: 700;
+}
+
+.activityTime {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.commentItem,
+.noteItem {
+    display: flex;
+    gap: 1rem;
+}
+
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #eff6ff;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.avatarBlack {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #0f172a;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.commentContent {
+    background: #f8fafc;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    flex: 1;
+}
+
+.commentHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.userTag {
+    color: #94a3b8;
+    font-size: 0.75rem;
+}
+
+.commentContent p {
+    margin: 0 0 0.5rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.noteContent {
+    background: #fffbeb;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    flex: 1;
+    border-left: 4px solid #f59e0b;
+}
+
+.noteHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #92400e;
+    font-size: 0.7rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+}
+
+.noteContent p {
+    margin: 0 0 0.5rem;
+    font-size: 0.9rem;
+    color: #78350f;
+}
+
+/* Comment Input */
+.commentInputArea {
+    margin-top: auto;
+}
+
+.inputBox {
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    background: #f8fafc;
+    padding: 1rem;
+}
+
+.inputBox textarea {
+    width: 100%;
+    border: none;
+    background: transparent;
+    resize: none;
+    height: 80px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    padding: 0;
+    outline: none;
+}
+
+.inputToolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.toolbarLeft {
+    display: flex;
+    gap: 1rem;
+    color: #94a3b8;
+}
+
+.toolbarRight {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.internalToggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.internalToggle label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #94a3b8;
+    cursor: pointer;
+}
+
+.sendBtn {
+    background: #0052ff;
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.sendBtn:hover {
+    background: #0041cc;
+}
+
+/* Footer */
+.footer {
+    margin-top: 4rem;
+    border-top: 1px solid #e2e8f0;
+    padding: 2rem 0;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+@media (max-width: 1100px) {
+    .mainContent {
+        grid-template-columns: 1fr;
+    }
+}

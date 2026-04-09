@@ -1,0 +1,109 @@
+/* High-Fidelity Sidebar Styles */
+.community-sidebar {
+    width: 280px;
+    background: #ffffff;
+    border-right: 1px solid #e2e8f0;
+    padding: 2.5rem 1.5rem;
+    position: sticky;
+    top: 80px;
+    height: calc(100vh - 80px);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.btn-shop-category {
+    background-color: #eff6ff;
+    color: #2563eb;
+    border: none;
+    width: 100%;
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-bottom: 2.5rem;
+    transition: all 0.2s;
+}
+
+.btn-shop-category:hover {
+    background-color: #dbeafe;
+}
+
+.category-group {
+    margin-bottom: 1.5rem;
+}
+
+.category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 0.75rem 0;
+    color: #64748b;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.category-header:hover {
+    color: #2563eb;
+}
+
+.category-header i {
+    font-size: 0.8rem;
+    transition: transform 0.3s;
+}
+
+.premium-deals-card {
+    margin-top: auto;
+    background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+    border: 1px solid #dbeafe;
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.premium-deals-card h4 {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #2563eb;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+}
+
+.premium-deals-card p {
+    font-size: 0.75rem;
+    color: #64748b;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+}
+
+.btn-explore {
+    background-color: #2563eb;
+    color: #ffffff;
+    border: none;
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-explore:hover {
+    background-color: #1e40af;
+    transform: translateY(-1px);
+}

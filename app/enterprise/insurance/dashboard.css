@@ -1,0 +1,75 @@
+/* Scoped variables for the Insurance Dashboard */
+.insurance-dashboard-theme {
+  --bg-main: #f4f6fa;
+  --bg-sidebar: #151a24;
+  --bg-card: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-sidebar: #94a3b8;
+  --text-sidebar-active: #ffffff;
+
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --success: #10b981;
+  --success-light: #d1fae5;
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+  --danger: #ef4444;
+  --danger-light: #fee2e2;
+  --purple: #8b5cf6;
+
+  --border-color: #e2e8f0;
+  --sidebar-border: #1e293b;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+.insurance-dashboard-theme .card {
+  background-color: var(--bg-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.insurance-dashboard-theme .card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.insurance-dashboard-theme .dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.insurance-dashboard-theme .widget-stats {
+  grid-column: span 3;
+}
+
+.insurance-dashboard-theme .widget-full-half {
+  grid-column: span 6;
+}
+
+@media (max-width: 1024px) {
+  .insurance-dashboard-theme .widget-stats {
+    grid-column: span 6;
+  }
+
+  .insurance-dashboard-theme .widget-full-half {
+    grid-column: span 12;
+  }
+}
+
+@media (max-width: 768px) {
+  .insurance-dashboard-theme .widget-stats {
+    grid-column: span 12;
+  }
+}

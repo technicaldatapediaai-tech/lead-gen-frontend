@@ -1,0 +1,179 @@
+.pageContainer {
+    padding: 1.5rem 2.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.topActionsRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.breadcrumbMuted {
+    color: var(--text-secondary);
+}
+
+.breadcrumbSeparator {
+    color: #cbd5e1;
+}
+
+.breadcrumbCurrent {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.actionButtons {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.viewToggleGroup {
+    display: flex;
+    background-color: var(--bg-card);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.iconButton {
+    padding: 0.5rem;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.iconButton:hover {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+}
+
+.activeView {
+    background-color: #eff6ff;
+    color: var(--primary);
+}
+
+.rotate90 {
+    transform: rotate(90deg);
+}
+
+.filterButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-card);
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    transition: background-color 0.2s;
+}
+
+.filterButton:hover {
+    background-color: var(--bg-main);
+}
+
+.newButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--primary);
+    color: white;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: background-color 0.2s;
+}
+
+.newButton:hover {
+    background-color: var(--primary-hover);
+}
+
+.bulkImportButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--primary);
+    background-color: transparent;
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+.bulkImportButton:hover {
+    background-color: #eff6ff;
+    /* light blue background on hover */
+}
+
+.controlsRow {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.dropdownBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    border-radius: 100px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-card);
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+.dropdownBtn:hover {
+    border-color: #cbd5e1;
+    background-color: var(--bg-main);
+}
+
+.dropdownLabel {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.dropdownValue {
+    color: var(--text-primary);
+}
+
+.kpiRow {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+}
+
+.kpiRow::-webkit-scrollbar {
+    height: 6px;
+}
+
+.kpiRow::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 10px;
+}
+
+.tableSection {
+    width: 100%;
+}

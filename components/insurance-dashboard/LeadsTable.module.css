@@ -1,0 +1,191 @@
+.tableContainer {
+    background-color: var(--bg-card);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.table th {
+    padding: 1.25rem 1.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--bg-card);
+}
+
+.table td {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+.table tr:last-child td {
+    border-bottom: none;
+}
+
+.table tbody tr {
+    transition: background-color 0.2s;
+}
+
+.table tbody tr:hover {
+    background-color: var(--bg-main);
+}
+
+.leadNameCell {
+    font-weight: 600;
+}
+
+.leadName {
+    color: var(--primary);
+    cursor: pointer;
+}
+
+.leadName:hover {
+    text-decoration: underline;
+}
+
+.companyText {
+    color: var(--text-primary);
+    font-weight: 500;
+    max-width: 120px;
+    display: inline-block;
+}
+
+.lightText {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.typeTag {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-sm);
+    letter-spacing: 0.5px;
+}
+
+.assigneeContainer {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.assigneeName {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    max-width: 100px;
+}
+
+.statusBadge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    display: inline-block;
+    text-align: center;
+    min-width: 80px;
+}
+
+.New {
+    background-color: #dbeafe;
+    color: #2563eb;
+}
+
+.InProcess {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.dateBlock {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.yearText {
+    font-size: 0.8rem;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.actionBtn {
+    color: var(--text-secondary);
+    padding: 0.25rem;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s;
+}
+
+.actionBtn:hover {
+    color: var(--text-primary);
+    background-color: var(--border-color);
+}
+
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.showingText {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.pageControls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.pageBtn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.pageBtn:hover:not(.activePage) {
+    background-color: var(--bg-main);
+}
+
+.activePage {
+    background-color: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
