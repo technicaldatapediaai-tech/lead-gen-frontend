@@ -45,20 +45,20 @@ export function SaasModal({ isOpen, onClose }: SaasModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[440px] p-0 overflow-hidden border-none rounded-[32px] bg-white shadow-2xl dark:bg-slate-950">
-        <div className="relative pt-12 pb-8 px-6 flex flex-col items-center">
+        <div className="relative pt-12 pb-8 px-10 flex flex-col items-start">
           {/* Brand Accent */}
           <div className="absolute top-0 left-0 w-full h-1.5 bg-linear-to-r from-blue-600 to-indigo-600" />
           
           {/* Logo Icon */}
-          <div className="w-20 h-20 rounded-3xl bg-linear-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 flex items-center justify-center mb-10 shadow-inner">
+          <div className="w-20 h-20 rounded-3xl bg-linear-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 flex items-center justify-center mb-10 shadow-inner self-center">
             <Zap className="h-10 w-10 text-blue-600 dark:text-blue-400" fill="currentColor" />
           </div>
 
-          <DialogHeader className="text-center w-full">
-            <DialogTitle className="text-[34px] font-[900] tracking-tight leading-[1.05] text-slate-900 dark:text-white mb-4">
+          <DialogHeader className="text-left w-full">
+            <DialogTitle className="text-[34px] font-[900] tracking-tight leading-[1.05] text-slate-900 dark:text-white mb-4 italic">
               Your SaaS Journey <br /> Starts Here
             </DialogTitle>
-            <DialogDescription className="text-[15px] leading-relaxed text-slate-500 dark:text-slate-400 max-w-[280px] mx-auto">
+            <DialogDescription className="text-[15px] leading-relaxed text-slate-500 dark:text-slate-400 max-w-[320px]">
               Get early software access and join 2,000+ high-growth founders.
             </DialogDescription>
           </DialogHeader>

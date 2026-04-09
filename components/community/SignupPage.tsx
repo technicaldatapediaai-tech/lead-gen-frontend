@@ -27,7 +27,6 @@ const SignupPage: React.FC<SignupPageProps> = ({ onBack, initialEmail }) => {
       linkedin: formData.get('linkedin'),
       startupName: formData.get('startupName'),
       startupUrl: formData.get('startupUrl'),
-      stage: formData.get('stage'),
       industry: formData.get('industry'),
       lookingFor: selectedLookingFor,
       betaPerk: selectedPerk
@@ -154,17 +153,7 @@ const SignupPage: React.FC<SignupPageProps> = ({ onBack, initialEmail }) => {
             </div>
 
             <div className="form-block">
-              <h4 className="block-title">PRODUCT & INDUSTRY</h4>
               <div className="block-row">
-                 <div className="input-wrap">
-                    <label>Product Stage</label>
-                    <select name="stage" required defaultValue="">
-                      <option value="" disabled>Select current stage</option>
-                      <option value="Ideation">Ideation</option>
-                      <option value="MVP/Beta">MVP / Beta</option>
-                      <option value="Launched/Scaling">Launched / Scaling</option>
-                    </select>
-                 </div>
                  <div className="input-wrap">
                     <label>Industry</label>
                     <select name="industry" required defaultValue="">
@@ -187,7 +176,7 @@ const SignupPage: React.FC<SignupPageProps> = ({ onBack, initialEmail }) => {
                    {[
                       { val: "Beta Testers & Feedback", icon: "🚀", desc: "Get early feedback" },
                       { val: "First Paying Customers", icon: "💰", desc: "Initial early-adopters" },
-                      { val: "Networking & Peer Collaboration", icon: "🤝", desc: "Connect with builders" }
+                      { val: "Barter", icon: "🤝", desc: "Connect with builders" }
                    ].map(item => (
                       <div 
                         key={item.val}
@@ -208,7 +197,7 @@ const SignupPage: React.FC<SignupPageProps> = ({ onBack, initialEmail }) => {
                       { val: "Lifetime Access (LTD)", icon: "✨" },
                       { val: "Extended Free Trial (e.g., 6 months)", icon: "⏳" },
                       { val: "Significant Discount (e.g., 70% off for early birds)", icon: "🏷️" },
-                      { val: "None (Networking/Barter only)", icon: "🌐" }
+                      { val: "Barter", icon: "🌐" }
                    ].map(item => (
                       <div 
                         key={item.val}
