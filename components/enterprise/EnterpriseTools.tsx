@@ -8,7 +8,10 @@ import {
   Search,
   Lock,
   Activity,
-  MapPin
+  MapPin,
+  BarChart3,
+  Layout,
+  Users
 } from "lucide-react";
 
 interface EnterpriseToolsProps {
@@ -20,35 +23,36 @@ export default function EnterpriseTools({ mode = "logistics" }: EnterpriseToolsP
 
   const tools = isInsurance ? [
     {
+      icon: <BarChart3 className="w-6 h-6" />,
+      title: "Executive Reporting",
+      desc: "One-click access to conversion rates, lead trends, and real-time revenue visuals."
+    },
+    {
       icon: <Search className="w-6 h-6" />,
-      title: "Risk Analysis Engine",
-      desc: "Instant risk assessment and profile generation using multi-source architectural data."
+      title: "Lead Intelligence",
+      desc: "Identify and prioritize high-value prospects with our proprietary Lead Scoring engine."
+    },
+    {
+      icon: <Layout className="w-6 h-6" />,
+      title: "Visual Kanban Pipeline",
+      desc: "Move leads from 'New' to 'Converted' using a visual, drag-and-drop Kanban interface.",
+      badge: "ELITE"
+    },
+    {
+      icon: <Users className="w-6 h-6" />,
+      title: "360° Account Insights",
+      desc: "Get CIN, GST, and financial news alerts for every account in your commercial portfolio."
     },
     {
       icon: <GitFork className="w-6 h-6" />,
-      title: "Underwriting Workflows",
-      desc: "Automated underwriting logic that routes complex policies to senior adjusters based on case load.",
+      title: "Automated Workflows",
+      desc: "Automated document generation and intelligent routing to reduce manual overhead.",
       badge: "AI POWERED"
     },
     {
-      icon: <Globe className="w-6 h-6" />,
-      title: "Global Compliance Hub",
-      desc: "Real-time tracking of international insurance regulations and multi-region tax requirements."
-    },
-    {
-      icon: <Lock className="w-6 h-6" />,
-      title: "Secure Policy Vault",
-      desc: "Military-grade encryption for all policy documents and legal evidence snapshots."
-    },
-    {
-      icon: <Activity className="w-6 h-6" />,
-      title: "Real-time Monitoring",
-      desc: "Live visibility into claims processing health and broker performance metrics."
-    },
-    {
-      icon: <ShieldCheck className="w-6 h-6" />,
-      title: "Fraud Detection Suite",
-      desc: "Behavioral analysis and pattern recognition to identify suspicious claim activities instantly."
+      icon: <Layers className="w-6 h-6" />,
+      title: "Omni-Channel Support",
+      desc: "Manage claims, billing, and technical issues in one central, high-fidelity hub."
     }
   ] : [
     {

@@ -10,22 +10,22 @@ export default function InsuranceHero() {
           {/* Left Column: Text Content */}
           <div className="max-w-2xl">
             {/* Badge */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-8 rounded-full bg-blue-50 border border-blue-100 dark:bg-blue-900/20 dark:border-blue-800">
-              <span className="text-[11px] font-bold tracking-widest text-blue-600 uppercase dark:text-blue-400">
-                Enterprise Insurance Edition
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-8 rounded-full bg-indigo-50 border border-indigo-100 dark:bg-indigo-900/20 dark:border-indigo-800">
+              <span className="text-[11px] font-bold tracking-widest text-indigo-600 uppercase dark:text-indigo-400">
+                Elite Insurance Portal
               </span>
             </div>
 
             {/* Headline */}
-            <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl mb-6 leading-tight">
-              Enterprise <br /> Insurance <br />
-              <span className="text-blue-600">Growth & Retention</span> <br />
-              Platform
+            <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl mb-6 leading-tight uppercase">
+              Revenue <span className="text-indigo-600">Forecasting</span> <br />
+              Commercial <span className="text-blue-600">Intelligence</span> <br />
+              Automated <span className="text-indigo-600">Workflow</span>
             </h1>
 
             {/* Subtitle */}
-            <p className="text-base text-muted-foreground leading-relaxed mb-10">
-              Automate policy renewals, enrich risk profiles, and generate high-intent leads for brokers and agencies using AI-powered intelligence.
+            <p className="text-base text-muted-foreground leading-relaxed mb-10 font-medium">
+              Track your $4.2M pipeline with precision. Get CIN, GST, and financial news alerts for every account using our Elite CRM architecture.
             </p>
 
             {/* CTAs */}
@@ -49,7 +49,7 @@ export default function InsuranceHero() {
 
           {/* Right Column: Dashboard Visual */}
           <div className="relative group">
-            <div className="absolute -inset-1 bg-linear-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200" />
+            <div className="absolute -inset-1 bg-linear-to-r from-indigo-600 to-blue-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200" />
 
             <div className="relative rounded-xl overflow-hidden border border-border shadow-2xl bg-card">
               <Image
