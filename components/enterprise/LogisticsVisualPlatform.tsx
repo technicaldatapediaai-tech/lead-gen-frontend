@@ -25,122 +25,147 @@ export default function LogisticsVisualPlatform() {
   return (
     <div className="bg-slate-50 dark:bg-slate-950">
       
-      {/* 1. Command Center Section */}
+      {/* 1. Feature Highlights: One-Click Addresses & Shipment Creation */}
       <section className="py-24 border-b border-border bg-white dark:bg-slate-900/40">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+        <div className="mx-auto max-w-7xl px-24">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white mb-2">Command Center</h2>
-              <p className="text-slate-500 dark:text-slate-400 max-w-lg">
-                Aggregate real-time global operations into a single high-fidelity perspective.
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 dark:bg-blue-900/30 rounded-full border border-blue-100 dark:border-blue-800 text-[10px] font-black uppercase tracking-widest text-blue-600 mb-6">
+                 Logistics Efficiency
+              </div>
+              <h2 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white mb-6">One-Click Addresses</h2>
+              <p className="text-slate-500 dark:text-slate-400 text-lg leading-relaxed mb-8">
+                 Reduce manual entry errors and speed up your logistics workflow by saving unlimited pickup and destination locations. Reach checkout faster with saved preferences.
               </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                 <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 flex items-center justify-center shadow-sm">
+                       <MapPin className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <div>
+                       <div className="text-sm font-bold">Smart Validation</div>
+                       <div className="text-[10px] text-slate-500 uppercase">Auto-Correction</div>
+                    </div>
+                 </div>
+                 <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 flex items-center justify-center shadow-sm">
+                       <ShieldCheck className="w-5 h-5 text-emerald-500" />
+                    </div>
+                    <div>
+                       <div className="text-sm font-bold">Secure Vault</div>
+                       <div className="text-[10px] text-slate-500 uppercase">Encrypted Data</div>
+                    </div>
+                 </div>
+              </div>
             </div>
-            <div className="flex items-center gap-3 bg-blue-50 dark:bg-blue-900/20 px-4 py-2 rounded-xl border border-blue-100 dark:border-blue-800">
-               <Activity className="w-5 h-5 text-blue-600" />
-               <span className="text-sm font-bold text-blue-600">Live Infrastructure Status: Optimal</span>
+            
+            <div className="relative">
+               <div className="bg-slate-50 dark:bg-slate-800/50 p-8 rounded-[40px] border border-slate-200 dark:border-slate-700 relative overflow-hidden">
+                  <div className="space-y-4">
+                     {[
+                       { name: "Shanghai Warehouse", type: "Main Hub", active: true },
+                       { name: "New York Port", type: "Delivery Point", active: false },
+                       { name: "Berlin Distribution", type: "Regional", active: false }
+                     ].map((addr, i) => (
+                       <div key={i} className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 flex justify-between items-center shadow-sm">
+                          <div className="flex items-center gap-4">
+                             <div className={`w-2 h-2 rounded-full ${addr.active ? 'bg-blue-600' : 'bg-slate-300'}`} />
+                             <div>
+                                <div className="text-sm font-bold underline decoration-blue-500/30">{addr.name}</div>
+                                <div className="text-[10px] text-slate-400 font-black tracking-widest">{addr.type}</div>
+                             </div>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-slate-300" />
+                       </div>
+                     ))}
+                  </div>
+                  {/* Decorative */}
+                  <div className="absolute top-0 right-0 p-8 opacity-5">
+                     <Users className="w-32 h-32 text-blue-600" />
+                  </div>
+               </div>
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-            <StatCard label="Units Installed" value="2,842" delta="+4.2%" />
-            <StatCard label="Shipping Business" value="14,321" delta="-1.5%" color="orange" />
-            <StatCard label="Established Ports" value="832" delta="+12" />
-            <StatCard label="Outstanding Bills" value="$4.2M" delta="Critical" color="red" />
-          </div>
-
-          <div className="relative rounded-[32px] overflow-hidden border border-border shadow-2xl h-[500px] bg-slate-900 group">
-             {/* Map Placeholder Context */}
-             <div className="absolute inset-0 opacity-40 mix-blend-overlay">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_#0f172a_70%)]" />
-                {/* Simulated Grid/Map */}
-                <div className="w-full h-full bg-[url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center" />
-             </div>
-             
-             {/* Map UI Overlays */}
-             <div className="absolute top-8 left-8 p-6 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20">
-                <div className="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-2">Active Network</div>
-                <div className="text-2xl font-bold text-white">Global Nodes Monitoring</div>
-                <div className="mt-4 flex gap-2">
-                   <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                   <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse delay-75" />
-                   <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse delay-150" />
-                </div>
-             </div>
-
-             <div className="absolute bottom-8 right-8 flex gap-3">
-                <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white cursor-pointer hover:bg-white/20 transition-all">
-                   <Search className="w-5 h-5" />
-                </div>
-                <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white cursor-pointer hover:bg-white/20 transition-all">
-                   <Globe className="w-5 h-5" />
-                </div>
-                <div className="w-12 h-12 rounded-xl bg-blue-600 border border-blue-500 flex items-center justify-center text-white cursor-pointer hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/30">
-                   <Layout className="w-5 h-5" />
-                </div>
-             </div>
           </div>
         </div>
       </section>
 
-      {/* 2. Live Tracking Section */}
-      <section className="py-24 bg-slate-50 dark:bg-slate-950">
-        <div className="mx-auto max-w-7xl px-6">
+      {/* 2. Real-Time Tracking Section */}
+      <section className="py-24 bg-slate-50 dark:bg-slate-950 border-b border-border">
+        <div className="mx-auto max-w-7xl px-24">
+          <div className="text-center mb-16">
+             <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-4">Real-Time Shipment Tracking</h2>
+             <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto italic">
+                Advanced multi-node visibility into every asset across your global network.
+             </p>
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
             <div className="lg:col-span-2">
-              <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-4">Live Tracking</h2>
-              <p className="text-slate-500 dark:text-slate-400 mb-10 max-w-xl">
-                 Real-time visibility into every asset across your network. Intelligent routing and instant status updates.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 max-w-2xl bg-white dark:bg-slate-900 p-3 rounded-2xl border border-border shadow-lg">
-                <div className="flex-1 flex items-center gap-3 px-4 py-2">
-                  <Search className="w-5 h-5 text-slate-400" />
-                  <input 
-                    type="text" 
-                    placeholder="Enter AWB, Container, Bill Reference Number" 
-                    className="bg-transparent border-none outline-none text-slate-900 dark:text-white w-full text-sm font-medium"
-                  />
-                </div>
-                <button className="bg-slate-900 dark:bg-blue-600 text-white px-8 py-3 rounded-xl text-sm font-bold hover:opacity-90 transition-all">
-                  Initialize
-                </button>
-              </div>
-              <div className="mt-4 flex gap-6 px-4">
-                 <span className="text-[10px] uppercase font-bold text-slate-400 hover:text-blue-500 cursor-pointer">Live AWB: 2831-JK</span>
-                 <span className="text-[10px] uppercase font-bold text-slate-400 hover:text-blue-500 cursor-pointer">Live AWB: 9282-PW</span>
-              </div>
+               {/* High-Fidelity Tracking Bar (MOVED FROM HERO) */}
+               <div className="bg-white dark:bg-slate-900 p-2 rounded-[24px] border border-border shadow-2xl shadow-blue-500/5 mb-10 transition-all focus-within:border-blue-500/40">
+                  <div className="flex flex-col sm:flex-row gap-3">
+                     <div className="flex-1 flex items-center gap-3 px-5 py-4">
+                        <Search className="w-6 h-6 text-blue-500" />
+                        <input 
+                           type="text" 
+                           placeholder="Enter AWB or Tracking ID (e.g., LX-7821-PW4)" 
+                           className="bg-transparent border-none outline-none text-slate-900 dark:text-white w-full text-base font-bold placeholder:text-slate-500"
+                        />
+                     </div>
+                     <button className="bg-blue-600 text-white px-10 py-4 rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-600/20 active:scale-95">
+                        Initialize Tracking
+                     </button>
+                  </div>
+               </div>
+
+               <div className="flex flex-wrap gap-8 px-4 mb-10">
+                  {[
+                    { label: "Live Shipment Timelines", color: "bg-emerald-500" },
+                    { label: "Milestone Updates", color: "bg-blue-500" },
+                    { label: "Real-Time GPS Sync", color: "bg-amber-500" }
+                  ].map((p, i) => (
+                    <div key={i} className="flex items-center gap-2 group cursor-default">
+                       <div className={`w-1.5 h-1.5 rounded-full ${p.color} animate-pulse`} />
+                       <span className="text-[10px] uppercase font-black tracking-widest text-slate-500 group-hover:text-blue-600 transition-colors">{p.label}</span>
+                    </div>
+                  ))}
+               </div>
+
+               <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-border shadow-sm italic text-slate-500 text-sm border-l-4 border-l-blue-600">
+                  &ldquo;Convert inbound shipping inquiries into milestone-driven success with automated visibility.&rdquo;
+               </div>
             </div>
 
             <div className="lg:col-span-1">
-               <div className="bg-slate-900 rounded-3xl p-8 border border-white/5 shadow-2xl relative overflow-hidden group">
+               <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-xl relative overflow-hidden group">
                   <div className="absolute top-0 right-0 p-4">
                      <div className="bg-blue-600 text-[10px] font-black text-white px-3 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-blue-500/20">Active</div>
                   </div>
                   <div className="flex items-center gap-4 mb-8">
-                     <div className="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center">
-                        <Box className="w-6 h-6 text-blue-400" />
+                     <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center">
+                        <Box className="w-6 h-6 text-blue-600" />
                      </div>
                      <div>
-                        <div className="text-white font-bold">LX-7821-PW4</div>
-                        <div className="text-[10px] text-slate-400">Current Node: Chicago IL</div>
+                        <div className="text-slate-900 font-bold">LX-7821-PW4</div>
+                        <div className="text-[10px] text-slate-500">Current Node: Chicago IL</div>
                      </div>
                   </div>
                   <div className="space-y-6">
                      <div className="flex gap-4">
                         <div className="flex flex-col items-center gap-1">
                            <div className="w-2 h-2 rounded-full bg-blue-600" />
-                           <div className="w-px h-8 bg-slate-800" />
+                           <div className="w-px h-8 bg-slate-200" />
                         </div>
                         <div>
-                           <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Station: IL-CHID3D4-2983</div>
-                           <div className="text-white text-sm font-bold">Inbound: 12:45PM - SEP 24</div>
+                           <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Station: IL-CHID3D4-2983</div>
+                           <div className="text-slate-900 text-sm font-bold">Inbound: 12:45PM - SEP 24</div>
                         </div>
                      </div>
                      <div className="flex gap-4">
-                        <div className="w-2 h-2 rounded-full bg-slate-800 mt-1" />
+                        <div className="w-2 h-2 rounded-full bg-slate-200 mt-1" />
                         <div>
-                           <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Next Destination</div>
-                           <div className="text-slate-400 text-sm">O&apos;Hare Terminal 5</div>
+                           <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Next Destination</div>
+                           <div className="text-slate-500 text-sm">O&apos;Hare Terminal 5</div>
                         </div>
                      </div>
                   </div>
@@ -152,7 +177,7 @@ export default function LogisticsVisualPlatform() {
 
       {/* 3. Shipment Architect Section */}
       <section className="py-32 bg-white dark:bg-slate-900/20 border-y border-border">
-        <div className="mx-auto max-w-6xl px-6">
+        <div className="mx-auto max-w-6xl px-24">
           <div className="mb-16">
             <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-2">Shipment Architect</h2>
             <p className="text-slate-500 dark:text-slate-400">Orchestrate complex logistics routes with precision.</p>
@@ -187,26 +212,26 @@ export default function LogisticsVisualPlatform() {
                </div>
             </div>
 
-            <div className="lg:col-span-4 bg-slate-900 rounded-[32px] p-10 text-white relative overflow-hidden">
-               <div className="absolute top-0 right-0 p-6 opacity-20">
-                  <Box className="w-24 h-24" />
+            <div className="lg:col-span-4 bg-white border border-slate-200 shadow-xl rounded-[32px] p-10 text-slate-900 relative overflow-hidden">
+               <div className="absolute top-0 right-0 p-6 opacity-10">
+                  <Box className="w-24 h-24 text-blue-600" />
                </div>
                <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-8">Shipment LX-M29-PW</div>
                <div className="mb-10">
-                  <div className="text-sm text-slate-400 mb-1 font-bold">Estimated Transit Time</div>
-                  <div className="text-4xl font-extrabold text-blue-400">14 Days</div>
+                  <div className="text-sm text-slate-500 mb-1 font-bold">Estimated Transit Time</div>
+                  <div className="text-4xl font-extrabold text-blue-600">14 Days</div>
                </div>
                <div className="space-y-4 mb-10">
-                  <div className="flex justify-between items-end border-b border-white/10 pb-2">
+                  <div className="flex justify-between items-end border-b border-slate-100 pb-2">
                      <span className="text-xs text-slate-400">Next Departure</span>
-                     <span className="text-xs font-bold">Tomorrow</span>
+                     <span className="text-xs font-bold text-slate-900">Tomorrow</span>
                   </div>
-                  <div className="flex justify-between items-end border-b border-white/10 pb-2">
+                  <div className="flex justify-between items-end border-b border-slate-100 pb-2">
                      <span className="text-xs text-slate-400">Available Space</span>
-                     <span className="text-xs font-bold text-orange-400">62.8%</span>
+                     <span className="text-xs font-bold text-orange-500">62.8%</span>
                   </div>
                </div>
-               <button className="w-full h-14 bg-blue-600 rounded-2xl flex items-center justify-center gap-2 text-sm font-bold hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20">
+               <button className="w-full h-14 bg-blue-600 rounded-2xl flex items-center justify-center gap-2 text-sm font-bold text-white hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20">
                   Initial Route Design <ArrowRight className="w-4 h-4" />
                </button>
             </div>
@@ -216,154 +241,176 @@ export default function LogisticsVisualPlatform() {
 
       {/* 4. Rate Engine Section */}
       <section className="py-24 bg-slate-50 dark:bg-slate-950">
-        <div className="mx-auto max-w-7xl px-6">
+        <div className="mx-auto max-w-7xl px-24">
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
              <div>
-               <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-2">Rate Engine</h2>
-               <p className="text-slate-500 dark:text-slate-400">Multi-modal market intelligence for real-time freight pricing.</p>
+               <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-4 italic">Estimate Your Shipping Cost</h2>
+               <p className="text-slate-500 dark:text-slate-400 max-w-xl underline decoration-blue-500/20">
+                  Access Live Admin-Managed Rate Cards for the most accurate, up-to-date pricing across global lanes.
+               </p>
              </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            <div className="lg:col-span-1 bg-white dark:bg-slate-900 p-8 rounded-3xl border border-border shadow-sm">
-               <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6">Request Custom Quote</div>
-               <div className="space-y-4">
-                  <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl">
-                     <div className="text-[9px] font-black uppercase text-slate-400 mb-1">Origin</div>
-                     <div className="text-xs font-bold text-slate-900 dark:text-white">CNSHA (Shanghai)</div>
+            <div className="lg:col-span-1 bg-white dark:bg-slate-900 p-8 rounded-[32px] border border-border shadow-xl">
+               <div className="text-[10px] font-black uppercase tracking-widest text-blue-600 mb-8 underline">Real-Time Quotation</div>
+               <div className="space-y-6">
+                  <div className="space-y-2">
+                     <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest pl-1">Origin Country</label>
+                     <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
+                        <div className="text-xs font-bold text-slate-900 dark:text-white">CNSHA (Shanghai, China)</div>
+                     </div>
                   </div>
-                  <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl">
-                     <div className="text-[9px] font-black uppercase text-slate-400 mb-1">Destination</div>
-                     <div className="text-xs font-bold text-slate-400">USNYC (New York)</div>
+                  <div className="space-y-2">
+                     <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest pl-1">Destination Country</label>
+                     <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
+                        <div className="text-xs font-bold text-slate-400">Select Destination...</div>
+                     </div>
                   </div>
-                  <div className="flex gap-2">
-                     <div className="flex-1 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl text-[10px] font-bold text-center">40HC Container</div>
-                     <div className="flex-1 p-3 bg-blue-600 rounded-xl text-[10px] font-bold text-white text-center">Sea Freight</div>
+                  <div className="grid grid-cols-2 gap-4">
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest pl-1">Weight (kg)</label>
+                        <input type="number" placeholder="0.00" className="w-full p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 text-xs font-bold focus:outline-none focus:border-blue-500 transition-colors" />
+                     </div>
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest pl-1">Pieces</label>
+                        <input type="number" placeholder="1" className="w-full p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 text-xs font-bold focus:outline-none focus:border-blue-500 transition-colors" />
+                     </div>
                   </div>
-                  <button className="w-full bg-slate-900 dark:bg-blue-600 text-white h-12 rounded-xl text-[10px] font-black italic tracking-widest uppercase mt-4">Generate Intel</button>
+                  <button className="w-full bg-blue-600 text-white h-14 rounded-2xl text-xs font-black uppercase tracking-[0.2em] shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition-all active:scale-95">Get Live Rates</button>
                </div>
             </div>
 
             <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
                <QuoteItem type="STANDARD" carrier="Oceanic Lines" price="$1,248" time="24 Days" />
                <QuoteItem type="PREMIUM" carrier="AirBridge XL" price="$4,832" time="3 Days" color="orange" />
-               <QuoteItem type="HUB" carrier="Inter-Rail" price="$928" time="18 Days" />
-               <QuoteItem type="CONSOLIDATED" carrier="Partner Network" price="$1,110" time="27 Days" />
+               <QuoteItem type="ECONOMY" carrier="Global Hub" price="$928" time="18 Days" />
+               <QuoteItem type="PRIORITY" carrier="Express Network" price="$1,110" time="27 Days" />
             </div>
           </div>
         </div>
       </section>
 
-      {/* 5. Global Ledger Section */}
-      <section className="py-24 bg-white dark:bg-slate-900/20 border-t border-border">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="flex justify-between items-center mb-12">
-             <h2 className="text-4xl font-black text-slate-900 dark:text-white">Global Ledger</h2>
-             <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
-                <div className="px-4 py-1.5 rounded-lg text-xs font-bold text-slate-500 cursor-pointer">All Shipments</div>
-                <div className="px-4 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm cursor-pointer">Active Assets</div>
-             </div>
-          </div>
+      {/* 5. Simplified Booking Workflow */}
+      <section className="py-24 bg-white dark:bg-slate-900/60 border-y border-border">
+        <div className="mx-auto max-w-7xl px-24 text-center">
+           <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-4 uppercase tracking-tighter">Book a Shipment in 3 Easy Steps</h2>
+           <p className="text-slate-500 dark:text-slate-400 mb-16 max-w-2xl mx-auto italic font-medium">
+              Enterprise-Grade Intelligence for booking international deliveries with zero friction.
+           </p>
 
-          <div className="overflow-x-auto rounded-[32px] border border-border shadow-2xl">
-            <table className="w-full text-left bg-white dark:bg-slate-900 border-collapse">
-              <thead>
-                <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-border">
-                  <th className="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-widest">Asset Identifier</th>
-                  <th className="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-widest">Dynamic Route</th>
-                  <th className="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-widest">VIP Deliver</th>
-                  <th className="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-widest">Current Status</th>
-                  <th className="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-widest">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                <TableRow id="LX-02-BKK" origin="Bangkok Cloud" dest="Chicago Hub" status="In Transit" />
-                <TableRow id="LX-91-LHR" origin="Logistics Core" dest="Global Port" status="Pending" color="orange" />
-                <TableRow id="LX-45-SFO" origin="West Coast" dest="SFO International" status="Delivered" color="emerald" />
-              </tbody>
-            </table>
-          </div>
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+              {/* Connector lines */}
+              <div className="hidden md:block absolute top-[60px] left-[25%] right-[25%] h-px bg-slate-100 dark:bg-slate-800 -z-10" />
+              
+              <div className="flex flex-col items-center">
+                 <div className="w-24 h-24 rounded-[32px] bg-blue-50 dark:bg-blue-900/20 border-2 border-white dark:border-slate-800 shadow-xl flex items-center justify-center mb-6 transform hover:rotate-6 transition-transform">
+                    <MapPin className="w-10 h-10 text-blue-600" />
+                 </div>
+                 <h3 className="text-xl font-black mb-2 text-slate-900 dark:text-white">1. Select Route</h3>
+                 <p className="text-sm text-slate-500 dark:text-slate-400 max-w-[200px]">Choose between Pickup or Warehouse Drop locations.</p>
+              </div>
+
+              <div className="flex flex-col items-center">
+                 <div className="w-24 h-24 rounded-[32px] bg-indigo-50 dark:bg-indigo-900/20 border-2 border-white dark:border-slate-800 shadow-xl flex items-center justify-center mb-6 transform hover:-rotate-6 transition-transform">
+                    <Box className="w-10 h-10 text-indigo-600" />
+                 </div>
+                 <h3 className="text-xl font-black mb-2 text-slate-900 dark:text-white">2. Package Info</h3>
+                 <p className="text-sm text-slate-500 dark:text-slate-400 max-w-[200px]">Enter weight and contents (e.g., Electronics, Garments).</p>
+              </div>
+
+              <div className="flex flex-col items-center">
+                 <div className="w-24 h-24 rounded-[32px] bg-emerald-50 dark:bg-emerald-900/20 border-2 border-white dark:border-slate-800 shadow-xl flex items-center justify-center mb-6 transform hover:rotate-3 transition-transform">
+                    <Users className="w-10 h-10 text-emerald-600" />
+                 </div>
+                 <h3 className="text-xl font-black mb-2 text-slate-900 dark:text-white">3. Receiver Info</h3>
+                 <p className="text-sm text-slate-500 dark:text-slate-400 max-w-[200px]">Add the destination contact with verified address sync.</p>
+              </div>
+           </div>
         </div>
       </section>
 
-      {/* 6. Predictive Workflows Section */}
-      <section className="py-24 bg-slate-900 text-white overflow-hidden relative">
-        <div className="absolute top-0 right-0 p-32 bg-blue-600/10 blur-[120px] rounded-full" />
-        <div className="absolute bottom-0 left-0 p-32 bg-indigo-600/10 blur-[120px] rounded-full" />
+      {/* 6. Smart Compliance & Documentation Section */}
+      <section className="py-24 bg-white text-slate-900 overflow-hidden relative border-t border-border">
+        <div className="absolute top-0 right-0 p-32 bg-blue-500/5 blur-[120px] rounded-full" />
+        <div className="absolute bottom-0 left-0 p-32 bg-indigo-500/5 blur-[120px] rounded-full" />
         
-        <div className="mx-auto max-w-7xl px-6 relative">
+        <div className="mx-auto max-w-7xl px-24 relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-500/20 rounded-full border border-blue-500/30 text-[10px] font-black uppercase tracking-widest text-blue-400 mb-8 italic">Autonomous Intelligence</div>
-              <h2 className="text-5xl font-black leading-[1.1] mb-8">
-                Predictive Logistics <br />
-                <span className="text-blue-500 italic uppercase">Agentic Workflows</span>
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-full border border-blue-100 text-[10px] font-black uppercase tracking-widest text-blue-600 mb-8 italic">Automated Compliance</div>
+              <h2 className="text-5xl font-black leading-[1.1] mb-8 text-slate-900">
+                Smart Compliance & <br />
+                <span className="text-blue-600 italic uppercase">Documentation</span>
               </h2>
-              <p className="text-slate-400 text-lg mb-12 max-w-lg leading-relaxed italic">
-                 Harness the power of agentic AI to predict delays, automate bookings, and optimize lane utilization before friction occurs.
+              <p className="text-slate-500 text-lg mb-12 max-w-lg leading-relaxed italic">
+                 Safe, approved, and compliant international shipping. Our system handles AWB generation, tax declarations, and admin approvals automatically.
               </p>
               
               <div className="space-y-6">
                  <div className="flex items-center gap-5 group cursor-pointer translate-x-0 hover:translate-x-2 transition-transform">
-                    <div className="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center">
-                       <ShieldCheck className="w-5 h-5 text-blue-400" />
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center">
+                       <FileText className="w-5 h-5 text-blue-600" />
                     </div>
                     <div>
-                       <div className="font-bold text-white">Auto-Booking Agent</div>
-                       <div className="text-xs text-slate-500">Autonomous RFP to booking generation based on live capacity.</div>
+                       <div className="font-bold text-slate-900">Auto-AWB Generation</div>
+                       <div className="text-xs text-slate-500">Instant Air Waybill creation synchronized with carrier nodes.</div>
                     </div>
                  </div>
                  <div className="flex items-center gap-5 group cursor-pointer translate-x-0 hover:translate-x-2 transition-transform">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center">
-                       <Clock className="w-5 h-5 text-indigo-400" />
+                    <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center">
+                       <ShieldCheck className="w-5 h-5 text-indigo-600" />
                     </div>
                     <div>
-                       <div className="font-bold text-white">Predictive Delay Forecasting</div>
-                       <div className="text-xs text-slate-500">Identifies potential port congestion 48 hours in advance.</div>
+                       <div className="font-bold text-slate-900">Tax & Value Declarations</div>
+                       <div className="text-xs text-slate-500">Automated compliance with international tax and customs laws.</div>
                     </div>
                  </div>
               </div>
             </div>
 
             <div className="relative">
-               <div className="bg-slate-800/40 p-10 rounded-[40px] border border-white/5 backdrop-blur-sm relative z-10">
+               <div className="bg-slate-50 p-10 rounded-[40px] border border-slate-200 backdrop-blur-sm relative z-10 shadow-xl">
                   <div className="flex flex-col items-center gap-10">
-                    <div className="p-6 bg-slate-700/50 rounded-2xl border border-white/10 w-full text-center">
-                       <span className="text-[10px] font-black uppercase text-blue-400 tracking-widest block mb-4">Feed: Raw File Uploaded</span>
+                    <div className="p-6 bg-white rounded-2xl border border-slate-100 w-full text-center shadow-sm">
+                       <span className="text-[10px] font-black uppercase text-blue-600 tracking-widest block mb-4">Doc Engine: AWB Initialized</span>
                        <div className="flex justify-center gap-4">
-                          <FileText className="w-8 h-8 opacity-20" />
+                          <FileText className="w-8 h-8 text-slate-300" />
                           <ArrowRight className="w-8 h-8 text-blue-500 animate-pulse" />
-                          <FileText className="w-8 h-8" />
+                          <div className="relative">
+                             <FileText className="w-8 h-8 text-slate-900" />
+                             <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white" />
+                          </div>
                        </div>
                     </div>
 
                     <div className="w-px h-10 bg-gradient-to-b from-blue-500 to-transparent" />
 
                     <div className="grid grid-cols-2 gap-6 w-full">
-                       <div className="p-4 bg-slate-900 rounded-xl border border-white/5 text-center">
-                          <div className="text-[9px] font-bold text-slate-500 mb-2">AI Extraction</div>
-                          <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                             <div className="h-full bg-blue-500" style={{ width: '85%' }} />
+                       <div className="p-4 bg-white rounded-xl border border-slate-100 text-center shadow-sm">
+                          <div className="text-[9px] font-bold text-slate-400 mb-2">Admin Approval</div>
+                          <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                             <div className="h-full bg-emerald-500" style={{ width: '100%' }} />
                           </div>
                        </div>
-                       <div className="p-4 bg-slate-900 rounded-xl border border-white/5 text-center opacity-50">
-                          <div className="text-[9px] font-bold text-slate-500 mb-2">Error Masking</div>
-                          <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                             <div className="h-full bg-indigo-500" style={{ width: '20%' }} />
+                       <div className="p-4 bg-white rounded-xl border border-slate-100 text-center shadow-sm">
+                          <div className="text-[9px] font-bold text-slate-400 mb-2">Customs Match</div>
+                          <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                             <div className="h-full bg-blue-500" style={{ width: '92%' }} />
                           </div>
                        </div>
                     </div>
 
                     <div className="w-px h-10 bg-gradient-to-t from-blue-500 to-transparent" />
 
-                    <div className="w-full bg-blue-600 p-4 rounded-xl text-center text-[10px] font-black uppercase tracking-widest">
-                       Generation System Operational
+                    <div className="w-full bg-slate-900 p-4 rounded-xl text-center text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-blue-500/20">
+                       Compliant & Verified
                     </div>
                   </div>
                </div>
                
                {/* Background Decorative Blur */}
-               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-blue-500/5 blur-[100px] -z-10" />
+               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-blue-500/10 blur-[100px] -z-10" />
             </div>
           </div>
         </div>

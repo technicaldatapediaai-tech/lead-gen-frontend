@@ -3,6 +3,8 @@
 import React from 'react';
 import { useCart } from '@/context/community/CartContext';
 import { Product } from '@/lib/community/data';
+import './ProductCard.css';
+
 
 interface ProductCardProps {
     product: Product;
@@ -25,13 +27,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick }) =>
                 {product.isNew && <span className="tag-new">New!</span>}
             </div>
             <div className="card-content">
-                <div className="card-header">
-                    <div className="header-info">
-                        <h4 className="product-name">{product.name}</h4>
-                        <p className="product-category">in {product.category}</p>
-                    </div>
-                    <div className="app-icon">
-                        <i className={product.icon}></i>
+                <div className="card-header-v2">
+                    <div className="header-info-v2">
+                        <span className="product-category-v2">IN {product.category.toUpperCase()}</span>
+                        <h4 className="product-name-v2">{product.name}</h4>
                     </div>
                 </div>
                 <p className="product-desc">{product.description}</p>

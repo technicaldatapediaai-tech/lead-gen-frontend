@@ -29,7 +29,7 @@ export default function InsuranceVisualPlatform() {
       {/* 1. Hero Section */}
       <section className="relative py-32 overflow-hidden bg-white">
         <div className="absolute top-0 right-0 w-1/2 h-full bg-slate-50 -z-10 rounded-bl-[10rem]" />
-        <div className="mx-auto max-w-6xl px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+        <div className="mx-auto max-w-6xl px-24 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div>
             <div className="inline-block px-3 py-1 mb-6 rounded-full bg-blue-50 border border-blue-100 text-[10px] font-bold tracking-widest text-blue-600 uppercase">
               Insurance Product Walk
@@ -75,7 +75,7 @@ export default function InsuranceVisualPlatform() {
 
       {/* 2. Command Center Section */}
       <section className="py-32 bg-slate-50 border-y border-slate-200">
-        <div className="mx-auto max-w-6xl px-6">
+        <div className="mx-auto max-w-6xl px-24">
           <div className="mb-16">
             <h2 className="text-4xl font-black text-slate-900 mb-3 uppercase tracking-tighter">Command Center</h2>
             <p className="text-slate-500 font-medium max-w-2xl uppercase text-[11px] tracking-widest opacity-60">Real-time revenue visibility and pipeline health metrics based on architectural throughput.</p>
@@ -113,7 +113,7 @@ export default function InsuranceVisualPlatform() {
 
       {/* 3. Leads Intelligence Section */}
       <section className="py-32 bg-white">
-        <div className="mx-auto max-w-6xl px-6 grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+        <div className="mx-auto max-w-6xl px-24 grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
           <div>
             <div className="inline-block px-3 py-1 mb-6 rounded-full bg-slate-100 border border-slate-200 text-[10px] font-bold tracking-widest text-slate-500 uppercase">
               Module 01
@@ -152,7 +152,7 @@ export default function InsuranceVisualPlatform() {
 
       {/* 4. Opportunity Pipeline Section */}
       <section className="py-32 bg-slate-50 border-y border-slate-200">
-        <div className="mx-auto max-w-6xl px-6 text-center">
+        <div className="mx-auto max-w-6xl px-24 text-center">
           <div className="mb-20">
             <div className="text-[10px] font-bold text-blue-600 uppercase tracking-[0.4em] mb-4 underline decoration-2 underline-offset-8">Module 02</div>
             <h2 className="text-4xl font-black text-slate-900 mb-4 uppercase tracking-tighter">Opportunity Pipeline</h2>
@@ -175,7 +175,7 @@ export default function InsuranceVisualPlatform() {
 
       {/* MISSING: Strategic Account Profiles Section */}
       <section className="py-32 bg-white">
-        <div className="mx-auto max-w-6xl px-6">
+        <div className="mx-auto max-w-6xl px-24">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
             <div className="grid grid-cols-2 gap-6 order-2 lg:order-1">
               <div className="space-y-6">
@@ -220,7 +220,7 @@ export default function InsuranceVisualPlatform() {
 
       {/* 5. Precision Scheduling Section */}
       <section className="py-32 bg-slate-50 border-y border-slate-200 overflow-hidden">
-        <div className="mx-auto max-w-6xl px-6 grid grid-cols-1 lg:grid-cols-5 gap-16 items-start">
+        <div className="mx-auto max-w-6xl px-24 grid grid-cols-1 lg:grid-cols-5 gap-16 items-start">
           <div className="lg:col-span-2">
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6">Module 04</div>
             <h2 className="text-4xl font-black text-slate-900 mb-8 leading-tight uppercase tracking-tighter">Precision Scheduling</h2>
@@ -256,7 +256,7 @@ export default function InsuranceVisualPlatform() {
 
       {/* 6. Claim Integrity Section */}
       <section className="py-32 bg-white text-slate-900 relative overflow-hidden">
-        <div className="mx-auto max-w-6xl px-6 grid grid-cols-1 lg:grid-cols-2 gap-24 items-center relative">
+        <div className="mx-auto max-w-6xl px-24 grid grid-cols-1 lg:grid-cols-2 gap-24 items-center relative">
           <div>
             <div className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-8 underline decoration-blue-600 decoration-2 underline-offset-8">Module 05</div>
             <h2 className="text-4xl font-black mb-8 leading-tight tracking-tighter uppercase">Claim Integrity & <br />Case Management</h2>
@@ -272,7 +272,7 @@ export default function InsuranceVisualPlatform() {
                 <p className="text-xs text-slate-400 font-medium leading-relaxed uppercase tracking-tight">GDP variants impact claims scoring and automated classification.</p>
               </div>
               <div className="group cursor-default">
-                <Activity className="w-10 h-10 text-cyan-500 mb-5 group-hover:scale-110 transition-transform" />
+                <Activity className="w-10 h-10 text-blue-500 mb-5 group-hover:scale-110 transition-transform" />
                 <h4 className="font-bold text-lg mb-2 uppercase tracking-tight">Logic Ledger</h4>
                 <p className="text-xs text-slate-400 font-medium leading-relaxed uppercase tracking-tight">Immutable evidence snapshots for complex liquidity benefits.</p>
               </div>
@@ -318,7 +318,7 @@ export default function InsuranceVisualPlatform() {
       {/* 7. CTA Section */}
       <section className="py-32 bg-blue-600 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
-        <div className="mx-auto max-w-4xl px-6 text-center relative z-10">
+        <div className="mx-auto max-w-4xl px-24 text-center relative z-10">
           <h2 className="text-4xl font-black text-white mb-8 leading-tight tracking-tighter uppercase">
             Ready to Build the Future <br /> of Your Enterprise?
           </h2>

@@ -61,46 +61,50 @@ export function SaasModal({ isOpen, onClose }: SaasModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[440px] p-0 overflow-hidden border-none rounded-[32px] bg-white shadow-2xl dark:bg-slate-950">
-        <div className="relative pt-12 pb-8 px-10 flex flex-col items-start">
+      <DialogContent 
+        className="sm:max-w-[380px] p-0 overflow-hidden border-none rounded-[20px] sm:rounded-[24px] bg-white shadow-2xl dark:bg-slate-950"
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+      >
+        <div className="relative pt-8 pb-3 px-8 flex flex-col items-start w-full text-left">
           {/* Brand Accent */}
-          <div className="absolute top-0 left-0 w-full h-1.5 bg-linear-to-r from-blue-600 to-indigo-600" />
+          <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-blue-600 to-indigo-600" />
           
-          {/* Logo Icon */}
-          <div className="w-20 h-20 rounded-3xl bg-linear-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 flex items-center justify-center mb-10 shadow-inner self-center">
-            <Zap className="h-10 w-10 text-blue-600 dark:text-blue-400" fill="currentColor" />
+          {/* Logo Icon - Minimal */}
+          <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center mb-6 self-center">
+            <Zap className="h-6 w-6 text-blue-600" fill="currentColor" />
           </div>
 
-          <DialogHeader className="text-left w-full">
-            <DialogTitle className="text-[34px] font-[900] tracking-tight leading-[1.05] text-slate-900 dark:text-white mb-4 italic">
+          <DialogHeader className="text-left w-full space-y-3">
+            <DialogTitle className="text-[28px] sm:text-[32px] font-[900] tracking-tight leading-[1.1] text-slate-900 dark:text-white italic">
               Your SaaS Journey <br /> Starts Here
             </DialogTitle>
-            <DialogDescription className="text-[15px] leading-relaxed text-slate-500 dark:text-slate-400 max-w-[320px]">
+            <DialogDescription className="text-[15px] leading-relaxed text-slate-500 dark:text-slate-400 max-w-[300px]">
               Get early software access and join 2,000+ high-growth founders.
             </DialogDescription>
           </DialogHeader>
         </div>
 
         {/* Form Area */}
-        <form onSubmit={handleJoinNow} className="px-10 pb-12 space-y-6">
-          <div className="space-y-4">
+        <form onSubmit={handleJoinNow} className="px-6 pb-6 space-y-4">
+          <div className="space-y-2.5">
             <div className="relative">
                <Input
                  type="email"
                  placeholder="founder@company.com"
                  value={email}
                  onChange={(e) => setEmail(e.target.value)}
-                 className="h-14 rounded-2xl bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10 px-6 text-slate-900 dark:text-white placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-blue-500 transition-all text-base"
+                 className="h-11 rounded-lg bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10 px-4 text-slate-900 dark:text-white placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-blue-500 transition-all text-sm"
                  required
                />
             </div>
             
             <Button 
               type="submit"
-              className="w-full h-14 rounded-2xl bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-lg shadow-xl shadow-blue-500/20 transition-all border-none flex items-center justify-center gap-2 group"
+              className="w-full h-11 rounded-lg bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-sm shadow-md transition-all border-none flex items-center justify-center gap-2 group"
             >
               Join Now
-              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Button>
           </div>
 

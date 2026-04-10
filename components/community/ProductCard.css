@@ -106,21 +106,22 @@
 .product-desc {
     font-size: 0.85rem;
     color: #64748b;
-    text-align: center;
+    text-align: left;
     line-height: 1.6;
     margin-bottom: 2rem;
-    min-height: 2.8rem;
+    min-height: 3rem;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    font-family: 'Outfit', sans-serif;
 }
 
 .card-footer-alt {
     margin-top: auto;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 1.5rem;
     width: 100%;
 }
@@ -152,8 +153,39 @@
     gap: 4px;
 }
 
-.price-period {
+/* Refined Vertical Alignment for Header */
+.card-header-v2 {
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+.header-info-v2 {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: flex-start;
+}
+
+.product-category-v2 {
     font-size: 0.7rem;
-    color: #94a3b8;
-    font-weight: 600;
+    font-weight: 600; /* Balanced weight for mutton label */
+    color: #64748b; /* Professional gray as seen in image */
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: 'Outfit', sans-serif;
+}
+
+.community-root .card-content .product-name-v2 {
+    font-size: 1.45rem !important; /* Slightly larger for maximum visibility */
+    font-weight: 900 !important; /* Forced ultra-bold as requested */
+    color: #000000 !important; /* Forced pure black to match image */
+    line-height: 1.25;
+    margin: 0 0 0.5rem 0 !important;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 3.6rem;
+    font-family: 'Outfit', sans-serif !important;
+    text-align: left;
 }

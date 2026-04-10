@@ -197,7 +197,7 @@ export default function LandingNavbar() {
               <div className="w-[300px] overflow-hidden rounded-2xl border border-border bg-white p-3 shadow-2xl shadow-purple-500/20 dark:bg-slate-950 ring-1 ring-black/5">
                 <div className="flex flex-col gap-1">
                   <button
-                    onClick={() => isAuthenticated ? router.push("/community") : setIsModalOpen(true)}
+                    onClick={() => router.push("/community?showModal=true")}
                     className="flex w-full items-center gap-3 p-3 rounded-xl hover:bg-gradient-to-br hover:from-purple-50 hover:to-indigo-50 dark:hover:from-purple-900/40 dark:hover:to-indigo-900/40 transition-all duration-300 group/item border border-transparent hover:border-purple-100 dark:hover:border-blue-800"
                   >
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-100 text-purple-600 transition-colors group-hover/item:bg-purple-600 group-hover/item:text-white dark:bg-purple-900/50 dark:text-purple-400">

@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, Suspense } from 'react';
+import React, { useState, Suspense, useEffect } from 'react';
+import Link from 'next/link';
 import Navbar from '@/components/community/Navbar';
 import Sidebar from '@/components/community/Sidebar';
 import ProductGrid from '@/components/community/ProductGrid';
@@ -13,6 +14,8 @@ import Cart from '@/components/community/Cart';
 import { products } from '@/lib/community/data';
 import { CartProvider } from '@/context/community/CartContext';
 import { useSearchParams } from 'next/navigation';
+import { SaasModal } from '@/components/SaasModal';
+import { useAuth } from '@/contexts/AuthContext';
 import './community.css';
 
 // Font Awesome is used by community components for icons
@@ -27,12 +30,25 @@ function CommunityContent() {
   const searchParams = useSearchParams();
   const signupParam = searchParams.get('signup');
   const emailParam = searchParams.get('email');
+  const showModalParam = searchParams.get('showModal');
 
+  const { isAuthenticated } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('shop');
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [showRegistrations, setShowRegistrations] = useState(false);
   const [showSignup, setShowSignup] = useState(signupParam === 'true');
+  const [isSaasModalOpen, setIsSaasModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (showModalParam === 'true' && !isAuthenticated) {
+      // Small delay to ensure the page has loaded visually
+      const timer = setTimeout(() => {
+        setIsSaasModalOpen(true);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [showModalParam, isAuthenticated]);
 
   const selectedProduct = products.find(p => p.id === selectedProductId) || null;
 
@@ -54,16 +70,29 @@ function CommunityContent() {
     <CartProvider>
       <FontAwesomeLink />
       <div className="community-root">
-        <Navbar 
-          onSearch={setSearchQuery} 
-          onRegisterClick={() => setShowSignup(true)} 
-          onSoftwareClick={() => {
-            setSelectedProductId(null);
-            setShowSignup(false);
-            setShowRegistrations(false);
-          }}
-          isDetailView={!!selectedProductId}
-        />
+        {isSaasModalOpen ? (
+          <header className="community-navbar">
+            <div className="navbar-container">
+              <div className="navbar-left">
+                <div className="logo-wrap">
+                  <span className="logo-text-primary">Leadnius</span>
+                  <span className="logo-text-secondary">Community</span>
+                </div>
+              </div>
+            </div>
+          </header>
+        ) : (
+          <Navbar 
+            onSearch={setSearchQuery} 
+            onRegisterClick={() => setShowSignup(true)} 
+            onSoftwareClick={() => {
+              setSelectedProductId(null);
+              setShowSignup(false);
+              setShowRegistrations(false);
+            }}
+            isDetailView={!!selectedProductId}
+          />
+        )}
         
         <div className="app-container">
           {showRegistrations ? (
@@ -72,7 +101,7 @@ function CommunityContent() {
             <SignupPage onBack={() => setShowSignup(false)} initialEmail={emailParam || undefined} />
           ) : (
             <>
-              {!selectedProduct && (
+              {!selectedProduct && !isSaasModalOpen && (
                 <Sidebar 
                   currentCategory={activeCategory} 
                   onCategoryChange={(cat: string) => {
@@ -82,53 +111,56 @@ function CommunityContent() {
                 />
               )}
               
-              <main className={`main-content ${selectedProduct ? 'full-width' : ''}`}>
-                <div className={`content-body ${selectedProduct ? 'content-body-detail' : ''}`}>
-                  {selectedProduct ? (
-                    <ProductDetail 
-                      product={selectedProduct} 
-                      onBack={() => setSelectedProductId(null)} 
-                    />
-                  ) : (
-                    <>
-                      <div className="hero">
-                        <div className="hero-header">
-                          <div className="hero-left">
-                            <h2 className="hero-title-main">Browse software</h2>
-                            <p className="product-count">{filteredProducts.length} products</p>
-                          </div>
-                          <div className="hero-right">
-                            <span className="sort-label">Sort by:</span>
-                            <div className="sort-select-wrapper">
-                              <select className="sort-select" defaultValue="recommended">
-                                <option value="recommended">Recommended</option>
-                                <option value="latest">Latest</option>
-                                <option value="reviews"># customer reviews</option>
-                                <option value="rating">Avg customer rating</option>
-                                <option value="price-low">Price: low to high</option>
-                                <option value="price-high">Price: high to low</option>
-                              </select>
-                              <span className="sort-icon">
-                                <i className="fas fa-chevron-down"></i>
-                              </span>
+              {!isSaasModalOpen && (
+                <main className={`main-content ${selectedProduct ? 'full-width' : ''}`}>
+                  <div className={`content-body ${selectedProduct ? 'content-body-detail' : ''}`}>
+                    {selectedProduct ? (
+                      <ProductDetail 
+                        product={selectedProduct} 
+                        onBack={() => setSelectedProductId(null)} 
+                      />
+                    ) : (
+                      <>
+                        <div className="hero">
+                          <div className="hero-header">
+                            <div className="hero-left">
+                              <h2 className="hero-title-main">Browse software</h2>
+                              <p className="product-count">{filteredProducts.length} products</p>
+                            </div>
+                            <div className="hero-right">
+                              <span className="sort-label">Sort by:</span>
+                              <div className="sort-select-wrapper">
+                                <select className="sort-select" defaultValue="recommended">
+                                  <option value="recommended">Recommended</option>
+                                  <option value="latest">Latest</option>
+                                  <option value="reviews"># customer reviews</option>
+                                  <option value="rating">Avg customer rating</option>
+                                  <option value="price-low">Price: low to high</option>
+                                  <option value="price-high">Price: high to low</option>
+                                </select>
+                                <span className="sort-icon">
+                                  <i className="fas fa-chevron-down"></i>
+                                </span>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <ProductGrid 
-                        products={filteredProducts} 
-                        onProductClick={setSelectedProductId} 
-                      />
-                      <BottomSection onRegisterClick={() => setShowSignup(true)} />
-                    </>
-                  )}
-                </div>
-              </main>
+                        <ProductGrid 
+                          products={filteredProducts} 
+                          onProductClick={setSelectedProductId} 
+                        />
+                        <BottomSection onRegisterClick={() => setShowSignup(true)} />
+                      </>
+                    )}
+                  </div>
+                </main>
+              )}
             </>
           )}
         </div>
         
         <Cart />
+        <SaasModal isOpen={isSaasModalOpen} onClose={() => setIsSaasModalOpen(false)} />
       </div>
     </CartProvider>
   );
