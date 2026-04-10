@@ -43,7 +43,7 @@ import {
   Link as LinkIcon,
   Pencil
 } from "lucide-react";
-import Papa from "papaparse";
+import { parseCsvFile, unparseCsv } from "@/lib/csv";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 import {
@@ -309,7 +309,7 @@ export default function BulkEmailPage() {
 
   const downloadFailureReport = () => {
     if (failedLeads.length === 0) return;
-    const csv = Papa.unparse(failedLeads);
+    const csv = unparseCsv(failedLeads);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
@@ -334,90 +334,82 @@ export default function BulkEmailPage() {
     toast.info("Failed leads re-loaded for correction.");
   };
 
-  const handleCsvUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCsvUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setCsvFile(file);
 
-    Papa.parse(file, {
-      header: false, // Parse all rows as data first to detect headers manually
-      skipEmptyLines: "greedy",
-      dynamicTyping: true,
-      complete: (results) => {
-        const data = (results.data || []) as any[][];
-        if (data.length === 0) {
-          toast.error("CSV file is empty");
-          return;
-        }
+    try {
+      const results = await parseCsvFile<any[]>(file, {
+        header: false,
+        skipEmptyLines: "greedy",
+        dynamicTyping: true
+      });
 
-        let startIdx = 0;
-        let headers: string[] = [];
-
-        // Improved Header Detection
-        // If the first row looks like it contains an email, it's likely data, not a header row.
-        const firstRow = data[0] || [];
-        const hasEmailInFirstRow = firstRow.some(cell => validateEmail(String(cell || "")));
-
-        // Check for common header terms
-        const headerKeywords = ['email', 'mail', 'name', 'first', 'last', 'company', 'org', 'linkedin', 'url'];
-        const hasKeywordsInFirstRow = firstRow.some(cell =>
-          typeof cell === 'string' && headerKeywords.some(k => cell.toLowerCase().includes(k))
-        );
-
-        if (hasKeywordsInFirstRow && !hasEmailInFirstRow) {
-          // It's a header row
-          headers = firstRow.map(h => String(h || "").trim());
-          startIdx = 1;
-        } else {
-          // No header row, or first row is already data
-          headers = firstRow.map((_, i) => `Column ${i + 1}`);
-          startIdx = 0;
-        }
-
-        const rowsToProcess = data.slice(startIdx);
-        // Map to objects using headers as keys
-        const normalizedData = rowsToProcess.map(row => {
-          const obj: any = {};
-          headers.forEach((h, i) => {
-            obj[h] = row[i];
-          });
-          return obj;
-        });
-
-        setAvailableHeaders(headers);
-        setRawParsedData(normalizedData);
-
-        // Auto-mapping logic
-        const mappings: Record<string, string> = {};
-        headers.forEach((h, i) => {
-          const lower = h.toLowerCase();
-          if (lower.includes('email') || lower.includes('mail')) mappings['email'] = h;
-          if (lower.includes('first') || lower.includes('name')) mappings['first_name'] = h;
-          if (lower.includes('comp') || lower.includes('org')) mappings['company'] = h;
-          if (lower.includes('link') || lower.includes('url')) mappings['linkedin_url'] = h;
-
-          // Fallback check: if column looks like email but header is generic
-          if (!mappings['email'] && firstRow[i] && validateEmail(String(firstRow[i]))) {
-            mappings['email'] = h;
-          }
-        });
-
-        const invalid = new Set<number>();
-        normalizedData.forEach((row, idx) => {
-          const emailKey = mappings['email'];
-          if (!emailKey || !validateEmail(String(row[emailKey] || ""))) {
-            invalid.add(idx);
-          }
-        });
-
-        setMappedHeaders(mappings);
-        setInvalidRows(invalid);
-        toast.info(`Successfully loaded ${normalizedData.length} records. Please verify mappings.`);
-      },
-      error: (error) => {
-        toast.error("Failed to parse CSV file: " + error);
+      const data = (results.data || []) as any[][];
+      if (data.length === 0) {
+        toast.error("CSV file is empty");
+        return;
       }
-    });
+
+      let startIdx = 0;
+      let headers: string[] = [];
+
+      const firstRow = data[0] || [];
+      const hasEmailInFirstRow = firstRow.some(cell => validateEmail(String(cell || "")));
+
+      const headerKeywords = ['email', 'mail', 'name', 'first', 'last', 'company', 'org', 'linkedin', 'url'];
+      const hasKeywordsInFirstRow = firstRow.some(cell =>
+        typeof cell === 'string' && headerKeywords.some(k => cell.toLowerCase().includes(k))
+      );
+
+      if (hasKeywordsInFirstRow && !hasEmailInFirstRow) {
+        headers = firstRow.map(h => String(h || "").trim());
+        startIdx = 1;
+      } else {
+        headers = firstRow.map((_, i) => `Column ${i + 1}`);
+        startIdx = 0;
+      }
+
+      const rowsToProcess = data.slice(startIdx);
+      const normalizedData = rowsToProcess.map(row => {
+        const obj: any = {};
+        headers.forEach((h, i) => {
+          obj[h] = row[i];
+        });
+        return obj;
+      });
+
+      setAvailableHeaders(headers);
+      setRawParsedData(normalizedData);
+
+      const mappings: Record<string, string> = {};
+      headers.forEach((h, i) => {
+        const lower = h.toLowerCase();
+        if (lower.includes('email') || lower.includes('mail')) mappings['email'] = h;
+        if (lower.includes('first') || lower.includes('name')) mappings['first_name'] = h;
+        if (lower.includes('comp') || lower.includes('org')) mappings['company'] = h;
+        if (lower.includes('link') || lower.includes('url')) mappings['linkedin_url'] = h;
+
+        if (!mappings['email'] && firstRow[i] && validateEmail(String(firstRow[i]))) {
+          mappings['email'] = h;
+        }
+      });
+
+      const invalid = new Set<number>();
+      normalizedData.forEach((row, idx) => {
+        const emailKey = mappings['email'];
+        if (!emailKey || !validateEmail(String(row[emailKey] || ""))) {
+          invalid.add(idx);
+        }
+      });
+
+      setMappedHeaders(mappings);
+      setInvalidRows(invalid);
+      toast.info(`Successfully loaded ${normalizedData.length} records. Please verify mappings.`);
+    } catch (error: any) {
+      toast.error("Failed to parse CSV file: " + (error?.message || "Unknown error"));
+    }
   };
 
   const applyImport = () => {

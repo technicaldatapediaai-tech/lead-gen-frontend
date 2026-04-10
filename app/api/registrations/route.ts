@@ -1,14 +1,9 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { listRegistrations } from '@/lib/community-store';
 
 export async function GET() {
   try {
-    const registrations = await prisma.registration.findMany({
-      orderBy: {
-        timestamp: 'desc',
-      },
-    });
-
+    const registrations = await listRegistrations();
     return NextResponse.json(registrations);
   } catch (err) {
     console.error('Error fetching registrations:', err);
