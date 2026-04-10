@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { TrendingUp, Users, Shield, Zap, Activity } from "lucide-react";
+
 
 interface EnterpriseVerticalsProps {
   mode?: "logistics" | "insurance";

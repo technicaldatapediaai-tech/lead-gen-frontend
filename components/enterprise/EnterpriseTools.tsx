@@ -1,12 +1,9 @@
 import {
   FileText,
   GitFork,
-  Globe,
   Layers,
-  Gauge,
   ShieldCheck,
   Search,
-  Lock,
   Activity,
   MapPin,
   BarChart3,

@@ -4,22 +4,13 @@ import React from "react";
 import Image from "next/image";
 import { 
   Shield, 
-  BarChart3, 
   Users, 
-  Clock, 
   ArrowRight, 
-  CheckCircle2, 
   Plus, 
   Search,
-  Layout,
   FileText,
-  Activity,
   Calendar,
-  Lock,
-  Globe,
-  Bell,
-  Map,
-  Link2
+  Bell
 } from "lucide-react";
 
 export default function InsuranceVisualPlatform() {
@@ -530,7 +521,15 @@ function LeadRow({ name, company, score, status }: { name: string, company: stri
   );
 }
 
-function PipelineColumn({ title, count, items }: { title: string, count: number, items: any[] }) {
+interface PipelineItem {
+  name: string;
+  value: string;
+  priority?: string;
+  date?: string;
+  isFeatured?: boolean;
+}
+
+function PipelineColumn({ title, count, items }: { title: string, count: number, items: PipelineItem[] }) {
   return (
     <div className="flex-1">
       <div className="flex justify-between items-center mb-8 pb-4 border-b-2 border-slate-200">
@@ -572,13 +571,4 @@ function TaskItem({ time, title, color }: { time: string, title: string, color: 
   );
 }
 
-function FeatureItem({ text }: { text: string }) {
-  return (
-    <div className="flex items-center gap-4 group">
-      <div className="w-7 h-7 rounded-sm bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all">
-        <CheckCircle2 className="w-4 h-4" />
-      </div>
-      <span className="text-slate-700 font-black uppercase text-[10px] tracking-widest group-hover:translate-x-1 transition-transform">{text}</span>
-    </div>
-  );
-}
+
