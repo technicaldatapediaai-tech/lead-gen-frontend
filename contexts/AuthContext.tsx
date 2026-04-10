@@ -56,6 +56,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     useEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         fetchUser();
     }, [fetchUser]);
 

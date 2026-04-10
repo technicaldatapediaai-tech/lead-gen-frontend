@@ -11,6 +11,12 @@ interface ApiError {
     status: number;
 }
 
+interface FastApiValidationError {
+    loc: (string | number)[];
+    msg: string;
+    type: string;
+}
+
 interface ApiResponse<T> {
     data?: T;
     error?: ApiError;
@@ -179,9 +185,11 @@ export async function apiRequest<T>(
             let errorDetail = `HTTP Error ${response.status}`;
             try {
                 const errorData = await response.json();
-                errorDetail = errorData.detail || errorDetail;
-                if (Array.isArray(errorDetail)) {
-                    errorDetail = (errorDetail as any[]).map((err: any) => `${err.loc.join('.')}: ${err.msg}`).join(', ');
+                const detail = errorData.detail || errorDetail;
+                if (Array.isArray(detail)) {
+                    errorDetail = (detail as FastApiValidationError[]).map((err) => `${err.loc.join('.')}: ${err.msg}`).join(', ');
+                } else {
+                    errorDetail = detail;
                 }
             } catch (jsonError) {
                 // Not JSON
