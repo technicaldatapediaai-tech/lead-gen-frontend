@@ -25,7 +25,7 @@ export default function InsuranceVisualPlatform() {
             <div className="inline-block px-3 py-1 mb-6 rounded-full bg-blue-50 border border-blue-100 text-[10px] font-bold tracking-widest text-blue-600">
               Insurance Product Walk
             </div>
-            <h1 className="text-5xl sm:text-6xl font-black leading-[1.1] mb-8 tracking-tightest">
+            <h1 className="text-5xl sm:text-6xl font-bold leading-[1.1] mb-8 tracking-tight">
               <span className="text-slate-900">The Future of Insurance</span> <br />
               <span className="text-blue-600">Intelligence Platform</span>
             </h1>
@@ -51,7 +51,7 @@ export default function InsuranceVisualPlatform() {
             <div className="inline-block px-3 py-1 mb-6 rounded-full bg-blue-50 border border-blue-100 text-[10px] font-bold tracking-widest text-blue-600">
                LEADNIUS | EXECUTIVE INTELLIGENCE
             </div>
-            <h2 className="text-4xl font-extrabold text-slate-900 mb-8 tracking-tightest">
+            <h2 className="text-4xl font-bold text-slate-900 mb-8 tracking-tight">
               Executive Analytics Dashboard
             </h2>
             <p className="text-slate-500 font-bold max-w-2xl mx-auto text-xs tracking-widest mb-10 uppercase opacity-70">
@@ -91,8 +91,8 @@ export default function InsuranceVisualPlatform() {
                </div>
             </div>
 
-            <div className="w-24 h-1.5 bg-blue-600 mx-auto rounded-full mb-6 opacity-20" />
-            <p className="text-[10px] font-black text-slate-400 tracking-[0.5em] uppercase">
+            <div className="w-16 h-1 bg-blue-600 mx-auto rounded-full mb-6 opacity-20" />
+            <p className="text-[11px] font-bold text-slate-400 tracking-wider uppercase">
               Architecture of Authority • Strategic Vision 2024
             </p>
           </div>
