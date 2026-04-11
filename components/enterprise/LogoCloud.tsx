@@ -81,7 +81,7 @@ function LogoItem({ icon, name, isDark, brandColor }: { icon: React.ReactNode, n
     }`}>
       <div className={`transition-all duration-500 group-hover:scale-110`} style={{ color: brandColor }}>
         <div className={`transition-all duration-500`}>
-          {React.cloneElement(icon as React.ReactElement, { strokeWidth: 3, size: 24 })}
+          {React.cloneElement(icon as React.ReactElement<any>, { strokeWidth: 3, size: 24 })}
         </div>
       </div>
       
