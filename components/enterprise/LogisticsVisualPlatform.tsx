@@ -182,8 +182,13 @@ export default function LogisticsVisualPlatform() {
       <section className="py-32 bg-white dark:bg-slate-900/20 border-y border-border">
         <div className="mx-auto max-w-6xl px-24">
           <div className="mb-16">
-            <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-2">Shipment Architect</h2>
-            <p className="text-slate-500 dark:text-slate-400 mb-8">Orchestrate complex logistics routes with precision.</p>
+            <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-6 tracking-tightest">Shipment Architect</h2>
+            <p className="text-slate-400 font-bold max-w-2xl text-[10px] tracking-[0.25em] opacity-80 mb-10 uppercase">
+              Orchestrate complex logistics routes with precision powered by Leadnius AI.
+            </p>
+            <p className="text-xl text-slate-500 font-medium max-w-3xl leading-relaxed mb-10">
+              Architecting global logistics with surgical precision. Our shipment engine synthesizes multi-modal transit nodes into a singular, high-fidelity route map. Navigate complex supply chains with authoritative foresight and precision-calibrated execution.
+            </p>
             
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               {[
@@ -275,9 +280,29 @@ export default function LogisticsVisualPlatform() {
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
              <div>
                <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-4">Estimate Your Shipping Cost</h2>
-               <p className="text-slate-500 dark:text-slate-400 max-w-xl underline decoration-blue-500/20">
+               <p className="text-slate-500 dark:text-slate-400 max-w-xl underline decoration-blue-500/20 mb-8">
                   Access Live Admin-Managed Rate Cards for the most accurate, up-to-date pricing across global lanes.
                </p>
+               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-2xl">
+                  <div className="flex gap-4 items-start">
+                     <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex-shrink-0 flex items-center justify-center mt-1">
+                        <Activity className="w-4 h-4 text-blue-600" />
+                     </div>
+                     <div>
+                        <h4 className="font-black text-slate-900 dark:text-white text-xs mb-1 uppercase tracking-tighter">Real-Time Market Sync</h4>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-medium">Bypass brokerage delays with direct API integration to 100+ global carriers for live market pricing.</p>
+                     </div>
+                  </div>
+                  <div className="flex gap-4 items-start">
+                     <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 flex-shrink-0 flex items-center justify-center mt-1">
+                        <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                     </div>
+                     <div>
+                        <h4 className="font-black text-slate-900 dark:text-white text-xs mb-1 uppercase tracking-tighter">Transparent Surcharges</h4>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-medium">Fuel, terminal handling, and basic duty estimates are included to eliminate the "estimate vs actual" gap.</p>
+                     </div>
+                  </div>
+               </div>
              </div>
           </div>
 
@@ -325,8 +350,11 @@ export default function LogisticsVisualPlatform() {
       <section className="py-24 bg-white dark:bg-slate-900/60 border-y border-border">
         <div className="mx-auto max-w-7xl px-24 text-center">
            <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-4 uppercase tracking-tighter">Book a Shipment in 3 Easy Steps</h2>
-           <p className="text-slate-500 dark:text-slate-400 mb-16 max-w-2xl mx-auto font-medium">
+           <p className="text-slate-500 dark:text-slate-400 mb-6 max-w-2xl mx-auto font-medium underline decoration-blue-500/20">
               Enterprise-Grade Intelligence for booking international deliveries with zero friction.
+           </p>
+           <p className="text-sm text-slate-400 max-w-3xl mx-auto mb-16 leading-relaxed">
+              Our streamlined booking architecture eliminates traditional logistics bottlenecks by synchronizing your saved addresses, package dimensions, and receiver details into a single, high-fidelity workflow. Manage global shipments with surgical precision and authoritative oversight.
            </p>
 
            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">

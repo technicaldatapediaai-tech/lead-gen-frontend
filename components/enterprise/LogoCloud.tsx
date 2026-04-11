@@ -2,7 +2,7 @@
 
 import { useTheme } from "next-themes";
 import Marquee from "./Marquee";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { 
   Zap, 
   Cpu, 
@@ -35,11 +35,21 @@ export default function LogoCloud() {
 
   return (
     <section
-      className={`py-24 transition-colors duration-300 ${isDark ? "bg-slate-950" : "bg-slate-50 border-y border-slate-200"}`}
+      className={`py-32 transition-colors duration-700 relative overflow-hidden ${
+        isDark 
+          ? "bg-slate-950" 
+          : "bg-white border-y border-slate-50"
+      }`}
     >
+      {/* Dynamic Background Glow */}
+      <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] blur-[120px] rounded-full transition-colors duration-700 pointer-events-none ${
+        isDark ? 'bg-blue-900/10' : 'bg-blue-50'
+      }`} />
       <div className="mx-auto max-w-7xl px-24">
         <h2
-          className={`text-center text-[10px] font-black uppercase tracking-[0.4em] mb-16 transition-colors ${isDark ? "text-slate-500" : "text-slate-400"}`}
+          className={`relative z-10 text-center text-xs font-bold uppercase tracking-widest mb-16 transition-colors ${
+            isDark ? "text-slate-500" : "text-slate-500"
+          }`}
         >
           Architecting for the World&apos;s Leading Teams
         </h2>
@@ -47,36 +57,35 @@ export default function LogoCloud() {
           className={`relative flex h-full w-full flex-col items-center justify-center overflow-hidden py-4`}
         >
           <Marquee pauseOnHover className="[--duration:30s]">
-            <LogoItem icon={<Cpu className="w-5 h-5" />} name="NVIDIA" isDark={isDark} />
-            <LogoItem icon={<Zap className="w-5 h-5" />} name="OPENAI" isDark={isDark} />
-            <LogoItem icon={<Triangle className="w-5 h-5 pt-1" />} name="VERCEL" isDark={isDark} />
-            <LogoItem icon={<Github className="w-5 h-5" />} name="GITHUB" isDark={isDark} />
-            <LogoItem icon={<Activity className="w-5 h-5" />} name="STRIPE" isDark={isDark} />
-            <LogoItem icon={<Lock className="w-5 h-5" />} name="AUTH0" isDark={isDark} />
-            <LogoItem icon={<Globe className="w-5 h-5" />} name="CLOUDFLARE" isDark={isDark} />
-            <LogoItem icon={<ShieldCheck className="w-5 h-5" />} name="PALANTIR" isDark={isDark} />
-            <LogoItem icon={<ZapIcon className="w-5 h-5" />} name="ZAPIER" isDark={isDark} />
+            <LogoItem icon={<Cpu className="w-5 h-5" />} name="NVIDIA" isDark={isDark} brandColor="#76B900" />
+            <LogoItem icon={<Zap className="w-5 h-5" />} name="OPENAI" isDark={isDark} brandColor="#00A67E" />
+            <LogoItem icon={<Triangle className="w-5 h-5 pt-1" />} name="VERCEL" isDark={isDark} brandColor="#000000" />
+            <LogoItem icon={<Github className="w-5 h-5" />} name="GITHUB" isDark={isDark} brandColor="#181717" />
+            <LogoItem icon={<Activity className="w-5 h-5" />} name="STRIPE" isDark={isDark} brandColor="#635BFF" />
+            <LogoItem icon={<Lock className="w-5 h-5" />} name="AUTH0" isDark={isDark} brandColor="#EB5424" />
+            <LogoItem icon={<Globe className="w-5 h-5" />} name="CLOUDFLARE" isDark={isDark} brandColor="#F38020" />
+            <LogoItem icon={<ShieldCheck className="w-5 h-5" />} name="PALANTIR" isDark={isDark} brandColor="#191919" />
+            <LogoItem icon={<ZapIcon className="w-5 h-5" />} name="ZAPIER" isDark={isDark} brandColor="#FF4A00" />
           </Marquee>
           
-          <div
-            className={`pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-linear-to-r ${isDark ? "from-slate-950" : "from-slate-50"}`}
-          ></div>
-          <div
-            className={`pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-linear-to-l ${isDark ? "from-slate-950" : "from-slate-50"}`}
-          ></div>
         </div>
       </div>
     </section>
   );
 }
 
-function LogoItem({ icon, name, isDark }: { icon: React.ReactNode, name: string, isDark: boolean }) {
+function LogoItem({ icon, name, isDark, brandColor }: { icon: React.ReactNode, name: string, isDark: boolean, brandColor: string }) {
   return (
-    <div className={`flex items-center gap-3 px-10 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-default group`}>
-      <div className={`${isDark ? 'group-hover:text-blue-400' : 'group-hover:text-blue-600'} transition-colors`}>
-        {icon}
+    <div className={`flex items-center gap-5 px-10 py-4 transition-all duration-500 cursor-pointer group relative rounded-2xl ${
+      isDark ? 'hover:bg-slate-900/50' : 'hover:bg-white hover:shadow-2xl hover:shadow-slate-200/50'
+    }`}>
+      <div className={`transition-all duration-500 group-hover:scale-110`} style={{ color: brandColor }}>
+        <div className={`transition-all duration-500`}>
+          {React.cloneElement(icon as React.ReactElement, { strokeWidth: 3, size: 24 })}
+        </div>
       </div>
-      <span className={`text-xl font-black tracking-tighter ${isDark ? 'text-white' : 'text-slate-900'} font-sans`}>
+      
+      <span className={`text-lg font-black tracking-tighter transition-all duration-500`} style={{ color: brandColor }}>
         {name}
       </span>
     </div>

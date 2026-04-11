@@ -298,30 +298,33 @@
 
 .tag-select {
     position: absolute;
-    top: 12px;
-    left: 12px;
-    background: rgba(15, 23, 42, 0.8);
-    backdrop-filter: blur(4px);
+    top: 10px;
+    left: 10px;
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
     color: var(--white);
-    font-size: 0.6rem;
-    font-weight: 800;
-    padding: 4px 8px;
-    border-radius: 4px;
-    letter-spacing: 0.05em;
+    font-size: 0.65rem;
+    font-weight: 900;
+    padding: 6px 12px;
+    border-radius: 6px;
+    letter-spacing: 0.1em;
     z-index: 10;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .tag-new {
     position: absolute;
-    top: 12px;
-    right: 12px;
-    background: var(--primary-blue);
+    top: 10px;
+    right: 10px;
+    background: #22c55e;
     color: var(--white);
     font-size: 0.65rem;
-    font-weight: 700;
-    padding: 4px 10px;
-    border-radius: 4px;
+    font-weight: 900;
+    padding: 6px 12px;
+    border-radius: 6px;
     z-index: 10;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    letter-spacing: 0.05em;
 }
 
 .card-content {

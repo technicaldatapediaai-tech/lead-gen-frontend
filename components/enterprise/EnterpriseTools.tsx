@@ -90,7 +90,7 @@ export default function EnterpriseTools({ mode = "logistics" }: EnterpriseToolsP
     <section className="py-24 bg-muted/30">
       <div className="mx-auto max-w-7xl px-24">
         <div className="text-center mb-20">
-          <h2 className="text-4xl font-extrabold text-slate-900 sm:text-5xl mb-6 tracking-tightest uppercase">
+          <h2 className="text-4xl font-extrabold text-slate-900 sm:text-5xl mb-6 tracking-tightest">
             Enterprise-Grade <br />
             <span className="text-indigo-600">{isInsurance ? "Insurance" : "Logistics"} Tools</span>
           </h2>

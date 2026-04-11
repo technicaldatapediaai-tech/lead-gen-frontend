@@ -9,7 +9,7 @@ export default function ManufacturingCTA() {
           <div className="absolute inset-0 opacity-10 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-cover" />
 
           <div className="relative z-10 max-w-4xl mx-auto">
-            <h2 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl mb-6 leading-tight">
+            <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl mb-6 leading-tight">
               Ready to accelerate your <br className="hidden sm:block" />
               manufacturing growth?
             </h2>

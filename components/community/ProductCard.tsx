@@ -23,7 +23,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick }) =>
         <div className="product-card" onClick={() => onProductClick(product.id)}>
             <div className="card-image-wrap">
                 <img src={product.image} alt={product.name} />
-                <span className="tag-select">APPSUMO | SELECT</span>
+                <span className="tag-select">LEADNIUS</span>
                 {product.isNew && <span className="tag-new">New!</span>}
             </div>
             <div className="card-content">

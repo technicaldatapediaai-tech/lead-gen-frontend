@@ -83,7 +83,7 @@ export default function EnterpriseVerticals({ mode = "logistics" }: EnterpriseVe
                 <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">
                   {content.val1}
                 </div>
-                <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                <div className="text-[10px] font-bold text-muted-foreground tracking-widest">
                   {content.stat1}
                 </div>
               </div>
@@ -91,7 +91,7 @@ export default function EnterpriseVerticals({ mode = "logistics" }: EnterpriseVe
                 <div className="text-2xl font-bold text-purple-600 dark:text-purple-400 mb-1">
                   {content.val2}
                 </div>
-                <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                <div className="text-[10px] font-bold text-muted-foreground tracking-widest">
                   {content.stat2}
                 </div>
               </div>
@@ -125,18 +125,29 @@ function VerticalCard({
   desc: string;
 }) {
   return (
-    <div className="group w-full max-w-[480px] rounded-3xl overflow-hidden border border-border bg-card shadow-sm hover:shadow-xl transition-all duration-300">
-      <div className="h-56 relative overflow-hidden bg-muted/20">
+    <div className="group w-full max-w-[480px] rounded-[2rem] overflow-hidden border border-slate-200 bg-white shadow-sm hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 hover:-translate-y-1">
+      <div className="h-64 relative overflow-hidden bg-slate-100">
         <Image
           src={imageSrc}
           alt={title}
           fill
-          className="object-cover transition-transform duration-500 group-hover:scale-110"
+          className="object-cover transition-transform duration-700 group-hover:scale-110"
         />
+        
+        {/* Branding Mask & Enterprise Badge */}
+        <div className="absolute top-4 left-4 z-20">
+          <div className="bg-slate-900/90 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/20 shadow-2xl flex items-center gap-2 scale-90 origin-top-left group-hover:scale-100 transition-transform duration-500">
+            <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+            <span className="text-[10px] font-black text-white tracking-[0.2em]">Leadnius</span>
+          </div>
+        </div>
+
+        {/* Subtle Gradient Overlay */}
+        <div className="absolute inset-0 bg-linear-to-t from-slate-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       </div>
       <div className="p-10">
-        <h3 className="text-2xl font-bold text-foreground mb-4">{title}</h3>
-        <p className="text-lg text-muted-foreground leading-relaxed">
+        <h3 className="text-2xl font-black text-slate-900 mb-4 tracking-tight">{title}</h3>
+        <p className="text-base text-slate-500 leading-relaxed font-medium">
           {desc}
         </p>
       </div>

@@ -9,20 +9,19 @@ export default function EnterpriseCTA({ mode = "logistics" }: EnterpriseCTAProps
   const isInsurance = mode === "insurance";
 
   return (
-    <section className="py-24 bg-background">
+    <section className="py-12 bg-background">
       <div className="mx-auto max-w-6xl px-24">
-        <div className="relative overflow-hidden rounded-[3rem] bg-linear-to-br from-blue-600 to-purple-600 px-24 py-24 text-center shadow-2xl sm:px-24 lg:px-24">
+        <div className="relative overflow-hidden rounded-[3rem] bg-linear-to-br from-blue-600 to-purple-600 px-24 py-12 text-center shadow-2xl sm:px-24 lg:px-24">
           {/* Background decoration */}
           <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
 
-          <h2 className="relative mx-auto max-w-3xl text-4xl font-extrabold tracking-tight text-white sm:text-5xl mb-6">
-            Ready to scale <br />
-            {isInsurance ? "insurance revenue?" : "logistics sales?"}
+          <h2 className="relative mx-auto max-w-3xl text-4xl font-bold tracking-normal leading-snug text-white sm:text-5xl mb-4">
+            Ready to scale {isInsurance ? "insurance revenue" : "logistics sales"} <br className="hidden sm:block" /> with Leadnius?
           </h2>
 
-          <p className="relative mx-auto max-w-2xl text-lg text-blue-100 mb-10">
-            Join 500+ global {isInsurance ? "insurance firms" : "logistics enterprises"} using LeadGenius to dominate
+          <p className="relative mx-auto max-w-2xl text-lg text-blue-100 mb-8 font-medium">
+            Join 500+ global {isInsurance ? "insurance firms" : "logistics enterprises"} using the Leadnius intelligence layer to dominate
             their {isInsurance ? "risk markets." : "market lanes."}
           </p>
 
