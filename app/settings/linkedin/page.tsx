@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 import Header from "@/components/Header";
-import Papa from "papaparse";
+import { parseCsvFile } from "@/lib/csv";
 
 interface LinkedInCredential {
     id: string;
@@ -180,48 +180,42 @@ export default function LinkedInSettingsPage() {
         }
     };
 
-    const handleBulkUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleBulkUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (!file) return;
 
         setIsBulkUploading(true);
-        Papa.parse(file, {
-            header: true,
-            skipEmptyLines: true,
-            complete: async (results) => {
-                const accounts = results.data.map((row: any) => ({
-                    linkedin_email: row.email || row.Email || row.linkedin_email,
-                    linkedin_password: row.password || row.Password || row.linkedin_password,
-                    profile_name: row.name || row.Name || row.full_name,
-                    credential_type: "organization"
-                })).filter(acc => acc.linkedin_email && acc.linkedin_password);
+        try {
+            const results = await parseCsvFile<Record<string, any>>(file, {
+                header: true,
+                skipEmptyLines: true
+            });
 
-                if (accounts.length === 0) {
-                    toast.error("No valid accounts found in CSV. Ensure columns 'email' and 'password' exist.");
-                    setIsBulkUploading(false);
-                    return;
-                }
+            const accounts = results.data.map((row: any) => ({
+                linkedin_email: row.email || row.Email || row.linkedin_email,
+                linkedin_password: row.password || row.Password || row.linkedin_password,
+                profile_name: row.name || row.Name || row.full_name,
+                credential_type: "organization"
+            })).filter(acc => acc.linkedin_email && acc.linkedin_password);
 
-                try {
-                    const res = await api.post<{ created: number }>("/api/linkedin/bulk-connect", { accounts });
-                    if (!res.error && res.data) {
-                        toast.success(`Successfully uploaded ${res.data.created} employee accounts`);
-                        await fetchLinkedInStatus();
-                    } else {
-                        toast.error(res.error?.detail || "Bulk upload failed");
-                    }
-                } catch (error) {
-                    console.error("Bulk upload error:", error);
-                    toast.error("Failed to process bulk upload");
-                } finally {
-                    setIsBulkUploading(false);
-                }
-            },
-            error: (error) => {
-                toast.error("Error parsing CSV: " + error.message);
-                setIsBulkUploading(false);
+            if (accounts.length === 0) {
+                toast.error("No valid accounts found in CSV. Ensure columns 'email' and 'password' exist.");
+                return;
             }
-        });
+
+            const res = await api.post<{ created: number }>("/api/linkedin/bulk-connect", { accounts });
+            if (!res.error && res.data) {
+                toast.success(`Successfully uploaded ${res.data.created} employee accounts`);
+                await fetchLinkedInStatus();
+            } else {
+                toast.error(res.error?.detail || "Bulk upload failed");
+            }
+        } catch (error: any) {
+            console.error("Bulk upload error:", error);
+            toast.error("Error parsing CSV: " + (error?.message || "Unknown error"));
+        } finally {
+            setIsBulkUploading(false);
+        }
     };
 
     const openCredentialModal = (type: "personal" | "organization") => {

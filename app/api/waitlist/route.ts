@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { listWaitlist, upsertWaitlist } from '@/lib/community-store';
 
 export async function POST(req: Request) {
   try {
@@ -9,14 +9,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
-    // Save to the Waitlist table
-    const entry = await prisma.waitlist.upsert({
-      where: { email },
-      update: {}, // Don't do anything if they already signed up
-      create: { 
-        email 
-      }
-    });
+    const entry = await upsertWaitlist(email);
 
     console.log('Waitlist entry saved:', entry);
     return NextResponse.json({ message: 'Successfully joined the waitlist', entry }, { status: 201 });
@@ -28,12 +21,7 @@ export async function POST(req: Request) {
 
 export async function GET() {
   try {
-    const entries = await prisma.waitlist.findMany({
-      orderBy: {
-        timestamp: 'desc',
-      },
-    });
-
+    const entries = await listWaitlist();
     return NextResponse.json(entries);
   } catch (err) {
     console.error('Error fetching waitlist:', err);
