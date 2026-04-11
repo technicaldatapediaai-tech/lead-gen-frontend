@@ -25,7 +25,7 @@ export default function InsuranceVisualPlatform() {
             <div className="inline-block px-3 py-1 mb-6 rounded-full bg-indigo-50 border border-indigo-100 text-[10px] font-bold tracking-widest text-indigo-600 uppercase">
               Insurance Product Walk
             </div>
-            <h1 className="text-5xl font-black tracking-tight text-slate-900 sm:text-6xl mb-8 leading-[1.1] italic uppercase">
+            <h1 className="text-5xl font-extrabold tracking-tightest text-slate-900 sm:text-7xl mb-8 leading-[1.05] uppercase">
               The Future of <br />
               <span className="text-indigo-600">Insurance <br /> Intelligence</span>
             </h1>
@@ -60,8 +60,8 @@ export default function InsuranceVisualPlatform() {
       <section className="py-32 bg-slate-50 border-y border-slate-200">
         <div className="mx-auto max-w-6xl px-24">
           <div className="mb-16">
-            <h2 className="text-4xl font-black text-slate-900 mb-3 uppercase tracking-tighter italic">Executive Analytics Dashboard</h2>
-            <p className="text-slate-500 font-medium max-w-2xl uppercase text-[11px] tracking-widest opacity-60">Revenue forecasting and pipeline visibility powered by elite commercial intelligence.</p>
+            <h2 className="text-4xl font-extrabold text-slate-900 mb-3 uppercase tracking-tightest">Executive Analytics Dashboard</h2>
+            <p className="text-slate-400 font-bold max-w-2xl uppercase text-[10px] tracking-[0.25em] opacity-80">Revenue forecasting and pipeline visibility powered by elite commercial intelligence.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
@@ -113,7 +113,7 @@ export default function InsuranceVisualPlatform() {
 
           <div className="bg-white p-10 rounded-[2.5rem] border border-slate-200 shadow-sm relative overflow-hidden group">
             <div className="flex justify-between items-center mb-12">
-              <h3 className="font-extrabold text-slate-900 uppercase text-xs tracking-widest italic">Lead Creation Trend vs Pipeline Funnel</h3>
+              <h3 className="font-extrabold text-slate-900 uppercase text-xs tracking-widest">Lead Creation Trend vs Pipeline Funnel</h3>
               <div className="flex items-center gap-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                 <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-slate-200" /> Creation Trend</span>
                 <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-indigo-600" /> Opportunity Funnel</span>
@@ -146,7 +146,7 @@ export default function InsuranceVisualPlatform() {
             <div className="inline-block px-3 py-1 mb-6 rounded-full bg-indigo-50 border border-indigo-100 text-[10px] font-bold tracking-widest text-indigo-600 uppercase">
               Module 01: CRM Excellence
             </div>
-            <h2 className="text-4xl font-black text-slate-900 mb-8 leading-tight uppercase tracking-tighter italic">
+            <h2 className="text-4xl font-extrabold text-slate-900 mb-8 leading-tight uppercase tracking-tightest">
               Lead Intelligence <br />& Management
             </h2>
             <p className="text-lg text-slate-500 mb-10 leading-relaxed font-medium">
@@ -171,7 +171,7 @@ export default function InsuranceVisualPlatform() {
           </div>
           <div className="bg-slate-50 p-10 rounded-[3rem] border border-slate-200 shadow-xl overflow-hidden group bg-linear-to-br from-indigo-50/30 to-white">
             <div className="flex justify-between items-center mb-8">
-              <h3 className="font-extrabold text-slate-900 uppercase text-xs tracking-widest italic">Smart Table: Lead Queue</h3>
+              <h3 className="font-extrabold text-slate-900 uppercase text-xs tracking-widest">Smart Table: Lead Queue</h3>
               <div className="flex items-center gap-2">
                  <Search className="w-4 h-4 text-slate-400" />
                  <div className="text-[10px] font-bold text-slate-400 uppercase">Filters Active</div>
@@ -190,9 +190,8 @@ export default function InsuranceVisualPlatform() {
       <section className="py-32 bg-slate-50 border-y border-slate-200">
         <div className="mx-auto max-w-6xl px-24 text-center">
           <div className="mb-20">
-            <div className="text-[10px] font-bold text-indigo-600 uppercase tracking-[0.4em] mb-4 underline decoration-2 underline-offset-8 italic">Module 02: Automated Pipeline</div>
-            <h2 className="text-4xl font-black text-slate-900 mb-4 uppercase tracking-tighter">Visual Opportunity Pipeline</h2>
-            <p className="text-slate-500 font-medium max-w-2xl mx-auto uppercase text-[11px] tracking-widest opacity-60">Move leads from &apos;Initial Review&apos; to &apos;Quote Request&apos; using a visual Kanban architecture.</p>
+            <h2 className="text-4xl font-extrabold text-slate-900 mb-4 uppercase tracking-tightest">Visual Opportunity Pipeline</h2>
+            <p className="text-slate-400 font-bold max-w-2xl mx-auto uppercase text-[10px] tracking-[0.25em] opacity-80">Move leads from &apos;Initial Review&apos; to &apos;Quote Request&apos; using a visual Kanban architecture.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -249,7 +248,7 @@ export default function InsuranceVisualPlatform() {
 
             <div>
               <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6">Module 03: Entity Intelligence</div>
-              <h2 className="text-4xl font-black text-slate-900 mb-8 leading-tight uppercase tracking-tighter italic italic">360-Degree <br /> Account Insights</h2>
+              <h2 className="text-4xl font-extrabold text-slate-900 mb-8 leading-tight uppercase tracking-tightest">360-Degree <br /> Account Insights</h2>
               <p className="text-lg text-slate-500 font-medium leading-relaxed mb-10 max-w-sm">
                 Get commercial intelligence at your fingertips. From CIN and GST verification to real-time financial news alerts for every enterprise account.
               </p>
@@ -289,7 +288,7 @@ export default function InsuranceVisualPlatform() {
         <div className="mx-auto max-w-6xl px-24 grid grid-cols-1 lg:grid-cols-5 gap-16 items-start">
           <div className="lg:col-span-2">
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6">Module 04</div>
-            <h2 className="text-4xl font-black text-slate-900 mb-8 leading-tight uppercase tracking-tighter">Precision Scheduling</h2>
+            <h2 className="text-4xl font-extrabold text-slate-900 mb-8 leading-tight uppercase tracking-tightest">Precision Scheduling</h2>
             <p className="text-xl text-slate-500 leading-relaxed font-medium max-w-md">
               Never miss a renewal or a strategic review meeting with our hyper-focused task management system.
             </p>
@@ -324,8 +323,8 @@ export default function InsuranceVisualPlatform() {
       <section className="py-32 bg-white text-slate-900 relative overflow-hidden border-t border-slate-100">
         <div className="mx-auto max-w-6xl px-24 grid grid-cols-1 lg:grid-cols-2 gap-24 items-center relative">
           <div>
-            <div className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mb-8 underline decoration-indigo-600 decoration-2 underline-offset-8 italic">Module 05: Service Center</div>
-            <h2 className="text-4xl font-black mb-8 leading-tight tracking-tighter uppercase italic">Client Support & <br />Case Management</h2>
+            <div className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mb-8 underline decoration-indigo-600 decoration-2 underline-offset-8">Module 05: Service Center</div>
+            <h2 className="text-4xl font-extrabold mb-8 leading-tight tracking-tightest uppercase">Client Support & <br />Case Management</h2>
             <p className="text-lg text-slate-500 mb-12 leading-relaxed font-medium">
               Ensure long-term satisfaction with our integrated ticketing system. Manage policy renewals, claim updates, and technical inquiries in one central hub.
             </p>
@@ -373,23 +372,28 @@ export default function InsuranceVisualPlatform() {
       </section>
 
       {/* 7. CTA Section */}
-      <section className="py-32 bg-indigo-600 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <div className="mx-auto max-w-4xl px-24 text-center relative z-10">
-          <h2 className="text-4xl font-black text-white mb-8 leading-tight tracking-tighter uppercase italic">
-            Ready to Build the Future <br /> of Your Elite Portal?
-          </h2>
-          <p className="text-xl text-indigo-100 mb-12 font-medium">
-            Join the world&apos;s leading insurance firms in creating a more structural, intelligent, and authoritative workspace.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
-            <button className="h-14 px-12 rounded-2xl bg-white text-indigo-600 font-black text-lg transition-all hover:scale-105 shadow-2xl hover:shadow-white/20 uppercase tracking-widest">
-              Request a Demo
-            </button>
-            <button className="h-14 px-12 rounded-2xl bg-indigo-700 text-white font-black text-lg border border-indigo-400 transition-all hover:bg-indigo-800 hover:border-white/20 uppercase tracking-widest">
-              Contact Sales
-            </button>
+      <section className="py-20 bg-white">
+        <div className="mx-auto max-w-6xl px-24">
+          <div className="relative overflow-hidden bg-indigo-600 rounded-[4rem] py-20 px-12 text-center group">
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
+            <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            
+            <div className="max-w-2xl mx-auto relative z-10">
+              <h2 className="text-3xl font-extrabold text-white mb-6 leading-tight tracking-tightest uppercase">
+                Ready to Build the Future <br /> of Your Elite Portal?
+              </h2>
+              <p className="text-base text-indigo-100 mb-10 font-medium opacity-90">
+                Join the world&apos;s leading insurance firms in creating a more structural, intelligent, and authoritative workspace.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <button className="h-12 px-10 rounded-2xl bg-white text-indigo-600 font-black text-xs transition-all hover:scale-105 shadow-2xl hover:shadow-white/20 uppercase tracking-widest leading-none">
+                  Request a Demo
+                </button>
+                <button className="h-12 px-10 rounded-2xl bg-indigo-700 text-white font-black text-xs border border-indigo-400/50 transition-all hover:bg-indigo-800 hover:border-white/20 uppercase tracking-widest leading-none">
+                  Contact Sales
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -400,8 +404,8 @@ export default function InsuranceVisualPlatform() {
 
 function KPICard({ title, value, change, isGood = true }: { title: string, value: string, change: string, isGood?: boolean }) {
   return (
-    <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm transition-all hover:-translate-y-2 hover:shadow-xl group">
-      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6 border-b border-slate-50 pb-2 group-hover:text-indigo-600 transition-colors tracking-widest leading-none">{title}</div>
+    <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40 transition-all hover:-translate-y-2 hover:shadow-2xl group">
+      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6 border-b border-slate-50 pb-2 group-hover:text-indigo-600 transition-colors tracking-[0.2em] leading-none">{title}</div>
       <div className="text-4xl font-black text-slate-900 mb-3 tracking-tighter">{value}</div>
       <div className={`text-[10px] font-black uppercase tracking-tighter px-3 py-1 rounded-full inline-block ${isGood ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'bg-blue-50 text-blue-600 shadow-sm'}`}>{change}</div>
     </div>
@@ -549,7 +553,7 @@ function PipelineColumn({ title, count, items }: { title: string, count: number,
             <div className="text-sm font-black text-slate-900 mb-6 uppercase tracking-tight leading-tight">{item.name}</div>
             <div className="text-[10px] text-slate-400 mb-4 font-bold uppercase tracking-widest">{item.date}</div>
             <div className="flex justify-between items-center pt-4 border-t border-slate-50">
-              <span className="text-indigo-600 font-black text-xs tracking-widest italic">EST. PREMIUM: {item.value}</span>
+              <span className="text-indigo-600 font-black text-xs tracking-widest">EST. PREMIUM: {item.value}</span>
               <ArrowRight className="w-4 h-4 text-slate-200" />
             </div>
           </div>

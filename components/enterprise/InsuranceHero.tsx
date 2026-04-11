@@ -5,7 +5,7 @@ import { ArrowRight, ShieldCheck, UserCheck } from "lucide-react";
 export default function InsuranceHero() {
   return (
     <section className="relative pt-32 pb-20 overflow-hidden bg-background">
-      <div className="mx-auto max-w-7xl px-24">
+      <div className="mx-auto max-w-7xl px-32">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left Column: Text Content */}
           <div className="max-w-2xl">
@@ -17,10 +17,10 @@ export default function InsuranceHero() {
             </div>
 
             {/* Headline */}
-            <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl mb-6 leading-tight uppercase">
-              Revenue <span className="text-indigo-600">Forecasting</span> <br />
-              Commercial <span className="text-blue-600">Intelligence</span> <br />
-              Automated <span className="text-indigo-600">Workflow</span>
+            <h1 className="text-4xl font-extrabold tracking-tighter text-slate-900 sm:text-5xl lg:text-7xl mb-8 leading-[1.05] uppercase max-w-3xl">
+              Revenue <span className="text-indigo-600">Forecasting</span> & <br />
+              Commercial Intelligence <br />
+              <span className="text-slate-400">Automated Workflow</span>
             </h1>
 
             {/* Subtitle */}
@@ -29,10 +29,10 @@ export default function InsuranceHero() {
             </p>
 
             {/* CTAs */}
-            <div className="flex flex-col sm:flex-row items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center gap-5">
               <Link
                 href="/demo"
-                className="h-12 px-8 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-0.5"
+                className="h-14 px-10 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-xl shadow-indigo-500/20 hover:-translate-y-1"
               >
                 Request a Demo
                 <ArrowRight className="w-4 h-4" />
@@ -40,7 +40,7 @@ export default function InsuranceHero() {
 
               <Link
                 href="#features"
-                className="h-12 px-8 rounded-lg border border-border bg-card hover:bg-muted/50 text-foreground text-sm font-semibold transition-all flex items-center justify-center hover:border-blue-200 dark:hover:border-blue-800"
+                className="h-14 px-10 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center hover:-translate-y-1"
               >
                 View Features
               </Link>
@@ -63,28 +63,28 @@ export default function InsuranceHero() {
             </div>
 
             {/* Floating Elements mimicking the design */}
-            <div className="absolute -top-6 -right-6 z-20 hidden md:flex items-center gap-3 bg-white dark:bg-slate-900 shadow-xl border border-border px-4 py-2 rounded-xl animate-bounce-slow">
-              <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                <ShieldCheck className="w-5 h-5 text-blue-600" />
+            <div className="absolute -top-6 -right-6 z-20 hidden md:flex items-center gap-4 bg-white/90 backdrop-blur-md shadow-2xl border border-white/20 p-5 rounded-[2rem] animate-bounce-slow">
+              <div className="p-3 bg-indigo-50 rounded-2xl">
+                <ShieldCheck className="w-6 h-6 text-indigo-600" />
               </div>
               <div>
-                <div className="text-[10px] text-muted-foreground font-semibold">
+                <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-none mb-1.5">
                   Risk Assessment
                 </div>
-                <div className="text-lg font-bold text-foreground">A+ Rated</div>
+                <div className="text-xl font-black text-slate-900 leading-none">A+ Rated</div>
               </div>
             </div>
 
-            <div className="absolute -bottom-6 -left-6 z-20 hidden md:flex items-center gap-3 bg-white dark:bg-slate-900 shadow-xl border border-border px-4 py-3 rounded-xl">
-              <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                <UserCheck className="w-5 h-5 text-blue-600" />
+            <div className="absolute -bottom-8 -left-8 z-20 hidden md:flex items-center gap-4 bg-white/90 backdrop-blur-md shadow-2xl border border-white/20 p-5 rounded-[2rem]">
+              <div className="p-3 bg-blue-50 rounded-2xl">
+                <UserCheck className="w-6 h-6 text-blue-600" />
               </div>
               <div>
-                <div className="text-sm font-bold text-foreground">
+                <div className="text-base font-black text-slate-900 leading-none mb-1.5">
                   Renewal Alert
                 </div>
-                <div className="text-[10px] text-muted-foreground">
-                  Commercial Liability Policy • 15 Days Left
+                <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-none">
+                  Commercial Liability • 15 Days Left
                 </div>
               </div>
             </div>

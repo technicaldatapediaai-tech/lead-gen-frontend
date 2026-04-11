@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 
 export default function EnterpriseHero() {
   return (
-    <section className="relative px-24 pt-32 pb-20 overflow-hidden bg-background">
+    <section className="relative px-32 pt-32 pb-20 overflow-hidden bg-background">
       {/* Optional Gradient Background Effect (subtle) */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-blue-500/5 rounded-full blur-[100px] -z-10" />
 

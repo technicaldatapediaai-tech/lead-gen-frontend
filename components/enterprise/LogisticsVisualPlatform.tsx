@@ -94,8 +94,11 @@ export default function LogisticsVisualPlatform() {
         <div className="mx-auto max-w-7xl px-24">
           <div className="text-center mb-16">
              <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-4">Real-Time Shipment Tracking</h2>
-             <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto italic">
+             <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-6">
                 Advanced multi-node visibility into every asset across your global network.
+             </p>
+             <p className="text-slate-400 dark:text-slate-500 text-sm max-w-xl mx-auto leading-relaxed">
+                Instantly track cargo across air, sea, and land with 10-second refreshes. Our multi-node telemetry provides detailed milestones from port arrivals to final warehouse transfers, ensuring complete transparency.
              </p>
           </div>
 
@@ -131,7 +134,7 @@ export default function LogisticsVisualPlatform() {
                   ))}
                </div>
 
-               <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-border shadow-sm italic text-slate-500 text-sm border-l-4 border-l-blue-600">
+               <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-border shadow-sm text-slate-500 text-sm border-l-4 border-l-blue-600">
                   &ldquo;Convert inbound shipping inquiries into milestone-driven success with automated visibility.&rdquo;
                </div>
             </div>
@@ -180,7 +183,21 @@ export default function LogisticsVisualPlatform() {
         <div className="mx-auto max-w-6xl px-24">
           <div className="mb-16">
             <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-2">Shipment Architect</h2>
-            <p className="text-slate-500 dark:text-slate-400">Orchestrate complex logistics routes with precision.</p>
+            <p className="text-slate-500 dark:text-slate-400 mb-8">Orchestrate complex logistics routes with precision.</p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              {[
+                { title: "Dynamic Routing", desc: "AI-optimized paths across 500+ global hubs." },
+                { title: "Capacity Intel", desc: "Real-time visibility into vessel & warehouse space." },
+                { title: "Auto-Compliance", desc: "Instant documentation for frictionless transit." },
+                { title: "Predictive ETAs", desc: "High-precision forecasting for every milestone." }
+              ].map((item, i) => (
+                <div key={i} className="flex flex-col gap-1 pr-6 border-r border-slate-100 last:border-0">
+                  <span className="text-xs font-black text-blue-600 uppercase tracking-tighter">{item.title}</span>
+                  <span className="text-[10px] text-slate-400 font-medium leading-tight">{item.desc}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -191,7 +208,7 @@ export default function LogisticsVisualPlatform() {
                         <MapPin className="w-3 h-3" /> Route Origin Details
                      </label>
                      <div className="bg-white dark:bg-slate-950 border border-border p-4 rounded-xl flex items-center justify-between">
-                        <span className="text-sm font-bold text-slate-900 dark:text-white italic">Port of Shanghai, CN</span>
+                        <span className="text-sm font-bold text-slate-900 dark:text-white">Port of Shanghai, CN</span>
                         <ChevronRight className="w-4 h-4 text-slate-300" />
                      </div>
                   </div>
@@ -209,6 +226,19 @@ export default function LogisticsVisualPlatform() {
                      <div className="w-3 h-3 bg-blue-600 rounded-sm" />
                   </div>
                   <span className="text-sm font-bold">Package ID: Commercial S</span>
+               </div>
+
+               <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6 pt-8 border-t border-slate-200 dark:border-slate-800">
+                  {[
+                    { title: "Universal Carrier", desc: "100+ Integrated Lines" },
+                    { title: "Milestone Sync", desc: "Real-time Node Updates" },
+                    { title: "Risk Mitigation", desc: "Intelligent Rerouting" }
+                  ].map((p, i) => (
+                    <div key={i} className="flex flex-col gap-1">
+                      <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{p.title}</div>
+                      <div className="text-xs font-bold text-slate-700 dark:text-slate-300">{p.desc}</div>
+                    </div>
+                  ))}
                </div>
             </div>
 
@@ -244,7 +274,7 @@ export default function LogisticsVisualPlatform() {
         <div className="mx-auto max-w-7xl px-24">
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
              <div>
-               <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-4 italic">Estimate Your Shipping Cost</h2>
+               <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-4">Estimate Your Shipping Cost</h2>
                <p className="text-slate-500 dark:text-slate-400 max-w-xl underline decoration-blue-500/20">
                   Access Live Admin-Managed Rate Cards for the most accurate, up-to-date pricing across global lanes.
                </p>
@@ -295,7 +325,7 @@ export default function LogisticsVisualPlatform() {
       <section className="py-24 bg-white dark:bg-slate-900/60 border-y border-border">
         <div className="mx-auto max-w-7xl px-24 text-center">
            <h2 className="text-4xl font-black text-slate-900 dark:text-white mb-4 uppercase tracking-tighter">Book a Shipment in 3 Easy Steps</h2>
-           <p className="text-slate-500 dark:text-slate-400 mb-16 max-w-2xl mx-auto italic font-medium">
+           <p className="text-slate-500 dark:text-slate-400 mb-16 max-w-2xl mx-auto font-medium">
               Enterprise-Grade Intelligence for booking international deliveries with zero friction.
            </p>
 
@@ -338,12 +368,12 @@ export default function LogisticsVisualPlatform() {
         <div className="mx-auto max-w-7xl px-24 relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-full border border-blue-100 text-[10px] font-black uppercase tracking-widest text-blue-600 mb-8 italic">Automated Compliance</div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-full border border-blue-100 text-[10px] font-black uppercase tracking-widest text-blue-600 mb-8">Automated Compliance</div>
               <h2 className="text-5xl font-black leading-[1.1] mb-8 text-slate-900">
                 Smart Compliance & <br />
-                <span className="text-blue-600 italic uppercase">Documentation</span>
+                <span className="text-blue-600 uppercase">Documentation</span>
               </h2>
-              <p className="text-slate-500 text-lg mb-12 max-w-lg leading-relaxed italic">
+              <p className="text-slate-500 text-lg mb-12 max-w-lg leading-relaxed">
                  Safe, approved, and compliant international shipping. Our system handles AWB generation, tax declarations, and admin approvals automatically.
               </p>
               
@@ -448,7 +478,7 @@ function QuoteItem({ type, carrier, price, time, color = "blue" }: { type: strin
     <div className={`p-8 rounded-[24px] border ${isPrimary ? 'bg-slate-900 border-white/5 text-white' : 'bg-white dark:bg-slate-900 border-border'} flex flex-col justify-between shadow-sm`}>
        <div className="flex justify-between items-start mb-6">
           <div className="space-y-1">
-             <div className={`text-[9px] font-black tracking-widest uppercase ${isPrimary ? 'text-orange-400' : 'text-blue-600 font-black italic underline'}`}>{type}</div>
+             <div className={`text-[9px] font-black tracking-widest uppercase ${isPrimary ? 'text-orange-400' : 'text-blue-600 font-black underline'}`}>{type}</div>
              <div className="font-bold text-base">{carrier}</div>
           </div>
           {isPrimary && <Zap className="w-5 h-5 text-orange-400" fill="currentColor" />}
@@ -479,7 +509,7 @@ function TableRow({ id, origin, dest, status, color = "blue" }: { id: string; or
          <div className="text-[10px] text-slate-400 uppercase tracking-widest">{dest}</div>
       </td>
       <td className="px-8 py-6">
-         <div className="text-sm font-black italic text-slate-400">04 DEC 2026</div>
+         <div className="text-sm font-black text-slate-400">04 DEC 2026</div>
       </td>
       <td className="px-8 py-6">
          <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm ${colorClass[color]}`}>

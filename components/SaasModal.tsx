@@ -76,7 +76,7 @@ export function SaasModal({ isOpen, onClose }: SaasModalProps) {
           </div>
 
           <DialogHeader className="text-left w-full space-y-3">
-            <DialogTitle className="text-[28px] sm:text-[32px] font-[900] tracking-tight leading-[1.1] text-slate-900 dark:text-white italic">
+            <DialogTitle className="text-[28px] sm:text-[32px] font-[900] tracking-tight leading-[1.1] text-slate-900 dark:text-white">
               Your SaaS Journey <br /> Starts Here
             </DialogTitle>
             <DialogDescription className="text-[15px] leading-relaxed text-slate-500 dark:text-slate-400 max-w-[300px]">

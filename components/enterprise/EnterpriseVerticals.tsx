@@ -1,6 +1,5 @@
 import Image from "next/image";
 
-
 interface EnterpriseVerticalsProps {
   mode?: "logistics" | "insurance";
 }
@@ -65,57 +64,51 @@ export default function EnterpriseVerticals({ mode = "logistics" }: EnterpriseVe
   ];
 
   return (
-    <section className="py-32 bg-background border-t border-border">
-      <div className="mx-auto max-w-6xl px-24 font-sans">
-        
-        {/* Centered Header Section */}
-        <div className="max-w-4xl mx-auto text-center mb-24">
-          <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full bg-blue-50 border border-blue-100 dark:bg-blue-900/20 dark:border-blue-800">
-            <div className="w-1.5 h-1.5 rounded-full bg-blue-600" />
-            <span className="text-[10px] font-bold tracking-widest text-blue-600 uppercase dark:text-blue-400">
-              {content.subtitle}
-            </span>
-          </div>
+    <section className="py-24 bg-background">
+      <div className="mx-auto max-w-6xl px-24">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
           
-          <h2 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl mb-8">
-            Tailored for Every <br />
-            <span className="text-blue-600">{content.title}</span>
-          </h2>
-          
-          <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto italic font-medium">
-            {content.desc}
-          </p>
+          {/* Left Column (Sticky) */}
+          <div className="lg:col-span-1 lg:sticky lg:top-32 h-fit">
+            <h2 className="text-4xl font-extrabold text-foreground sm:text-5xl mb-6 leading-tight">
+              Tailored for Every <br />
+              <span className="text-blue-600">{content.title}</span>
+            </h2>
+            <p className="text-muted-foreground text-lg mb-10 leading-relaxed font-medium">
+              {content.desc}
+            </p>
 
-          <div className="flex items-center justify-center gap-8 mt-12">
-            <div className="bg-slate-50 dark:bg-slate-900/50 px-8 py-6 rounded-3xl border border-border text-center shadow-sm">
-              <div className="text-3xl font-black text-blue-600 dark:text-blue-400 mb-1">
-                {content.val1}
+            <div className="flex items-center gap-6">
+              <div className="bg-blue-50 dark:bg-blue-900/20 px-6 py-4 rounded-2xl border border-blue-100 dark:border-blue-800 text-center">
+                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+                  {content.val1}
+                </div>
+                <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                  {content.stat1}
+                </div>
               </div>
-              <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                {content.stat1}
-              </div>
-            </div>
-            <div className="bg-slate-50 dark:bg-slate-900/50 px-8 py-6 rounded-3xl border border-border text-center shadow-sm">
-              <div className="text-3xl font-black text-indigo-600 dark:text-indigo-400 mb-1">
-                {content.val2}
-              </div>
-              <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                {content.stat2}
+              <div className="bg-purple-50 dark:bg-purple-900/20 px-6 py-4 rounded-2xl border border-purple-100 dark:border-purple-800 text-center">
+                <div className="text-2xl font-bold text-purple-600 dark:text-purple-400 mb-1">
+                  {content.val2}
+                </div>
+                <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                  {content.stat2}
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Reorganized Card Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {verticals.map((v, i) => (
-            <VerticalCard
-              key={i}
-              imageSrc={v.image}
-              title={v.title}
-              desc={v.desc}
-            />
-          ))}
+          {/* Right Column (Scrollable Cards) */}
+          <div className="lg:col-span-2 pl-4 md:pl-20 flex flex-col items-start space-y-24">
+            {verticals.map((v, i) => (
+              <VerticalCard
+                key={i}
+                imageSrc={v.image}
+                title={v.title}
+                desc={v.desc}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -132,8 +125,8 @@ function VerticalCard({
   desc: string;
 }) {
   return (
-    <div className="group w-full rounded-3xl overflow-hidden border border-border bg-card shadow-sm hover:shadow-xl transition-all duration-300">
-      <div className="h-48 relative overflow-hidden bg-muted/20">
+    <div className="group w-full max-w-[480px] rounded-3xl overflow-hidden border border-border bg-card shadow-sm hover:shadow-xl transition-all duration-300">
+      <div className="h-56 relative overflow-hidden bg-muted/20">
         <Image
           src={imageSrc}
           alt={title}
@@ -141,13 +134,14 @@ function VerticalCard({
           className="object-cover transition-transform duration-500 group-hover:scale-110"
         />
       </div>
-      <div className="p-8">
-        <h3 className="text-xl font-bold text-foreground mb-3">{title}</h3>
-        <p className="text-base text-muted-foreground leading-relaxed">
+      <div className="p-10">
+        <h3 className="text-2xl font-bold text-foreground mb-4">{title}</h3>
+        <p className="text-lg text-muted-foreground leading-relaxed">
           {desc}
         </p>
       </div>
     </div>
   );
 }
+
 
