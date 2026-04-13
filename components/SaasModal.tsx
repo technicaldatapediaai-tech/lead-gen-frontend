@@ -28,7 +28,7 @@ export function SaasModal({ isOpen, onClose }: SaasModalProps) {
   const handleJoinNow = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Save to waitlist database
+    // Save to newsletter database
     try {
       const response = await fetch('/api/waitlist', {
         method: 'POST',
@@ -39,10 +39,10 @@ export function SaasModal({ isOpen, onClose }: SaasModalProps) {
       });
 
       if (!response.ok) {
-        console.error('Failed to save to waitlist');
+        console.error('Failed to save to newsletter');
       }
     } catch (error) {
-      console.error('Error joining waitlist:', error);
+      console.error('Error joining newsletter:', error);
     }
 
     if (isAuthenticated) {

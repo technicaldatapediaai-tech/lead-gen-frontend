@@ -28,7 +28,7 @@ export default function InsuranceComingSoon() {
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button className="h-14 px-10 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-base shadow-xl transition-all hover:-translate-y-1 flex items-center gap-2">
-                Join Waitlist
+                Join Newsletter
                 <Bell className="w-5 h-5" />
               </button>
               <button className="h-14 px-10 rounded-2xl bg-white dark:bg-slate-900 border border-border text-foreground font-bold text-base transition-all hover:bg-muted/50">

@@ -15,7 +15,7 @@ export interface RegistrationRecord {
   timestamp: Date;
 }
 
-export interface WaitlistEntry {
+export interface NewsletterEntry {
   id: number;
   email: string;
   timestamp: Date;
@@ -51,23 +51,23 @@ export async function listRegistrations(): Promise<RegistrationRecord[]> {
   return registrations as RegistrationRecord[];
 }
 
-export async function upsertWaitlist(email: string): Promise<WaitlistEntry> {
+export async function upsertNewsletter(email: string): Promise<NewsletterEntry> {
   const normalizedEmail = email.trim().toLowerCase();
   
-  const entry = await prisma.waitlist.upsert({
+  const entry = await prisma.newsletter.upsert({
     where: { email: normalizedEmail },
     update: {},
     create: { email: normalizedEmail },
   });
 
-  return entry as WaitlistEntry;
+  return entry as NewsletterEntry;
 }
 
-export async function listWaitlist(): Promise<WaitlistEntry[]> {
-  const waitlist = await prisma.waitlist.findMany({
+export async function listNewsletter(): Promise<NewsletterEntry[]> {
+  const entries = await prisma.newsletter.findMany({
     orderBy: {
       timestamp: 'desc',
     },
   });
-  return waitlist as WaitlistEntry[];
+  return entries as NewsletterEntry[];
 }

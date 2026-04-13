@@ -22,8 +22,10 @@ model Registration {
   timestamp   DateTime @default(now())
 }
 
-model Waitlist {
+model Newsletter {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   timestamp DateTime @default(now())
+
+  @@map("Newsletter Emails")
 }

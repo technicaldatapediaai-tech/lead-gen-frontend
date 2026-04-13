@@ -75,7 +75,7 @@ export default function DashboardCallBotPage() {
             <h2 className="text-3xl font-bold tracking-tight">Be the first to know</h2>
             <p className="mt-4 text-lg text-blue-100/90 leading-relaxed">
               We're currently rolling out early access to selected partners. 
-              Join the waitlist to transform your sales process with AI.
+              Join our newsletter to be the first to transform your sales process with AI.
             </p>
           </div>
           <div className="mt-8 shrink-0 lg:mt-0">
@@ -83,7 +83,7 @@ export default function DashboardCallBotPage() {
               href="/settings/call-bot"
               className="inline-flex h-14 items-center gap-3 rounded-2xl bg-white px-8 text-lg font-bold text-blue-600 shadow-xl hover:bg-blue-50 transition-all hover:scale-105 active:scale-95"
             >
-              Join the Waitlist
+              Join Newsletter
               <ArrowRight size={20} />
             </Link>
           </div>
