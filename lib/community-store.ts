@@ -1,105 +1,73 @@
-import { mkdir, readFile, writeFile } from "fs/promises";
-import path from "path";
+import prisma from "./prisma";
 
 export interface RegistrationRecord {
-  id: string;
-  fullName?: string;
+  id: number;
+  fullName: string;
   email: string;
-  password?: string;
-  linkedin?: string;
-  startupName?: string;
-  startupUrl?: string;
-  stage?: string;
-  industry?: string;
-  lookingFor?: string[];
-  betaPerk?: string;
-  timestamp: string;
+  password?: string | null;
+  linkedin?: string | null;
+  startupName?: string | null;
+  startupUrl?: string | null;
+  stage?: string | null;
+  industry?: string | null;
+  lookingFor: string[];
+  betaPerk?: string | null;
+  timestamp: Date;
 }
 
 export interface WaitlistEntry {
-  id: string;
+  id: number;
   email: string;
-  timestamp: string;
-}
-
-interface CommunityStore {
-  registrations: RegistrationRecord[];
-  waitlist: WaitlistEntry[];
-}
-
-const DATA_DIR = path.join(process.cwd(), "data");
-const STORE_PATH = path.join(DATA_DIR, "community.json");
-
-async function ensureStoreFile() {
-  await mkdir(DATA_DIR, { recursive: true });
-  try {
-    await readFile(STORE_PATH, "utf8");
-  } catch {
-    const initial: CommunityStore = { registrations: [], waitlist: [] };
-    await writeFile(STORE_PATH, JSON.stringify(initial, null, 2), "utf8");
-  }
-}
-
-async function readStore(): Promise<CommunityStore> {
-  await ensureStoreFile();
-  try {
-    const raw = await readFile(STORE_PATH, "utf8");
-    const parsed = JSON.parse(raw);
-    return {
-      registrations: Array.isArray(parsed.registrations) ? parsed.registrations : [],
-      waitlist: Array.isArray(parsed.waitlist) ? parsed.waitlist : []
-    };
-  } catch {
-    return { registrations: [], waitlist: [] };
-  }
-}
-
-async function writeStore(store: CommunityStore) {
-  await ensureStoreFile();
-  await writeFile(STORE_PATH, JSON.stringify(store, null, 2), "utf8");
+  timestamp: Date;
 }
 
 export async function addRegistration(
   payload: Omit<RegistrationRecord, "id" | "timestamp">
 ): Promise<RegistrationRecord> {
-  const store = await readStore();
-  const record: RegistrationRecord = {
-    id: crypto.randomUUID(),
-    ...payload,
-    timestamp: new Date().toISOString()
-  };
+  const registration = await prisma.registration.create({
+    data: {
+      fullName: payload.fullName,
+      email: payload.email,
+      password: payload.password,
+      linkedin: payload.linkedin,
+      startupName: payload.startupName,
+      startupUrl: payload.startupUrl,
+      stage: payload.stage,
+      industry: payload.industry,
+      lookingFor: payload.lookingFor,
+      betaPerk: payload.betaPerk,
+    },
+  });
 
-  store.registrations.unshift(record);
-  await writeStore(store);
-  return record;
+  return registration as RegistrationRecord;
 }
 
 export async function listRegistrations(): Promise<RegistrationRecord[]> {
-  const store = await readStore();
-  return [...store.registrations].sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+  const registrations = await prisma.registration.findMany({
+    orderBy: {
+      timestamp: 'desc',
+    },
+  });
+  return registrations as RegistrationRecord[];
 }
 
 export async function upsertWaitlist(email: string): Promise<WaitlistEntry> {
   const normalizedEmail = email.trim().toLowerCase();
-  const store = await readStore();
-  const existing = store.waitlist.find(entry => entry.email.toLowerCase() === normalizedEmail);
+  
+  const entry = await prisma.waitlist.upsert({
+    where: { email: normalizedEmail },
+    update: {},
+    create: { email: normalizedEmail },
+  });
 
-  if (existing) {
-    return existing;
-  }
-
-  const entry: WaitlistEntry = {
-    id: crypto.randomUUID(),
-    email: normalizedEmail,
-    timestamp: new Date().toISOString()
-  };
-
-  store.waitlist.unshift(entry);
-  await writeStore(store);
-  return entry;
+  return entry as WaitlistEntry;
 }
 
 export async function listWaitlist(): Promise<WaitlistEntry[]> {
-  const store = await readStore();
-  return [...store.waitlist].sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+  const waitlist = await prisma.waitlist.findMany({
+    orderBy: {
+      timestamp: 'desc',
+    },
+  });
+  return waitlist as WaitlistEntry[];
 }

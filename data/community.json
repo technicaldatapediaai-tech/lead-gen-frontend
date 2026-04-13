@@ -1,5 +1,48 @@
 {
-  "registrations": [],
+  "registrations": [
+    {
+      "id": "d9de2613-7e41-456b-b23b-c8ff29fd3ef3",
+      "fullName": "ioghh ",
+      "email": "divyanshiverma484@gmail.com",
+      "linkedin": "https://linkedin.com/in/divyanshi-verma-analytics",
+      "startupName": "DataNova AI",
+      "startupUrl": "https://datanova-ai.vercel.app",
+      "industry": "HealthTech",
+      "lookingFor": [
+        "Beta Testers & Feedback"
+      ],
+      "betaPerk": "Lifetime Access (LTD)",
+      "timestamp": "2026-04-13T09:46:21.111Z"
+    },
+    {
+      "id": "f9149f42-d5eb-4ebf-8f47-48601e0b8fd9",
+      "fullName": "anshika ",
+      "email": "divyanshiverma484@gmail.com",
+      "linkedin": "https://linkedin.com/in/divyanshi-verma-analytics",
+      "startupName": "DataNova AI",
+      "startupUrl": "https://datanova-ai.vercel.app",
+      "industry": "FinTech",
+      "lookingFor": [
+        "Beta Testers & Feedback"
+      ],
+      "betaPerk": "Lifetime Access (LTD)",
+      "timestamp": "2026-04-13T09:42:16.905Z"
+    },
+    {
+      "id": "3632c362-cccb-43d8-80d1-945ed5d791ac",
+      "fullName": "divyanshi ",
+      "email": "divyanshiverma484@gmail.com",
+      "linkedin": "https://linkedin.com/in/divyanshi-verma-analytics",
+      "startupName": "DataNova AI",
+      "startupUrl": "https://datanova-ai.vercel.app",
+      "industry": "AI",
+      "lookingFor": [
+        "Beta Testers & Feedback"
+      ],
+      "betaPerk": "Lifetime Access (LTD)",
+      "timestamp": "2026-04-13T09:40:20.653Z"
+    }
+  ],
   "waitlist": [
     {
       "id": "7dc491aa-fe16-4a3f-aaea-a41f5644edad",
