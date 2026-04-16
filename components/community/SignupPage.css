@@ -62,12 +62,11 @@
 }
 
 .branding-subtitle {
-  font-size: 1.15rem;
+  font-size: 1rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.7);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
   text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  text-transform: uppercase;
 }
 
 .gradient-text {
