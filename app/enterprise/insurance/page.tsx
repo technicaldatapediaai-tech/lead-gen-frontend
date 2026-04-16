@@ -14,6 +14,7 @@ export default function InsuranceEnterprisePage() {
       <LandingNavbar />
 
       <main>
+        <InsuranceHero />
         <InsuranceVisualPlatform />
         <EnterpriseVerticals mode="insurance" />
         <EnterpriseTools mode="insurance" />

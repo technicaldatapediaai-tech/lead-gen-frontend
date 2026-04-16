@@ -17,9 +17,15 @@ export default function InsuranceHero() {
             </div>
 
             {/* Headline */}
-            <h1 className="text-[5rem] sm:text-6xl lg:text-7xl font-black leading-[1.1] mb-8 uppercase tracking-tightest">
-              <span className="text-slate-900">Elite Insurance</span> <br />
-              <span className="text-blue-600">Intelligence Platform</span>
+            <h1 className="text-3xl sm:text-5xl lg:text-[4rem] font-black leading-[1.0] mb-8 tracking-tightest text-center">
+              <span className="text-slate-900 block mb-2 whitespace-nowrap">Elite Insurance Intelligence</span>
+              <span className="relative inline-block whitespace-nowrap">
+                <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                  Platform
+                </span>
+                {/* Thick Line Accent */}
+                <div className="absolute -bottom-2 left-0 w-full h-2 bg-gradient-to-r from-blue-600/30 to-purple-600/30 rounded-full blur-[2px] -z-10" />
+              </span>
             </h1>
 
             {/* Subtitle */}

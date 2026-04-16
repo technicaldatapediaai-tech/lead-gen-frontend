@@ -18,32 +18,6 @@ export default function InsuranceVisualPlatform() {
   return (
     <div className="bg-slate-50 font-sans text-slate-900 selection:bg-blue-500/30">
       
-      {/* 1. Hero Section */}
-      <section className="relative py-32 overflow-hidden bg-white">
-        <div className="mx-auto max-w-7xl px-6 md:px-24 text-center">
-          <div>
-            <div className="inline-block px-3 py-1 mb-6 rounded-full bg-blue-50 border border-blue-100 text-[10px] font-bold tracking-widest text-blue-600">
-              Insurance Product Walk
-            </div>
-            <h1 className="text-5xl sm:text-6xl font-bold leading-[1.1] mb-8 tracking-tight">
-              <span className="text-slate-900">The Future of Insurance</span> <br />
-              <span className="text-blue-600">Intelligence Platform</span>
-            </h1>
-            <p className="text-xl text-slate-600 leading-relaxed mb-10 mx-auto font-medium">
-              Elite CRM and Architecture for high-performance 
-              insurance teams. Track pipelines, manage accounts, and 
-              verify entities with authority.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-4">
-              <button className="h-14 px-10 rounded-2xl bg-blue-600 text-white font-bold text-base shadow-xl shadow-blue-500/20 hover:bg-blue-700 transition-all hover:-translate-y-1 flex items-center justify-center gap-2 tracking-widest">
-                Explore Elite Portal
-                <ArrowRight className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* 2. Executive Analytics Dashboard Section */}
       <section className="py-32 bg-slate-50 border-y border-slate-200">
         <div className="mx-auto max-w-6xl px-24">
