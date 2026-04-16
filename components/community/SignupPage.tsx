@@ -77,7 +77,14 @@ const SignupPage: React.FC<SignupPageProps> = ({ onBack, initialEmail }) => {
   return (
     <div className="signup-page">
       <div className="signup-left">
-        {/* Using the branded background image set via CSS */}
+        <div className="branding-content">
+          <h1 className="branding-title">
+            Get your early users today and <br /> collaborate with fellow founders
+          </h1>
+          <p className="branding-subtitle">
+            A premier community for Startup Founders
+          </p>
+        </div>
       </div>
 
       {/* Right Column: Community Form */}
