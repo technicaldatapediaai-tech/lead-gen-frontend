@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { 
     Loader2, Upload, FileType, CheckCircle2, 
-    AlertCircle, X, Columns, Table as TableIcon 
+    AlertCircle, X, Columns, Table as TableIcon, Download
 } from "lucide-react";
 import { parseCsvFile } from "@/lib/csv";
 import {
@@ -79,8 +79,6 @@ export default function CSVImport({ onSuccess, campaignName, campaignId }: { onS
             const firstRow = results.data[0] as string[];
             const socialDomains = ["linkedin.com", "instagram.com", "twitter.com", "facebook.com", "x.com"];
             
-            // Detect if first row is headers: none of the cells should look like URLs or emails
-            // and some cells should look like common header keywords
             const headerKeywords = ['name', 'url', 'link', 'email', 'profile', 'company', 'title'];
             const firstRowIsHeaders = !firstRow.some(cell => 
                 socialDomains.some(d => cell?.toLowerCase().includes(d)) || 
@@ -177,18 +175,30 @@ export default function CSVImport({ onSuccess, campaignName, campaignId }: { onS
         if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
-    return (
-        <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-            <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 rounded-lg bg-emerald-600/10 text-emerald-500">
-                    <Upload className="h-5 w-5" />
-                </div>
-                <div>
-                    <h2 className="text-lg font-semibold text-foreground">CSV Lead Import</h2>
-                    <p className="text-sm text-muted-foreground">Upload a spreadsheet of prospects to bulk-add them.</p>
-                </div>
-            </div>
+    const downloadSampleCSV = () => {
+        const headers = ["name", "linkedin_url", "email", "company"];
+        const sampleData = [
+            ["John Doe", "https://linkedin.com/in/johndoe", "john@example.com", "Acme Corp"],
+            ["Jane Smith", "https://linkedin.com/in/janesmith", "jane@example.com", "TechFlow"]
+        ];
+        
+        const csvContent = [
+            headers.join(","),
+            ...sampleData.map(row => row.join(","))
+        ].join("\n");
+        
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", "leadgenius_sample.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
 
+    return (
+        <div className="w-full flex flex-col space-y-4 text-left">
             {!file ? (
                 <div 
                     onDragEnter={handleDrag} 
@@ -196,8 +206,8 @@ export default function CSVImport({ onSuccess, campaignName, campaignId }: { onS
                     onDragOver={handleDrag} 
                     onDrop={handleDrop}
                     onClick={() => fileInputRef.current?.click()}
-                    className={`relative border-2 border-dashed rounded-3xl p-12 text-center transition-all cursor-pointer bg-muted/20
-                        ${dragActive ? 'border-blue-500 bg-blue-500/5' : 'border-border hover:border-blue-500/30'}
+                    className={`relative w-full rounded-md p-8 text-center transition-colors cursor-pointer
+                        ${dragActive ? 'bg-primary/5 text-primary' : 'hover:bg-muted/50 text-muted-foreground'}
                     `}
                 >
                     <input 
@@ -208,60 +218,49 @@ export default function CSVImport({ onSuccess, campaignName, campaignId }: { onS
                         className="hidden" 
                     />
                     
-                    <div className="mx-auto w-16 h-16 rounded-full bg-blue-600/10 text-blue-500 flex items-center justify-center mb-4">
-                        <Upload className="h-8 w-8" />
+                    <div className="mx-auto w-10 h-10 rounded-full bg-muted flex items-center justify-center mb-3">
+                        <Upload className="h-5 w-5 text-foreground" />
                     </div>
                     
-                    <h3 className="text-base font-semibold text-foreground mb-1">
+                    <h3 className="text-sm font-semibold text-foreground mb-1">
                         Click to upload or drag and drop
                     </h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-xs">
                         CSV files only. Max size: 5MB.
                     </p>
-                    
-                    <div className="mt-8 grid grid-cols-2 gap-4 max-w-sm mx-auto">
-                        <div className="text-xs text-muted-foreground bg-muted/40 p-2 rounded-lg border border-border">
-                            <FileType className="h-4 w-4 mx-auto mb-1 opacity-50" />
-                            Proper Header Mapping
-                        </div>
-                        <div className="text-xs text-muted-foreground bg-muted/40 p-2 rounded-lg border border-border">
-                            <div className="h-4 w-4 mx-auto mb-1 rounded-full border border-dashed border-muted-foreground/50" />
-                            Auto-Scoring Applied
-                        </div>
-                    </div>
                 </div>
             ) : (
-                <div className="rounded-3xl border border-blue-500/30 bg-blue-500/5 p-8">
+                <div className="rounded-md border bg-card p-6">
                     {/* File Header */}
-                    <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-4">
-                            <div className="p-3 rounded-2xl bg-blue-600 text-white">
-                                <FileType className="h-6 w-6" />
+                    <div className="flex items-start justify-between mb-6">
+                        <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-md border bg-muted">
+                                <FileType className="h-5 w-5 text-muted-foreground" />
                             </div>
                             <div>
-                                <h3 className="text-base font-semibold text-foreground truncate max-w-[200px]">{file.name}</h3>
+                                <h3 className="text-sm font-medium text-foreground truncate max-w-[200px]">{file.name}</h3>
                                 <p className="text-xs text-muted-foreground">{(file.size / 1024).toFixed(1)} KB • Ready to upload</p>
                             </div>
                         </div>
                         <button 
                             onClick={removeFile}
-                            className="p-2 rounded-full hover:bg-muted text-muted-foreground transition"
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-md hover:bg-muted text-muted-foreground transition-colors"
                         >
-                            <X className="h-5 w-5" />
+                            <X className="h-4 w-4" />
                         </button>
                     </div>
 
                     {/* Column Mapping Feedback */}
-                    <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="mb-6 grid grid-cols-1 gap-2">
                         {['Name', 'LinkedIn', 'Email'].map((field) => (
-                            <div key={field} className="flex items-center gap-2 p-3 rounded-xl bg-card border border-border/50 text-[11px]">
-                                <div className={`p-1.5 rounded-lg ${columnMappings[field] ? 'bg-emerald-600/10 text-emerald-500' : 'bg-amber-600/10 text-amber-500'}`}>
-                                    {columnMappings[field] ? <CheckCircle2 className="h-3.5 w-3.5" /> : <AlertCircle className="h-3.5 w-3.5" />}
+                            <div key={field} className="flex items-center justify-between p-2 rounded-md border bg-background text-xs">
+                                <div className="flex items-center gap-2">
+                                    {columnMappings[field] ? <CheckCircle2 className="h-4 w-4 text-primary" /> : <AlertCircle className="h-4 w-4 text-destructive" />}
+                                    <span className="font-medium">{field}</span>
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-muted-foreground font-medium">{field}</p>
-                                    <p className="font-semibold truncate">{columnMappings[field] || 'Not found'}</p>
-                                </div>
+                                <span className="text-muted-foreground truncate max-w-[150px]">
+                                    {columnMappings[field] ? columnMappings[field] : 'Not mapped'}
+                                </span>
                             </div>
                         ))}
                     </div>
@@ -272,20 +271,20 @@ export default function CSVImport({ onSuccess, campaignName, campaignId }: { onS
                             <motion.div 
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="mb-8 overflow-hidden rounded-2xl border border-border bg-card shadow-sm"
+                                className="mb-6 overflow-hidden rounded-md border text-sm shadow-sm"
                             >
-                                <div className="px-4 py-2.5 bg-muted/30 border-b border-border flex items-center justify-between">
-                                    <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-                                        <TableIcon className="h-3.5 w-3.5" />
-                                        Data Preview (Top {previewData.length} rows)
+                                <div className="bg-muted px-3 py-2 border-b flex items-center justify-between">
+                                    <span className="text-xs font-semibold text-muted-foreground flex items-center gap-2">
+                                        <TableIcon className="h-4 w-4" />
+                                        Data Preview (Top {previewData.length})
                                     </span>
                                 </div>
-                                <div className="overflow-x-auto max-h-[300px]">
+                                <div className="overflow-x-auto max-h-[250px]">
                                     <Table>
                                         <TableHeader>
-                                            <TableRow className="bg-muted/20 hover:bg-muted/20">
+                                            <TableRow className="bg-muted/50">
                                                 {headers.map((header) => (
-                                                    <TableHead key={header} className="text-[10px] font-bold uppercase tracking-wider py-3 first:pl-4 last:pr-4">
+                                                    <TableHead key={header} className="text-xs font-semibold py-2 h-auto first:pl-4 last:pr-4">
                                                         {header}
                                                     </TableHead>
                                                 ))}
@@ -293,9 +292,9 @@ export default function CSVImport({ onSuccess, campaignName, campaignId }: { onS
                                         </TableHeader>
                                         <TableBody>
                                             {previewData.map((row, i) => (
-                                                <TableRow key={i} className="hover:bg-muted/5 transition-colors">
+                                                <TableRow key={i}>
                                                     {headers.map((header) => (
-                                                        <TableCell key={header} className="text-[11px] py-2.5 first:pl-4 last:pr-4 truncate max-w-[200px]">
+                                                        <TableCell key={header} className="text-xs py-2 first:pl-4 last:pr-4 truncate max-w-[150px]">
                                                             {row[header] || <span className="text-muted-foreground/30">—</span>}
                                                         </TableCell>
                                                     ))}
@@ -308,52 +307,60 @@ export default function CSVImport({ onSuccess, campaignName, campaignId }: { onS
                         )}
                     </AnimatePresence>
 
-                    <div className="flex gap-3">
+                    <div className="flex gap-2">
                         <Button 
                             onClick={handleUpload}
                             disabled={isLoading || previewData.length === 0}
-                            className="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-7 rounded-2xl font-semibold shadow-lg shadow-blue-600/20"
+                            className="flex-1"
+                            size="sm"
                         >
                             {isLoading ? (
                                 <>
-                                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                                    Processing leads...
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Processing...
                                 </>
                             ) : (
-                                <>
-                                    <CheckCircle2 className="mr-2 h-5 w-5" />
-                                    Start Import
-                                </>
+                                "Start Import"
                             )}
                         </Button>
                         <Button 
                             variant="outline" 
                             onClick={removeFile}
                             disabled={isLoading}
-                            className="py-7 px-8 rounded-2xl"
+                            size="sm"
                         >
                             Cancel
                         </Button>
                     </div>
 
-                    <div className="mt-5 flex items-center gap-2 text-[11px] text-muted-foreground justify-center">
-                        <Columns className="h-3.5 w-3.5" />
-                        Columns are mapped automatically. Ensure headers match common names.
-                    </div>
+                    <p className="mt-4 text-xs text-center text-muted-foreground">
+                        Columns mapped automatically. Ensure headers match common names.
+                    </p>
                 </div>
             )}
 
-            <div className="mt-8 bg-secondary/30 rounded-2xl p-4 border border-border">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
-                    <CheckCircle2 className="h-3 w-3 text-emerald-500" />
-                    CSV Best Practices
-                </h4>
-                <ul className="text-xs text-muted-foreground space-y-2 list-disc pl-4">
-                    <li>Include headers: <code className="bg-muted px-1 rounded">name</code>, <code className="bg-muted px-1 rounded">linkedin_url</code>, <code className="bg-muted px-1 rounded">email</code></li>
-                    <li>Avoid special characters in names</li>
-                    <li>Ensure LinkedIn URLs are full links (https://...)</li>
-                </ul>
-            </div>
+            {!file && (
+                <div className="rounded-md border p-4 bg-muted/20">
+                    <h4 className="text-xs font-semibold text-foreground mb-2 flex items-center gap-2">
+                        <CheckCircle2 className="h-3 w-3 text-primary" />
+                        CSV Best Practices
+                    </h4>
+                    <ul className="text-xs text-muted-foreground space-y-1.5 list-disc pl-4 mb-4">
+                        <li>Include headers: <code className="bg-muted px-1 py-0.5 rounded text-[10px]">name</code>, <code className="bg-muted px-1 py-0.5 rounded text-[10px]">linkedin_url</code>, <code className="bg-muted px-1 py-0.5 rounded text-[10px]">email</code></li>
+                        <li>Avoid special characters in names</li>
+                        <li>Ensure LinkedIn URLs are full links (https://...)</li>
+                    </ul>
+                    <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={(e) => { e.stopPropagation(); downloadSampleCSV(); }} 
+                        className="w-full text-xs"
+                    >
+                        <Download className="mr-2 h-3.5 w-3.5" />
+                        Download Sample Template
+                    </Button>
+                </div>
+            )}
         </div>
     );
 }
